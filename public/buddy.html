@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Zinfai Buddy — your portfolio on Android</title>
+<meta name="description" content="Zinfai Buddy is the read-only Android companion to Zinfai. Import your backup once and see net worth, holdings, live prices, expenses, insights and alerts on your phone — offline, private, and behind a biometric lock.">
+<link rel="canonical" href="https://www.zinfai.com/buddy">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zinfai">
+<meta property="og:title" content="Zinfai Buddy — your portfolio on Android">
+<meta property="og:description" content="The read-only Android companion to Zinfai. Live multi-currency prices over your own backup, offline and private.">
+<meta property="og:url" content="https://www.zinfai.com/buddy">
+<meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/zinfai-logo-small.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/styles.css?v=1">
+<script src="/js/site.js?v=1"></script>
+</head>
+
+<body>
+
+<!-- ---------------- NAV ---------------- -->
+<site-nav active="buddy"></site-nav>
+
+<!-- ---------------- APP HERO ---------------- -->
+<section class="app-hero">
+<div class="container app-hero-inner">
+    <div>
+        <div class="app-hero-head">
+            <img class="app-hero-logo" src="/images/zinfai-logo.png" alt="Zinfai Buddy logo">
+            <div>
+                <span class="eyebrow warm">Android companion</span>
+                <h1>Zinfai Buddy</h1>
+            </div>
+        </div>
+        <p class="lead">Your portfolio, in your pocket.</p>
+        <p class="desc">
+            Zinfai Buddy is the read-only mobile companion to Zinfai. Import a backup once
+            and your phone shows a live, multi-currency view of everything you own — net
+            worth, holdings priced on their own exchanges, expenses, market insights and
+            alerts. It never changes your data, and after the first import it works
+            entirely offline.
+        </p>
+        <div class="meta-row">
+            <span class="pill warm" data-download-version="zinfai-buddy">v1.0.0</span>
+            <span class="pill">Android 7.0+</span>
+            <span class="pill">Read-only</span>
+            <span class="pill">Works offline</span>
+        </div>
+        <div class="btn-row">
+            <a class="btn warm" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-buddy-v1.0.0/Zinfai-Buddy-v1.0.0.apk" data-download="zinfai-buddy:android">Download the APK</a>
+            <a class="btn ghost" href="#install">Install instructions</a>
+        </div>
+        <p class="fine-print" style="text-align:left; margin-top:18px;">
+            Buddy is distributed as a direct APK, not through the Play Store — see the
+            install steps below.
+        </p>
+    </div>
+    <div>
+        <figure class="shot">
+            <div class="shot__frame phone-tall is-empty">
+                <img src="/images/buddy/overview.png" alt="Zinfai Buddy overview screen" loading="lazy" onerror="shotFallback(this)">
+                <div class="shot__ph"><div class="ico">📱</div><div class="ph-title">Overview</div><div class="ph-sub">images/buddy/overview.png</div></div>
+            </div>
+        </figure>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- REQUIRES ZINFAI ---------------- -->
+<section id="requires">
+<div class="container">
+    <div class="notice info">
+        <b>Buddy needs Zinfai to work.</b>
+        It has no backend, no database, and no way to enter data. Everything it shows comes
+        from a <code class="inline">zinfai_backup_&lt;username&gt;.json</code> file exported by
+        Zinfai on your computer. Without an active Zinfai install and a backup file, Buddy
+        stops at the onboarding screen — there is no demo mode.
+        <a href="/download">Install Zinfai first →</a>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- HOW IT WORKS ---------------- -->
+<section id="how-it-works">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow warm">How it works</span>
+        <h2 class="section-title">One file in. Live numbers out.</h2>
+        <p class="section-subtitle">
+            Buddy reads your backup, then re-implements Zinfai's pricing and day-change
+            maths on the device — so even a days-old backup shows today's numbers.
+        </p>
+    </div>
+
+    <div class="steps">
+        <div class="step">
+            <span class="num">1</span>
+            <h4>Export from Zinfai</h4>
+            <p>In Zinfai, go to Settings → Backup and export. Or turn on Google Drive backup and let it write the file nightly.</p>
+        </div>
+        <div class="step">
+            <span class="num">2</span>
+            <h4>Import into Buddy</h4>
+            <p>Sign in with Google to pull the latest backup straight from your Drive, or pick the file manually with the system file picker.</p>
+        </div>
+        <div class="step">
+            <span class="num">3</span>
+            <h4>Prices overlay on top</h4>
+            <p>Buddy fetches live quotes per exchange — NSE, BSE, US markets, LSE, ASX, AMFI NAVs and crypto — and layers them over the backup without altering it.</p>
+        </div>
+        <div class="step">
+            <span class="num">4</span>
+            <h4>Refresh whenever you like</h4>
+            <p>Pull to refresh for new prices; re-import a newer backup when your holdings change. Everything else works offline.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- MULTI-CURRENCY / REGION ---------------- -->
+<section id="global">
+<div class="container">
+    <div class="callout">
+        <div>
+            <h3>Multi-currency and region-aware, exactly like the desktop app.</h3>
+            <p>
+                Nothing in Buddy is implicitly rupees. Each holding keeps its own trading
+                currency — a London listing quotes in GBp, a Sydney one in AUD — and no two
+                amounts are added until they share a currency. Live FX rates convert
+                everything into your reporting currency for roll-ups, with lakh/crore
+                formatting for INR and short-scale for the rest.
+            </p>
+            <p style="margin-top:14px;">
+                Your base location drives the rest: the market clock, home indices,
+                volatility gauge, commodity units, macro cards and news feeds all follow
+                the country you actually live in. Day boundaries are per-exchange, so an
+                ASX position rolls over before an NSE one.
+            </p>
+        </div>
+        <div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Region</th><th>Currency</th><th>Home indices</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>India</td><td>INR</td><td>NIFTY 50, SENSEX</td></tr>
+                        <tr><td>United States</td><td>USD</td><td>S&amp;P 500, NASDAQ, Dow, Russell 2000</td></tr>
+                        <tr><td>United Kingdom</td><td>GBP</td><td>FTSE 100, FTSE 250</td></tr>
+                        <tr><td>Australia</td><td>AUD</td><td>S&amp;P/ASX 200, All Ordinaries</td></tr>
+                        <tr><td>UAE</td><td>AED</td><td>DFM General</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- FEATURES ---------------- -->
+<section id="features">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">Inside the app</span>
+        <h2 class="section-title">Six screens, no clutter.</h2>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="card-icon">🏠</div>
+            <h3>Overview</h3>
+            <p>Net worth hero card — assets and cash minus what's owed — with overall P&amp;L, today's change, a growth chart across 1M to ALL, and an allocation donut.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Portfolio</h3>
+            <p>Holdings grouped into Stocks, Mutual Funds, Commodities, Crypto, Deposits, Retirement, Govt Schemes, Real Estate, Bonds and Physical. Swipe between categories, pull to refresh, tap through to full transaction history.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🧾</div>
+            <h3>Expenses</h3>
+            <p>Monthly trend bars you can tap into, a category donut, current-year total and monthly average, and a sortable transaction table per month.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🌐</div>
+            <h3>Insights</h3>
+            <p>Your region's indices and volatility gauge, commodities in customary units, a headline FX pair, macro cards, regional news, and Fear &amp; Greed sentiment gauges with 60-day sparklines.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔔</div>
+            <h3>Alerts &amp; daily digest</h3>
+            <p>Alert rules from your Zinfai setup are evaluated on-device against live prices and portfolio composition, plus a 7 PM digest notification with P&amp;L and the day's movers — in your own time zone.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔒</div>
+            <h3>Settings &amp; security</h3>
+            <p>Google Drive sync, manual import, light and dark themes, biometric lock on open, and a one-tap clear-data option that wipes the local copy.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- GALLERY ---------------- -->
+<section id="screens">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow warm">Screens</span>
+        <h2 class="section-title">A look around</h2>
+    </div>
+
+    <div class="gallery gallery--phone">
+        <figure class="shot">
+            <div class="shot__frame phone is-empty">
+                <img src="/images/buddy/portfolio.png" alt="Buddy portfolio holdings" loading="lazy" onerror="shotFallback(this)">
+                <div class="shot__ph"><div class="ico">📊</div><div class="ph-title">Portfolio</div><div class="ph-sub">images/buddy/portfolio.png</div></div>
+            </div>
+            <figcaption>Holdings by category</figcaption>
+        </figure>
+        <figure class="shot">
+            <div class="shot__frame phone is-empty">
+                <img src="/images/buddy/expenses.png" alt="Buddy expenses screen" loading="lazy" onerror="shotFallback(this)">
+                <div class="shot__ph"><div class="ico">🧾</div><div class="ph-title">Expenses</div><div class="ph-sub">images/buddy/expenses.png</div></div>
+            </div>
+            <figcaption>Monthly spending</figcaption>
+        </figure>
+        <figure class="shot">
+            <div class="shot__frame phone is-empty">
+                <img src="/images/buddy/insights.png" alt="Buddy market insights" loading="lazy" onerror="shotFallback(this)">
+                <div class="shot__ph"><div class="ico">🌐</div><div class="ph-title">Insights</div><div class="ph-sub">images/buddy/insights.png</div></div>
+            </div>
+            <figcaption>Markets &amp; sentiment</figcaption>
+        </figure>
+        <figure class="shot">
+            <div class="shot__frame phone is-empty">
+                <img src="/images/buddy/asset-detail.png" alt="Buddy asset detail" loading="lazy" onerror="shotFallback(this)">
+                <div class="shot__ph"><div class="ico">🔍</div><div class="ph-title">Asset detail</div><div class="ph-sub">images/buddy/asset-detail.png</div></div>
+            </div>
+            <figcaption>Every holding, in full</figcaption>
+        </figure>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- INSTALL ---------------- -->
+<section id="install">
+<div class="container">
+    <div class="panel wide">
+        <div class="panel__head">
+            <div class="dl-icon">🤖</div>
+            <div>
+                <h3>Install on Android</h3>
+                <p class="panel__intro">
+                    Buddy ships as a signed APK from the Zinfai downloads hub. Android will
+                    ask for permission to install it — that's normal for apps outside the
+                    Play Store.
+                </p>
+            </div>
+        </div>
+
+        <div class="num-steps">
+            <div class="step">
+                <div class="num-steps__n">1</div>
+                <div>
+                    <h4>Download the APK on your phone</h4>
+                    <p>
+                        Open this page on the phone and tap
+                        <a href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-buddy-v1.0.0/Zinfai-Buddy-v1.0.0.apk" data-download="zinfai-buddy:android">Download the APK</a>.
+                        Chrome may warn that this file type can harm your device — tap
+                        <b>Download anyway</b>.
+                    </p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="num-steps__n">2</div>
+                <div>
+                    <h4>Allow installs from your browser</h4>
+                    <p>
+                        Tap the downloaded file. If Android blocks it, it will offer a
+                        <b>Settings</b> shortcut — enable <b>Allow from this source</b> (also at
+                        Settings → Apps → Special app access → Install unknown apps), then go back
+                        and tap the file again.
+                    </p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="num-steps__n">3</div>
+                <div>
+                    <h4>Install and open</h4>
+                    <p>
+                        Tap <b>Install</b>, then <b>Open</b>. Play Protect may run a quick scan
+                        first — let it finish and choose <b>Install anyway</b> if prompted.
+                    </p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="num-steps__n">4</div>
+                <div>
+                    <h4>Import your backup</h4>
+                    <p>
+                        On the onboarding screen, either sign in with Google to fetch the latest
+                        <code class="inline">zinfai_backup_*.json</code> from your Drive, or pick
+                        the file manually if you copied it across. That's it — your portfolio
+                        appears.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="notice" style="margin-top:26px;">
+            <b>Updating.</b> Download a newer APK and install it over the top — your imported
+            backup, theme and alert settings are kept. There is no auto-update; check the
+            <a href="https://github.com/ZinfaiAdmin/zinfai-download/releases">release history</a>
+            now and then.
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- REQUIREMENTS ---------------- -->
+<section id="requirements">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">Requirements</span>
+        <h2 class="section-title">What you need</h2>
+    </div>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr><th>Item</th><th>Requirement</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Operating system</td><td>Android 7.0 (Nougat) or later</td></tr>
+                <tr><td>Zinfai</td><td>A running Zinfai install with your data in it — Buddy cannot work without one</td></tr>
+                <tr><td>Backup file</td><td><code class="inline">zinfai_backup_&lt;username&gt;.json</code>, via Google Drive or manual transfer</td></tr>
+                <tr><td>Storage</td><td>~150 MB, plus room for the backup file</td></tr>
+                <tr><td>Network</td><td>Only for live prices, market data and Drive sync — the app opens and works offline</td></tr>
+                <tr><td>iOS</td><td>Not available yet</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- PRIVACY ---------------- -->
+<section id="privacy-note">
+<div class="container">
+    <div class="callout">
+        <div>
+            <h3>Read-only, by design.</h3>
+            <p>
+                Buddy cannot create, edit or delete anything in Zinfai. Your backup stays on
+                the phone in the app's private storage, protected by an optional biometric
+                lock and erasable in one tap. The only outbound calls are to public market
+                data sources for prices and news, and to Google Drive if you choose to sync
+                that way. There is no Zinfai account, no telemetry, and no server that
+                receives your holdings.
+            </p>
+            <div class="btn-row" style="margin-top:24px;">
+                <a class="btn ghost" href="/privacy">Read the privacy statement</a>
+            </div>
+        </div>
+        <div>
+            <ul class="feature-list">
+                <li><b>No account</b> — nothing to sign up for.</li>
+                <li><b>No telemetry</b> — no analytics or crash-reporting SDKs.</li>
+                <li><b>Your Drive, your file</b> — Drive access is yours, scoped to the backup.</li>
+                <li><b>Biometric lock</b> — fingerprint or face unlock on open.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- CLOSING CTA ---------------- -->
+<section style="padding-top:20px;">
+<div class="container">
+    <div class="callout" style="text-align:center; grid-template-columns:1fr; justify-items:center;">
+        <div style="max-width:640px;">
+            <h3>Start with Zinfai, carry it with Buddy.</h3>
+            <p>Install the desktop app, export a backup, and your whole financial picture follows you around.</p>
+            <div class="btn-row" style="justify-content:center; margin-top:26px;">
+                <a class="btn" href="/download">Download Zinfai</a>
+                <a class="btn warm" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-buddy-v1.0.0/Zinfai-Buddy-v1.0.0.apk" data-download="zinfai-buddy:android">Download Buddy APK</a>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- FOOTER ---------------- -->
+<site-footer></site-footer>
+
+</body>
+</html>

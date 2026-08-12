@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Logs
+*.log
+firebase-debug.log*
+firebase-debug.*.log*
+
+# Firebase cache / emulator state
+.firebase/
+
+# Installer artifacts never live here — they are published as GitHub Release
+# assets on ZinfaiAdmin/zinfai-download. Guard against an accidental copy.
+*.pkg
+*.exe
+*.apk
+*.dmg
+
+# Local env
+.env
+.env.local
+
+# Node (only if tooling is ever added; the site itself has no build step)
+node_modules/
+npm-debug.log*

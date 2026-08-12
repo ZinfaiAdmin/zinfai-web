@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Privacy — Zinfai</title>
+<meta name="description" content="Zinfai runs on your own machine and has no server to send your data to. Here is exactly what stays local, what leaves, and what you control.">
+<link rel="canonical" href="https://www.zinfai.com/privacy">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zinfai">
+<meta property="og:title" content="Privacy — Zinfai">
+<meta property="og:description" content="What stays on your machine, what leaves, and what you control.">
+<meta property="og:url" content="https://www.zinfai.com/privacy">
+<meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/zinfai-logo-small.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/styles.css?v=1">
+<script src="/js/site.js?v=1"></script>
+</head>
+
+<body>
+
+<!-- ---------------- NAV ---------------- -->
+<site-nav></site-nav>
+
+<!-- ---------------- PAGE HEAD ---------------- -->
+<section class="page-head">
+<div class="container">
+    <span class="eyebrow">Privacy</span>
+    <h1>We can't see your money.</h1>
+    <p>
+        Not as a policy choice — as an architectural one. Zinfai has no server, no
+        accounts and no analytics. There is nowhere for your data to go.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- PROSE ---------------- -->
+<section>
+<div class="container">
+<div class="prose">
+
+    <p class="updated">Last updated: 11 August 2026</p>
+
+    <h2>The short version</h2>
+    <p>
+        Zinfai is software you install and run yourself. Your holdings, transactions,
+        expenses, income, liabilities, goals and plans are stored in a database on your own
+        computer. We operate no backend that receives them, so we could not read your
+        financial data even if we wanted to.
+    </p>
+    <p>
+        This website, <b>www.zinfai.com</b>, is a set of static pages. It has no login, no
+        forms and no tracking scripts.
+    </p>
+
+    <h2>What stays on your machine</h2>
+    <ul>
+        <li>Every asset, account, transaction, expense, income and liability you record.</li>
+        <li>Your local login credentials, stored as a hash in your own database.</li>
+        <li>Uploaded statements, and everything extracted from them.</li>
+        <li>AI-generated plans, ratings and analyses, once returned.</li>
+        <li>Your AI provider API keys, in your local database or a local <code class="inline">.env</code> file.</li>
+        <li>Daily portfolio snapshots and the whole history they build up.</li>
+    </ul>
+
+    <h2>What leaves your machine, and when</h2>
+    <p>
+        Zinfai reaches out to the internet for a handful of specific things. Each one is
+        listed here so there are no surprises.
+    </p>
+    <ul>
+        <li>
+            <b>Market prices and FX rates.</b> The app requests quotes for the instruments you
+            hold from public market-data sources (exchange quote APIs, AMFI for mutual fund
+            NAVs, public crypto APIs) and daily foreign-exchange rates. These requests contain
+            ticker symbols and scheme codes — never your quantities, cost basis or identity.
+        </li>
+        <li>
+            <b>Market, macro and news data.</b> Index levels, commodity prices, macro series and
+            news feeds for your region. Nothing about you is sent.
+        </li>
+        <li>
+            <b>AI provider requests — only if you configure a key.</b> When you generate a
+            financial plan, rate an asset, parse an unsupported statement or run news analysis,
+            the relevant data is sent from your machine directly to the provider you chose
+            (OpenAI, Anthropic, Google, xAI, DeepSeek or Mistral) using your own API key. It
+            does not pass through us. That data is handled under <em>that provider's</em>
+            privacy terms, so read them if this matters to you. Leave the keys blank and no AI
+            request is ever made.
+        </li>
+        <li>
+            <b>Google Drive backups — only if you enable them.</b> The backup file is written to
+            your own Drive account, with access you grant and can revoke at any time. We never
+            receive it.
+        </li>
+        <li>
+            <b>Update checks.</b> The app checks the public downloads repository for a newer
+            release so it can show the update banner. This is a plain request for a version
+            number and carries no data about you.
+        </li>
+    </ul>
+
+    <h2>What we collect</h2>
+    <p>
+        Nothing. There is no account system, no telemetry, no crash reporting, no analytics
+        and no cookies set by this website. We do not build a profile of you, because we
+        have nothing to build one from.
+    </p>
+    <p>
+        Two ordinary exceptions apply, and they're the same ones any website has. Our
+        hosting provider and DNS provider process standard request logs (IP address, user
+        agent, page requested) to serve and protect the site. And if you download an
+        installer, that request goes to GitHub, which logs it under its own privacy policy.
+    </p>
+
+    <h2>If you email us</h2>
+    <p>
+        Writing to <a href="mailto:support@zinfai.com">support@zinfai.com</a> means we hold
+        your email address and whatever you put in the message, for as long as it takes to
+        help you. We don't add you to any list, and we don't share it.
+    </p>
+    <p>
+        Please never send passwords, API keys, full account numbers or an unredacted backup
+        file. We will never ask for them.
+    </p>
+
+    <h2>Zinfai Buddy</h2>
+    <p>
+        The Android app is read-only and has no account. The backup you import is kept in
+        the app's private storage on the device, optionally behind a biometric lock, and can
+        be erased with one tap in Settings. Its only outbound calls are to the same public
+        market-data sources for live prices and news, and to Google Drive if you sync that
+        way. There are no analytics or crash-reporting SDKs in it.
+    </p>
+
+    <h2>Security is yours to hold</h2>
+    <p>
+        Running on your own machine means the safeguards are yours too. Keep your computer
+        and disk encrypted, use a strong password for the app, and export backups
+        regularly — if you lose the machine or delete the Docker volume, the data is gone
+        and we have no copy to restore from.
+    </p>
+    <p>
+        By default the app listens on <code class="inline">localhost</code> only, so it isn't
+        reachable from your network. If you deliberately expose it, put it behind
+        authentication and HTTPS — that configuration, and its consequences, are yours.
+    </p>
+
+    <h2>Your data, your call</h2>
+    <ul>
+        <li><b>Export</b> — one JSON file with everything, any time, from Settings → Backup.</li>
+        <li><b>Delete</b> — remove the Docker volume and the data is permanently gone.</li>
+        <li><b>Revoke</b> — remove API keys in Settings, or revoke Drive access in your Google account.</li>
+    </ul>
+    <p>
+        There is no request to file with us for any of this, because we hold none of it.
+    </p>
+
+    <h2>Not financial advice</h2>
+    <p>
+        Zinfai is a tracking and planning tool for your own research and education. The AI
+        planner and asset quality ratings are AI-generated and can be wrong. Zinfai is not a
+        registered investment adviser, broker or tax adviser, and nothing in the app or on
+        this site is a recommendation to buy or sell any security. Verify anything that
+        matters, and consider a registered adviser in your own jurisdiction.
+    </p>
+
+    <h2>Changes to this statement</h2>
+    <p>
+        If this changes, the date at the top changes with it. Since we hold no contact
+        details, there is no mailing list to notify — check back here.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+        Questions about any of this: <a href="mailto:support@zinfai.com">support@zinfai.com</a>.
+    </p>
+
+</div>
+</div>
+</section>
+
+<!-- ---------------- CLOSING CTA ---------------- -->
+<section style="padding-top:10px;">
+<div class="container">
+    <div class="callout" style="text-align:center; grid-template-columns:1fr; justify-items:center;">
+        <div style="max-width:620px;">
+            <h3>Privacy you can verify by unplugging the network.</h3>
+            <p>Turn off Wi-Fi and Zinfai still opens, still shows your portfolio, still runs the numbers. Only the live prices go quiet.</p>
+            <div class="btn-row" style="justify-content:center; margin-top:26px;">
+                <a class="btn" href="/download">Download Zinfai</a>
+                <a class="btn ghost" href="/support">Support &amp; FAQ</a>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- FOOTER ---------------- -->
+<site-footer></site-footer>
+
+</body>
+</html>
