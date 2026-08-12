@@ -1,8 +1,9 @@
 name: Deploy to Firebase Hosting
 
 # Deploys public/ to Firebase Hosting (live channel) on every push to main.
-# Auth: a Google service-account JSON stored in the FIREBASE_SERVICE_ACCOUNT secret.
-# See SETUP.md → "Continuous deployment" for how to create both.
+# Auth: a Google service-account JSON stored in the
+# FIREBASE_SERVICE_ACCOUNT_ZINFAI_WEB secret.
+# See SETUP.md → "Continuous deployment" for how to create it.
 on:
   push:
     branches: [main]
@@ -20,6 +21,6 @@ jobs:
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZINFAI_WEB }}
+          projectId: zinfai-web
           channelId: live

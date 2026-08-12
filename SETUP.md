@@ -282,7 +282,8 @@ firebase init hosting:github
 ```
 
 It asks for the repo (`ZinfaiAdmin/zinfai-web`), creates a service account,
-stores the JSON as the `FIREBASE_SERVICE_ACCOUNT` secret, and offers to write a
+stores the JSON as a secret named `FIREBASE_SERVICE_ACCOUNT_<PROJECT_ID>` — for
+this project, `FIREBASE_SERVICE_ACCOUNT_ZINFAI_WEB` — and offers to write a
 workflow file. **Decline the workflow file** — this repo already has a better one
 at `.github/workflows/firebase-deploy.yml`. If it overwrites yours, restore it
 with `git checkout .github/`.
@@ -295,20 +296,15 @@ with `git checkout .github/`.
 2. Name it `github-deploy`. Grant the roles **Firebase Hosting Admin** and
    **Firebase Authentication Viewer** (the deploy action checks the latter).
 3. **Keys → Add key → JSON**. Download it.
-4. `gh secret set FIREBASE_SERVICE_ACCOUNT --repo ZinfaiAdmin/zinfai-web < path/to/key.json`
+4. `gh secret set FIREBASE_SERVICE_ACCOUNT_ZINFAI_WEB --repo ZinfaiAdmin/zinfai-web < path/to/key.json`
 5. Delete the downloaded JSON from your machine.
 </details>
 
-### 8c. Set the project ID variable
+The secret name must match the one in `.github/workflows/firebase-deploy.yml`.
+The project ID (`zinfai-web`) is set inline in that workflow — it isn't secret,
+so it needs no repo variable.
 
-The workflow reads the project ID from a repo variable, so it isn't duplicated:
-
-```bash
-gh variable set FIREBASE_PROJECT_ID --repo ZinfaiAdmin/zinfai-web --body "zinfai-web"
-#                                                                        ↑ your real project ID
-```
-
-### 8d. Test it
+### 8c. Test it
 
 ```bash
 gh workflow run "Deploy to Firebase Hosting" --repo ZinfaiAdmin/zinfai-web
@@ -471,7 +467,7 @@ Run through this once the domain is connected.
 | `/download` 404s but `/download.html` works | Testing against a plain static server, not Firebase | Use `firebase emulators:start --only hosting` |
 | `OSError: [Errno 48] Address already in use` on port 5000 | macOS `ControlCenter` (AirPlay Receiver) owns port 5000 | Use 5050, as above — or disable AirPlay Receiver in System Settings → General → AirDrop & Handoff |
 | CI deploy fails with a permission error | Service account missing a role | Add **Firebase Hosting Admin** in Google Cloud IAM |
-| CI deploy fails: *"projectId is required"* | The `FIREBASE_PROJECT_ID` repo variable isn't set | `gh variable set FIREBASE_PROJECT_ID …` (§8c) |
+| CI deploy fails: *"Input required and not supplied: firebaseServiceAccount"* | Secret name doesn't match the workflow | `gh secret list --repo ZinfaiAdmin/zinfai-web` — it must be `FIREBASE_SERVICE_ACCOUNT_ZINFAI_WEB` (§8b) |
 | `firebase deploy` says credentials invalid | Expired CLI login | `firebase login --reauth` |
 | Download button 404s | No hub release for that version yet, or the fallback URL is stale | Check `manifest/<product>.json` on the hub; re-run the release workflow |
 | Version badge shows an old number | Manifest fetch failed, so the fallback text is showing | Open DevTools → Network, look for the `manifest/*.json` request |
