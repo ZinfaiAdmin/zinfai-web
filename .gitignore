@@ -16,6 +16,11 @@ firebase-debug.*.log*
 *.apk
 *.dmg
 
+# Raw retina screen captures (~20 MB of ~3400px originals). The optimised
+# copies the site actually serves live in public/images/; keep the originals
+# out of the repo so it doesn't carry both.
+ZINFAI-SCREENSHOTS/
+
 # Local env
 .env
 .env.local
