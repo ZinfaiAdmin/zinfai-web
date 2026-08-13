@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=1">
+<link rel="stylesheet" href="/css/styles.css?v=2">
 <script src="/js/site.js?v=1"></script>
 </head>
 
@@ -35,9 +35,12 @@
 <!-- ---------------- HERO ---------------- -->
 <section class="hero">
 <div class="container">
-    <img class="hero-logo" src="/images/zinfai-logo.png" alt="Zinfai">
-    <h1>ZINFAI</h1>
-    <div class="tagline">Your Financial Mirror</div>
+    <!-- The full brand lockup already reads "Zinfai — Your Financial Mirror",
+         so the heading below is not repeated on screen. It stays in the markup
+         for search engines and screen readers, which cannot read the artwork. -->
+    <img class="hero-logo" src="/images/zinfai-lockup-560.png"
+         width="560" height="560" alt="Zinfai — Your Financial Mirror">
+    <h1 class="sr-only">Zinfai — Your Financial Mirror</h1>
     <p class="hero-text">
         Your entire financial life in one place — in every currency you hold it,
         and entirely on your own machine. Zinfai tracks 40+ asset types across
