@@ -399,7 +399,7 @@ section{ padding:84px 0; }
 .gallery{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px; }
 /* Phone-screenshot gallery — portrait slots sized for mobile shots */
 .gallery--phone{ grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
-.gallery--phone .shot__frame{ aspect-ratio:9/19; max-width:280px; margin-inline:auto; }
+.gallery--phone .shot__frame{ aspect-ratio:9/20; max-width:280px; margin-inline:auto; }
 .shot{ margin:0; }
 .shot__frame{
     position:relative;
@@ -412,8 +412,9 @@ section{ padding:84px 0; }
         linear-gradient(135deg,#151a23,#0b0d12);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
 }
-.shot__frame.phone{ aspect-ratio:9/16; max-width:300px; margin-inline:auto; }
-.shot__frame.phone-tall{ aspect-ratio:896/1756; max-width:300px; margin-inline:auto; }
+/* 9:20 matches the 1080x2400 Android captures exactly, so cover never crops. */
+.shot__frame.phone{ aspect-ratio:9/20; max-width:300px; margin-inline:auto; }
+.shot__frame.phone-tall{ aspect-ratio:9/20; max-width:300px; margin-inline:auto; }
 .shot__frame.phone-tall img{ object-fit:contain; }
 .shot__frame.portrait{ aspect-ratio:4/5; max-width:340px; margin-inline:auto; }
 .shot__frame img{ width:100%; height:100%; object-fit:cover; display:block; }

@@ -18,7 +18,9 @@ Capture guidance
 ----------------
   - Portrait phone screenshots, 1080 x 2400 or similar 9:19.5–9:16 ratio.
     The .shot__frame.phone / .phone-tall CSS frames expect portrait.
-  - Dark theme, for consistency with the desktop shots.
+  - Light theme — the desktop Zinfai shots in images/zinfai/ are light, so dark
+    phone shots sit oddly next to them. (Buddy's dark mode also draws the
+    donut-chart centre in white, which is unreadable on a dark card.)
   - Hide the status-bar clutter if you can (demo mode); full status bar is OK.
   - Keep each file under ~400 KB — optimise before committing.
   - Use demo data. Redact real balances, holder names and account numbers.
