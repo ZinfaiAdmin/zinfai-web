@@ -23,8 +23,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=2">
-<script src="/js/site.js?v=1"></script>
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<script src="/js/site.js?v=2"></script>
 </head>
 
 <body>
@@ -38,8 +38,9 @@
     <span class="eyebrow">Privacy</span>
     <h1>We can't see your money.</h1>
     <p>
-        Not as a policy choice — as an architectural one. Zinfai has no server, no
-        accounts and no analytics. There is nowhere for your data to go.
+        Not as a policy choice — as an architectural one. Zinfai runs on your machine
+        with no server behind it. We hold an email address so you can download it, and
+        nothing else.
     </p>
 </div>
 </section>
@@ -49,7 +50,7 @@
 <div class="container">
 <div class="prose">
 
-    <p class="updated">Last updated: 11 August 2026</p>
+    <p class="updated">Last updated: 14 August 2026</p>
 
     <h2>The short version</h2>
     <p>
@@ -59,8 +60,11 @@
         financial data even if we wanted to.
     </p>
     <p>
-        This website, <b>www.zinfai.com</b>, is a set of static pages. It has no login, no
-        forms and no tracking scripts.
+        This website, <b>www.zinfai.com</b>, does have one account system: downloading an
+        installer requires a free account with a verified email address. That account is
+        for the download only — it holds your email, never your finances, and the app you
+        install never signs in to it. There are still no tracking or analytics scripts on
+        this site.
     </p>
 
     <h2>What stays on your machine</h2>
@@ -104,23 +108,50 @@
             receive it.
         </li>
         <li>
-            <b>Update checks.</b> The app checks the public downloads repository for a newer
-            release so it can show the update banner. This is a plain request for a version
-            number and carries no data about you.
+            <b>Update checks.</b> The app checks for a newer release so it can show the
+            update banner. This is a plain request for a version number and carries no data
+            about you — it is not tied to your download account.
         </li>
     </ul>
 
     <h2>What we collect</h2>
     <p>
-        Nothing. There is no account system, no telemetry, no crash reporting, no analytics
-        and no cookies set by this website. We do not build a profile of you, because we
-        have nothing to build one from.
+        From the app: nothing. No telemetry, no crash reporting, no analytics, and no way
+        for your financial data to reach us.
     </p>
     <p>
-        Two ordinary exceptions apply, and they're the same ones any website has. Our
-        hosting provider and DNS provider process standard request logs (IP address, user
-        agent, page requested) to serve and protect the site. And if you download an
-        installer, that request goes to GitHub, which logs it under its own privacy policy.
+        From this website, if you register for a download, we hold exactly this:
+    </p>
+    <ul>
+        <li>Your <b>email address</b>, and your name if you gave one.</li>
+        <li><b>How you signed in</b> — email and password, or Google.</li>
+        <li><b>Whether your email is verified</b>, and when you last signed in.</li>
+        <li><b>Which installers you downloaded</b> — product, platform, version and time.</li>
+        <li>The <b>IP address and browser</b> the registration and each download came from,
+            kept as an anti-abuse record.</li>
+    </ul>
+    <p>
+        That is the complete list. We do not track which pages you browse, we set no
+        advertising or analytics cookies, and we do not sell, rent or share any of it. The
+        one cookie-equivalent in play is the sign-in token your browser stores to keep you
+        logged in, which you clear by signing out.
+    </p>
+    <p>
+        <b>Why we ask.</b> So we can tell you when a security or data-correctness update
+        ships, and so we know roughly who is running Zinfai. We do not run marketing
+        campaigns off this list.
+    </p>
+    <p>
+        <b>Who processes it.</b> Sign-in and the account record are handled by Google
+        Firebase (Authentication and Firestore) on our behalf. Verification email is sent
+        through our email provider. The installer itself is served from GitHub, which logs
+        the request under its own privacy policy. Our hosting and DNS providers process
+        standard request logs (IP address, user agent, page requested) to serve and protect
+        the site, as any website's do.
+    </p>
+    <p>
+        <b>How long we keep it.</b> For as long as you have an account. Ask us to delete it
+        and we remove the account and its download history.
     </p>
 
     <h2>If you email us</h2>
@@ -136,7 +167,7 @@
 
     <h2>Zinfai Buddy</h2>
     <p>
-        The Android app is read-only and has no account. The backup you import is kept in
+        The Android app is read-only and signs you in to nothing. The backup you import is kept in
         the app's private storage on the device, optionally behind a biometric lock, and can
         be erased with one tap in Settings. Its only outbound calls are to the same public
         market-data sources for live prices and news, and to Google Drive if you sync that
@@ -147,7 +178,7 @@
     <p>
         Running on your own machine means the safeguards are yours too. Keep your computer
         and disk encrypted, use a strong password for the app, and export backups
-        regularly — if you lose the machine or delete the Docker volume, the data is gone
+        regularly — if you lose the machine or delete its data volume, the data is gone
         and we have no copy to restore from.
     </p>
     <p>
@@ -159,11 +190,15 @@
     <h2>Your data, your call</h2>
     <ul>
         <li><b>Export</b> — one JSON file with everything, any time, from Settings → Backup.</li>
-        <li><b>Delete</b> — remove the Docker volume and the data is permanently gone.</li>
+        <li><b>Delete</b> — remove the data volume and the data is permanently gone.</li>
         <li><b>Revoke</b> — remove API keys in Settings, or revoke Drive access in your Google account.</li>
     </ul>
     <p>
-        There is no request to file with us for any of this, because we hold none of it.
+        None of that needs a request to us, because we hold none of it. For the download
+        account we do hold, email
+        <a href="mailto:support@zinfai.com">support@zinfai.com</a> and we will send you a
+        copy of the record or delete it, whichever you ask for. Deleting it does not affect
+        a copy of Zinfai you have already installed.
     </p>
 
     <h2>Not financial advice</h2>
@@ -177,8 +212,8 @@
 
     <h2>Changes to this statement</h2>
     <p>
-        If this changes, the date at the top changes with it. Since we hold no contact
-        details, there is no mailing list to notify — check back here.
+        If this changes, the date at the top changes with it. If the change is significant
+        and you have a registered account, we will email you about it.
     </p>
 
     <h2>Contact</h2>

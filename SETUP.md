@@ -1,26 +1,30 @@
 # Setting up www.zinfai.com — end to end
 
 Everything needed to take this repo from a folder on your laptop to a live site
-at **https://www.zinfai.com**, with automatic deploys and working download links.
+at **https://www.zinfai.com**, with automatic deploys and gated downloads.
 
-Follow it top to bottom the first time. Later you'll only ever need
-[§9 Publishing a new release](#9-publishing-a-new-release) and
-[§10 Adding screenshots](#10-adding-screenshots).
+> **If you are the maintainer, not a first-time reader:** §§1–8 are already done
+> and are kept here as reference for rebuilding. The only outstanding work is
+> [§9 Gated downloads & accounts](#9-gated-downloads--accounts), which opens with
+> a checked list of what is and isn't done. Day to day you only need
+> [§10 Publishing a new release](#10-publishing-a-new-release) and
+> [§11 Adding screenshots](#11-adding-screenshots).
 
-| # | Step | Where | Roughly |
-|---|------|-------|---------|
-| 1 | [Prerequisites](#1-prerequisites) | your machine | 10 min |
-| 2 | [Preview the site locally](#2-preview-the-site-locally) | your machine | 2 min |
-| 3 | [Create the Firebase project](#3-create-the-firebase-project) | Firebase console | 5 min |
-| 4 | [Connect the CLI and deploy](#4-connect-the-cli-and-deploy) | terminal | 5 min |
-| 5 | [Add the custom domain](#5-add-the-custom-domain-in-firebase) | Firebase console | 5 min |
-| 6 | [Point Cloudflare DNS at it](#6-point-cloudflare-dns-at-firebase) | Cloudflare | 10 min + wait |
-| 7 | [Turn on support@zinfai.com](#7-email-routing-for-supportzinfaicom) | Cloudflare | 10 min |
-| 8 | [Continuous deployment](#8-continuous-deployment-from-github) | GitHub | 10 min |
-| 9 | [Publishing a new release](#9-publishing-a-new-release) | CI | ongoing |
-| 10 | [Adding screenshots](#10-adding-screenshots) | your machine | ongoing |
-| 11 | [Launch checklist](#11-launch-checklist) | — | 10 min |
-| 12 | [Troubleshooting](#12-troubleshooting) | — | as needed |
+| # | Step | Where | Roughly | Status |
+|---|------|-------|---------|--------|
+| 1 | [Prerequisites](#1-prerequisites) | your machine | 10 min | ✅ |
+| 2 | [Preview the site locally](#2-preview-the-site-locally) | your machine | 2 min | ✅ |
+| 3 | [Create the Firebase project](#3-create-the-firebase-project) | Firebase console | 5 min | ✅ |
+| 4 | [Connect the CLI and deploy](#4-connect-the-cli-and-deploy) | terminal | 5 min | ✅ |
+| 5 | [Add the custom domain](#5-add-the-custom-domain-in-firebase) | Firebase console | 5 min | ✅ |
+| 6 | [Point Cloudflare DNS at it](#6-point-cloudflare-dns-at-firebase) | Cloudflare | 10 min + wait | ✅ apex + www |
+| 7 | [Turn on support@zinfai.com](#7-email-routing-for-supportzinfaicom) | Cloudflare | 10 min | ✅ routing on |
+| 8 | [Continuous deployment](#8-continuous-deployment-from-github) | GitHub | 10 min | ✅ hosting only |
+| 9 | [Gated downloads & accounts](#9-gated-downloads--accounts) | Firebase + GitHub | 45 min | ⬅ **you are here** |
+| 10 | [Publishing a new release](#10-publishing-a-new-release) | CI | ongoing | — |
+| 11 | [Adding screenshots](#11-adding-screenshots) | your machine | ongoing | — |
+| 12 | [Launch checklist](#12-launch-checklist) | — | 10 min | — |
+| 13 | [Troubleshooting](#13-troubleshooting) | — | as needed | — |
 
 ---
 
@@ -64,7 +68,7 @@ at `/download.html`, whereas production serves them at `/download` — internal
 links use the clean form, so a few will 404 locally. That's expected; §4 shows
 the emulator, which reproduces production exactly.
 
-Every screenshot will show a styled placeholder. That's by design — see §10.
+Every screenshot will show a styled placeholder. That's by design — see §11.
 
 > **Why 5050 and not 5000?** On macOS, port 5000 is occupied by `ControlCenter`
 > — the AirPlay Receiver — so `python3 -m http.server 5000` dies with
@@ -93,7 +97,7 @@ which a static site of this size will never approach.
 
 > **Do not upload installers to Firebase Hosting.** The Spark plan's terms
 > exclude serving binaries like `.exe`, `.pkg` and `.apk`. Installers live as
-> GitHub Release assets — see §9.
+> GitHub Release assets — see §10.
 
 Now record the ID in `.firebaserc`:
 
@@ -176,16 +180,40 @@ Cloudflare dashboard → select `zinfai.com` → **DNS → Records**.
 
 Save, wait a minute or two, then click **Verify** back in Firebase.
 
-### 6b. The A records
+### 6b. The address records
 
-Firebase gives two IPv4 addresses. Add both, for each host:
+**`www` and the apex are two separate custom domains in Firebase.** Adding one
+does not add the other, and each gets its own certificate. Add *both* in the
+Firebase console (Hosting → Add custom domain) before touching DNS — for
+`zinfai.com`, choose **"Redirect to an existing domain" → `www.zinfai.com`**, so
+there is one canonical host and the `<link rel="canonical">` tags stay accurate.
+
+Firebase then tells you which record to add per host. Modern projects get a
+single IPv4 (`199.36.158.100`); older ones get two. Add exactly what the console
+shows:
 
 | Type | Name | Content | Proxy status | TTL |
 |------|------|---------|--------------|-----|
-| A | `www` | first IP from Firebase | **DNS only (grey cloud)** | Auto |
-| A | `www` | second IP from Firebase | **DNS only (grey cloud)** | Auto |
-| A | `@` | first IP from Firebase | **DNS only (grey cloud)** | Auto |
-| A | `@` | second IP from Firebase | **DNS only (grey cloud)** | Auto |
+| CNAME | `www` | `zinfai-web.web.app` | **DNS only (grey cloud)** | Auto |
+| A | `@` | IP(s) from Firebase | **DNS only (grey cloud)** | Auto |
+
+On Cloudflare you may instead use `CNAME @ → zinfai-web.web.app`; apex CNAME
+flattening is automatic on every plan, resolves to the same address, and
+survives Firebase renumbering. Firebase's verification accepts it either way.
+
+> **A TXT record alone does nothing for resolution.** `hosting-site=…` proves
+> ownership; it does not give the host an address. If `dig +short zinfai.com`
+> prints nothing, there is no A/CNAME at the apex — that is the whole bug.
+>
+> Check the certificate before blaming DNS. This says the domain was never
+> finished in the Firebase console:
+>
+> ```bash
+> curl -sv --resolve zinfai.com:443:199.36.158.100 https://zinfai.com -o /dev/null 2>&1 \
+>   | grep -iE "subject:|subjectAltName"
+> # bad:  subject: CN=firebaseapp.com  /  subjectAltName does not match
+> # good: a Google Trust Services cert that includes your host in its SANs
+> ```
 
 > ### ⚠️ The one thing that trips everybody up
 >
@@ -218,7 +246,11 @@ curl -sI https://zinfai.com     | head -1        # expect a 301 to www
 ```
 
 DNS changes at Cloudflare propagate in seconds; the Firebase certificate is the
-slow part.
+slow part — usually under an hour, occasionally up to 24.
+
+Once both hosts resolve, add them to **Authentication → Settings → Authorized
+domains** (`zinfai.com` and `www.zinfai.com`) or Google sign-in fails with
+`auth/unauthorized-domain`. See [§9.4](#94-turn-on-the-sign-in-methods).
 
 ---
 
@@ -230,27 +262,38 @@ this up before you tell anyone about the site.
 
 Cloudflare Email Routing forwards it to a real inbox, free.
 
-1. Cloudflare dashboard → `zinfai.com` → **Email → Email Routing** → **Get started**.
+1. Cloudflare dashboard → `zinfai.com` → **Email Service → Email Routing** →
+   **Get started**.
 2. Cloudflare offers to add the required **MX** and **SPF TXT** records
    automatically. Accept — this is the correct choice unless you already run mail
-   on this domain.
-3. Under **Destination addresses**, add the real inbox (e.g.
-   `zinfai.admin@gmail.com`) and click the confirmation link Cloudflare emails you.
-4. Under **Custom addresses**, create:
+   on this domain. Cloudflare then shows **DNS records: Locked**, meaning it owns
+   those records from here on. That matters in
+   [§9.5](#95-send-verification-email-through-resend) — read the warning there before you set
+   up Resend.
+3. **Destination Addresses** tab → add the real inbox (e.g.
+   `zinfai.admin@gmail.com`) and click the confirmation link Cloudflare emails
+   you. It stays unusable until you confirm.
+4. **Routing rules** tab → **Create address**:
 
    | Custom address | Action | Destination |
    |----------------|--------|-------------|
    | `support@zinfai.com` | Send to an email | your confirmed inbox |
 
-5. Optionally also add a **catch-all** → same inbox, so typos like
-   `suport@zinfai.com` still reach you.
+   > Cloudflare used to call this section **Custom addresses**; it is now
+   > **Routing rules**. Same thing. The Overview tab's "Routing rules: 0" counter
+   > is how you tell this step hasn't been done yet.
+
+5. On the same tab, optionally enable the **catch-all** → same inbox, so typos
+   like `suport@zinfai.com` still reach you.
 6. **Test it.** Send a mail to `support@zinfai.com` from an unrelated account and
    confirm it lands.
 
-**To reply as `support@zinfai.com`** (rather than from your personal Gmail),
-in Gmail: Settings → Accounts → *Send mail as* → **Add another email address**,
-enter `support@zinfai.com`, and use Gmail's SMTP relay or an app-specific setup.
-Cloudflare Email Routing is receive-only; sending needs this extra step.
+**To reply as `support@zinfai.com`** (rather than from your personal Gmail), you
+need an outbound SMTP server, because Cloudflare Email Routing only receives. The
+tidiest option is to reuse the Resend credentials from
+[§9.5](#95-send-verification-email-through-resend): in Gmail, Settings → Accounts →
+*Send mail as* → **Add another email address** → `support@zinfai.com`, then give
+it `smtp.resend.com`, port 587, username `resend`, password = your Resend API key.
 
 ---
 
@@ -315,10 +358,256 @@ Green run → the site is live from CI. From now on, edit, commit, push.
 
 ---
 
-## 9. Publishing a new release
+## 9. Gated downloads & accounts
+
+Installers are only served to people who have registered and verified an email
+address. Nothing on the public web links to a binary any more.
+
+**How it fits together**
+
+```
+visitor clicks Download
+        ▼
+ signed in & verified?  ── no ──►  /register  (Firebase Auth: Google or email+password)
+        │ yes                            │
+        ▼                                └─► verification email via Resend
+ POST /api/download  (Firebase ID token in the Authorization header)
+        ▼
+ functions/index.js   verifies the token, checks email_verified,
+                      logs to Firestore, asks GitHub for a signed URL
+        ▼
+ 302 to release-assets.githubusercontent.com  (expires in minutes)
+```
+
+The check that matters is `email_verified` on the **decoded ID token**, in
+`functions/index.js`. Everything in the browser is presentation — bypass it and
+you get a 401 or 403.
+
+### Where this actually stands
+
+Sections 1–8 are done — the project, the domain, the CI. This section is the only
+outstanding work, and not all of it is outstanding. Checked **15 August 2026**;
+re-run the commands rather than trusting the ticks.
+
+| | State | Check it yourself |
+|---|---|---|
+| Firebase project + CLI auth | ✅ done | `firebase login:list` |
+| `www.zinfai.com` — DNS + cert | ✅ done | `curl -sI https://www.zinfai.com/` |
+| `zinfai.com` apex — DNS + cert | ✅ done | `curl -sI https://zinfai.com/` |
+| Auth authorized domains | ✅ both hosts present | see §9.4 |
+| Cloudflare Email Routing (inbound) | ✅ MX + SPF live | `dig +short zinfai.com MX` |
+| Blaze plan | ❌ **still Spark** | §9.1 — blocks everything below |
+| Email/Password + Google sign-in | ❌ not enabled | §9.4 |
+| `GITHUB_TOKEN` secret | ❌ not set (needs Blaze) | §9.3 |
+| Resend — DKIM/SPF/DMARC | ❌ no records in the zone | §9.5 |
+| Function + Firestore deployed | ❌ never deployed | §9.6 |
+| `zinfai-download` visibility | ⚠️ **still public** | §9.2 — do this last |
+
+**Blaze first.** Secret Manager, Cloud Functions and the Firestore API are all
+gated behind it, so §9.3 and §9.6 will simply refuse to run until §9.1 is done.
+Everything else can be done in any order.
+
+> Until §9.6 deploys the function, `/api/**` 404s — so the download buttons on
+> the live site currently fall back to their "Sign in to download" state and go
+> nowhere useful. The site is safe, not finished.
+
+### 9.1 Upgrade the Firebase project to Blaze
+
+Cloud Functions cannot be deployed on the free Spark plan at all, so this is not
+optional. Blaze keeps the same free tiers; at this traffic the bill is
+approximately nothing, but there is **no hard spending cap**.
+
+1. https://console.firebase.google.com/project/zinfai-web/usage/details → **Modify plan** → Blaze.
+2. Set a budget alert: Google Cloud console → Billing → Budgets & alerts → e.g. $5/month.
+   Alerts notify, they do not stop spend.
+
+### 9.2 Make the downloads hub private
+
+**Do this last**, once everything else works — it is the switch that breaks every
+existing public download link.
+
+```bash
+gh repo edit ZinfaiAdmin/zinfai-download --visibility private --accept-visibility-change-consequences
+```
+
+> Already-published URLs stay published: anything already shared or cached keeps
+> working from people's history until the release assets themselves move. Cut a
+> fresh release after going private if that matters to you.
+
+### 9.3 Create the GitHub token the function uses
+
+A fine-grained PAT, scoped to just the hub repo, read-only:
+
+- https://github.com/settings/personal-access-tokens/new
+- **Token name:** anything, e.g. `zinfai-web-fn-download-reader` — see the note below
+- Resource owner: **ZinfaiAdmin** · Repository access: **Only** `zinfai-download`
+- Permissions → Repository → **Contents: Read-only**
+- Expiry: 1 year — put a reminder in your calendar, downloads break silently when it lapses
+
+Store it as a secret (never in the repo):
+
+```bash
+firebase functions:secrets:set GITHUB_TOKEN --project zinfai-web
+# paste the token VALUE (github_pat_…) when prompted
+```
+
+> **Two different names, don't conflate them.**
+>
+> | | What it is | Must match? |
+> |---|---|---|
+> | GitHub's **Token name** | A label shown only in your own list at github.com/settings/tokens. Never transmitted. | No — pick anything readable |
+> | **`GITHUB_TOKEN`** | The Secret Manager key, hardcoded as `defineSecret("GITHUB_TOKEN")` in `functions/index.js` | Yes — between that line and `secrets:set` |
+>
+> The secret's *value* is the `github_pat_…` string. The label you typed into
+> GitHub has no bearing on it. Avoid literally naming the PAT `GITHUB_TOKEN`:
+> GitHub Actions auto-injects a built-in secret of that name, so it reads as a
+> collision even though the two never meet.
+
+### 9.4 Turn on the sign-in methods
+
+Authentication is already initialised on the project — there are just no sign-in
+providers turned on, so `/register` cannot create anyone yet.
+
+Firebase console → **Authentication** → Sign-in method:
+
+- **Email/Password** → Enable (leave passwordless off)
+- **Google** → Enable, set the support email
+
+**Authorized domains needs nothing.** Firebase added both hosts when the custom
+domains were set up in §5. Confirm without leaving the terminal:
+
+```bash
+curl -s "https://identitytoolkit.googleapis.com/v1/projects?key=$(
+  grep -oE 'apiKey: *"[^"]+"' public/js/auth.js | head -1 | cut -d'"' -f2
+)" | grep -o '"authorizedDomains":\[[^]]*\]'
+```
+
+That currently returns `localhost`, `zinfai-web.firebaseapp.com`,
+`zinfai-web.web.app`, `zinfai.com`, `www.zinfai.com` — which is everything the
+site needs. The same command is the fastest way to confirm Email/Password went
+live: `"allowPasswordSignup": true` appears in the response once it is enabled.
+
+### 9.5 Send verification email through Resend
+
+Firebase's default sender is `noreply@zinfai-web.firebaseapp.com`, which is
+Firebase-branded and spam-foldered often enough to cost you registrations.
+
+1. Sign up at https://resend.com (free tier: 3,000 emails/month).
+2. **Domains → Add domain →** `zinfai.com`. Resend gives you a DKIM TXT record,
+   plus an MX and SPF pair scoped to a `send.` subdomain.
+3. Add those records in **Cloudflare DNS** (DNS-only, not proxied).
+
+   > ### ⚠️ Do not touch the apex MX or SPF records
+   >
+   > Email Routing (§7) already owns these at `zinfai.com`, and Cloudflare shows
+   > them as **Locked**:
+   >
+   > ```
+   > zinfai.com  MX   route1/2/3.mx.cloudflare.net
+   > zinfai.com  TXT  "v=spf1 include:_spf.mx.cloudflare.net ~all"
+   > ```
+   >
+   > **A hostname may have only one SPF record.** Two `v=spf1` TXT records on the
+   > same name is a `PermError` under RFC 7208 — it doesn't merge, it fails
+   > *both*, and your inbound routing breaks along with your outbound mail.
+   >
+   > This works out fine, because Resend puts its MX and SPF on
+   > **`send.zinfai.com`**, not the apex — a different hostname, so nothing
+   > collides. Its DKIM record sits at `resend._domainkey.zinfai.com`, which also
+   > doesn't clash. You end up with:
+   >
+   > | Name | Type | Owner |
+   > |------|------|-------|
+   > | `zinfai.com` | MX + SPF TXT | Cloudflare Email Routing — inbound, leave alone |
+   > | `cf2024-1._domainkey.zinfai.com` | TXT | Cloudflare — DKIM, already there, leave alone |
+   > | `send.zinfai.com` | MX + SPF TXT | Resend — outbound |
+   > | `resend._domainkey.zinfai.com` | TXT | Resend — DKIM |
+   >
+   > **The two DKIM records do not conflict**, even though both sign for
+   > `zinfai.com`. DKIM is selector-scoped: a receiver reads the `s=` tag on the
+   > message and looks up only that selector. `cf2024-1` and `resend` are
+   > different names, so both coexist. This is the intended design for multiple
+   > senders — and it is precisely what SPF lacks, which is why SPF is the one
+   > record type to be careful with here.
+   >
+   > If any guide tells you to add `include:amazonses.com` to the apex SPF record,
+   > it is assuming you don't have Email Routing. You do. Don't.
+
+3b. **Add a DMARC record** — the zone has none, and mail from a domain with DKIM
+   and SPF but no DMARC policy still gets treated with suspicion by Gmail and
+   Outlook. Start in monitor-only mode:
+
+   | Type | Name | Content |
+   |------|------|---------|
+   | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:support@zinfai.com` |
+
+   `p=none` changes nothing about delivery; it just asks receivers to report. Once
+   you've watched the reports for a few weeks and confirmed only Resend and
+   Cloudflare send as you, tighten to `p=quarantine`.
+4. Wait for Resend to show the domain as **Verified**.
+5. **API Keys → Create**, then in Resend take the **SMTP** credentials
+   (`smtp.resend.com`, port 587, username `resend`, password = the API key).
+6. Firebase console → Authentication → **Templates** → Email address verification
+   → the pencil icon → **SMTP settings**, and fill in those credentials with
+   sender `Zinfai <verify@zinfai.com>`.
+7. Edit the template wording so it reads as Zinfai, not Firebase.
+
+Send yourself a test registration and confirm the mail lands in the inbox rather
+than spam.
+
+### 9.6 Deploy
+
+```bash
+cd functions && npm install && cd ..
+firebase deploy --only functions,firestore:rules,firestore:indexes,hosting --project zinfai-web
+```
+
+The first functions deploy also enables Cloud Build, Artifact Registry and Cloud
+Run on the project; accept the prompts.
+
+> **The GitHub Actions workflow does not cover this.**
+> `.github/workflows/firebase-deploy.yml` uses `action-hosting-deploy`, which
+> deploys **hosting only**. Pushing to `main` will publish the pages but leave
+> the function and the Firestore rules at whatever version you last pushed by
+> hand. Until the workflow is extended, run the `firebase deploy` above yourself
+> whenever `functions/` or `firestore.rules` changes.
+>
+> Extending it means granting the deploy service account more than Hosting
+> Admin — at minimum Cloud Functions Admin, Service Account User, Cloud Build
+> Editor, Artifact Registry Admin and Cloud Datastore Owner.
+
+### 9.7 Seeing who registered
+
+Both collections are written only by the function, and are not client-readable.
+
+- **Firebase console → Firestore → `users`** — one doc per registration: email,
+  name, provider, `emailVerified`, `createdAt`, `downloadCount`, `lastDownloadAt`.
+- **Firestore → `downloads`** — one doc per download: uid, email, product,
+  platform, version, timestamp, IP, user agent.
+
+Export the lot to CSV when you want it:
+
+```bash
+gcloud firestore export gs://zinfai-web.firebasestorage.app/exports/$(date +%F) \
+  --collection-ids=users,downloads --project zinfai-web
+```
+
+### 9.8 Local development
+
+```bash
+firebase emulators:start --only hosting,functions,firestore,auth --project zinfai-web
+```
+
+`auth.js` points at production Firebase Auth, so signing in against the emulator
+needs `connectAuthEmulator` wiring that is deliberately not there. For most UI
+work, run the emulator and sign in against the real project instead.
+
+---
+
+## 10. Publishing a new release
 
 **The website does not need a commit when you ship a new version.** It reads the
-current version and download URLs from the public downloads hub at page load.
+current version from `/api/manifest` at page load.
 
 ### How the chain works
 
@@ -330,14 +619,18 @@ ZinfaiAdmin/zinfai  (private)             ZinfaiAdmin/zinfai-buddy  (private)
         │                                         │
         └──────────────┬──────────────────────────┘
                        ▼
-        ZinfaiAdmin/zinfai-download   (PUBLIC — the hub)
+        ZinfaiAdmin/zinfai-download   (PRIVATE — the hub)
           releases/zinfai-v1.0.3/Zinfai-v1.0.3.pkg
           releases/zinfai-buddy-v1.0.1/Zinfai-Buddy-v1.0.1.apk
           manifest/zinfai.json
           manifest/zinfai-buddy.json
                        ▼
-        www.zinfai.com  — js/site.js fetches the manifests and rewrites
-                          every download link, version badge and filename
+        functions/index.js  — reads the manifest with GITHUB_TOKEN, checks the
+                              caller has a verified account, and returns a
+                              short-lived signed GitHub URL
+                       ▼
+        www.zinfai.com  — js/site.js fills in version badges and file names;
+                          the buttons never hold a URL
 ```
 
 `scripts/publish_downloads.sh` in the Zinfai repo does the mirroring and writes
@@ -357,12 +650,13 @@ the manifest. Each manifest looks like:
 
 ### One-time hub setup
 
-The hub repo must exist and be **public**:
+The hub repo must exist and be **private** — see
+[§9](#9-gated-downloads--accounts). If it is still public, the gate is
+decorative, because the release asset URLs remain fetchable by anyone.
 
 ```bash
-gh repo view ZinfaiAdmin/zinfai-download   # if this 404s:
-gh repo create ZinfaiAdmin/zinfai-download --public \
-  --description "Public downloads hub for Zinfai and Zinfai Buddy"
+gh repo view ZinfaiAdmin/zinfai-download --json visibility
+gh repo edit ZinfaiAdmin/zinfai-download --visibility private --accept-visibility-change-consequences
 ```
 
 The publishing CI needs a `DOWNLOADS_TOKEN` secret — a PAT with
@@ -371,17 +665,24 @@ and `zinfai-buddy` repos.
 
 ### What the site expects in markup
 
-```html
-<a data-download="zinfai:macos"        href="…fallback…">Download for macOS</a>
-<a data-download="zinfai:windows"      href="…fallback…">Download for Windows</a>
-<a data-download="zinfai-buddy:android" href="…fallback…">Download the APK</a>
+Download triggers are `<button>`, never `<a href>` — there is no public URL to
+put in an href, and that is the point.
 
-<span data-download-version="zinfai">v1.0.2</span>          <!-- version badge -->
-<span data-download-file="zinfai:macos">Zinfai-v1.0.2.pkg</span>  <!-- inside the install command -->
+```html
+<button type="button" class="btn" data-download="zinfai:macos" data-dl-ready="Download for Mac">
+  <span data-dl-label>Download for Mac</span>
+</button>
+
+<span data-download-version="zinfai">v1.0.6</span>                 <!-- version badge -->
+<span data-download-file="zinfai:macos">Zinfai-v1.0.6.pkg</span>   <!-- inside the install command -->
 ```
 
-If a manifest can't be fetched, the hard-coded `href` and text stay as-is, so
-downloads never break — they just go stale. Bump them whenever you happen to edit
+`site.js` swaps the label to "Sign in to download" for signed-out visitors and
+sends them to `/register`. Elements marked `data-dl-hint` are hidden once the
+visitor is verified.
+
+If the manifest can't be fetched the hard-coded text stays as-is, so the page
+never renders blank — it just goes stale. Bump it whenever you happen to edit
 the page.
 
 > **Known gap on day one:** `manifest/zinfai-buddy.json` does not exist yet
@@ -394,16 +695,22 @@ the page.
 ### Sanity-check after a release
 
 ```bash
-curl -s https://raw.githubusercontent.com/ZinfaiAdmin/zinfai-download/main/manifest/zinfai.json | jq .
-curl -sI "$(curl -s https://raw.githubusercontent.com/ZinfaiAdmin/zinfai-download/main/manifest/zinfai.json | jq -r .platforms.macos.url)" | head -1
+# public endpoint — version and file names only, never a URL
+curl -s "https://www.zinfai.com/api/manifest?product=zinfai" | jq .
+
+# the gate should refuse an anonymous caller
+curl -s -X POST https://www.zinfai.com/api/download \
+  -H 'Content-Type: application/json' \
+  -d '{"product":"zinfai","platform":"macos"}' | jq .
+# expect: {"error":"Sign in to continue."}
 ```
 
-Then load https://www.zinfai.com/download and confirm the version badges show the
-new number.
+Then load https://www.zinfai.com/download, confirm the version badges show the
+new number, sign in, and check the button actually delivers the file.
 
 ---
 
-## 10. Adding screenshots
+## 11. Adding screenshots
 
 The site ships with self-revealing placeholders: each slot shows a styled card
 until the image exists, then the real screenshot takes over on load. **No HTML
@@ -433,7 +740,7 @@ in, commit, push. CI deploys them.
 
 ---
 
-## 11. Launch checklist
+## 12. Launch checklist
 
 Run through this once the domain is connected.
 
@@ -443,11 +750,23 @@ Run through this once the domain is connected.
 - [ ] Every nav and footer link resolves: `/`, `/features`, `/download`, `/buddy`, `/support`, `/privacy`
 - [ ] The redirects work: `/downloads` → `/download`, `/zinfai-buddy` → `/buddy`, `/help` → `/support`
 - [ ] A nonsense URL like `/nope` renders the branded 404
-- [ ] Anchor links land correctly: `/features#track`, `/download#docker`, `/buddy#install`
-- [ ] Download buttons point at real, downloadable assets (see the Buddy caveat in §9)
+- [ ] Anchor links land correctly: `/features#track`, `/download#requirements`, `/buddy#install`
 - [ ] Version badges show the current version, not the hard-coded fallback
-- [ ] The copy-to-clipboard buttons on the install and Docker commands work
+- [ ] The copy-to-clipboard button on the Mac install command works
 - [ ] `support@zinfai.com` receives a test email
+
+The gate (after §9 is deployed — all of these fail today):
+
+- [ ] `/api/manifest?product=zinfai` returns JSON with a version and **no URL**
+- [ ] Signed out, a download button reads "Sign in to download" and goes to `/register`
+- [ ] Registering with email sends a verification mail **from `zinfai.com`, to the inbox not spam**
+- [ ] Before verifying, the button still refuses; `POST /api/download` returns 403 `email-not-verified`
+- [ ] After clicking the link and pressing "I've verified — continue", the download starts
+- [ ] Google sign-in works on `www.zinfai.com` and lands verified immediately
+- [ ] The same flow works on the apex `zinfai.com`
+- [ ] `curl -X POST https://www.zinfai.com/api/download` with no token returns 401
+- [ ] Firestore has one `users` doc and one `downloads` doc for that test
+- [ ] Every installer still downloads **after** `zinfai-download` goes private
 - [ ] The site is usable at 375 px wide (iPhone SE) — check the nav, tables and phone frames
 - [ ] `https://www.zinfai.com/robots.txt` and `/sitemap.xml` both load
 - [ ] Submit the sitemap: [Google Search Console](https://search.google.com/search-console) → add `https://www.zinfai.com` (verify via the DNS TXT method, which Cloudflare makes trivial) → **Sitemaps** → submit `sitemap.xml`
@@ -456,7 +775,7 @@ Run through this once the domain is connected.
 
 ---
 
-## 12. Troubleshooting
+## 13. Troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
@@ -468,6 +787,8 @@ Run through this once the domain is connected.
 | `OSError: [Errno 48] Address already in use` on port 5000 | macOS `ControlCenter` (AirPlay Receiver) owns port 5000 | Use 5050, as above — or disable AirPlay Receiver in System Settings → General → AirDrop & Handoff |
 | CI deploy fails with a permission error | Service account missing a role | Add **Firebase Hosting Admin** in Google Cloud IAM |
 | CI deploy fails: *"Input required and not supplied: firebaseServiceAccount"* | Secret name doesn't match the workflow | `gh secret list --repo ZinfaiAdmin/zinfai-web` — it must be `FIREBASE_SERVICE_ACCOUNT_ZINFAI_WEB` (§8b) |
+| `/api/**` serves the 404 page, but the function works at `https://us-central1-zinfai-web.cloudfunctions.net/api` | On the **first** deploy, hosting is released before the function exists, so the rewrite has nothing to bind to | `firebase deploy --only hosting` again. Only ever bites the first time; not a config error, so don't go editing the rewrite |
+| Buddy release never publishes, `Release` run finishes in ~10s | `release.yml` gates on `expo.version` changing in `app.json`; a plain push doesn't qualify | Bump `expo.version` (and `android.versionCode`), or force it: `gh workflow run release.yml -R ZinfaiAdmin/zinfai-buddy --ref main` |
 | `firebase deploy` says credentials invalid | Expired CLI login | `firebase login --reauth` |
 | Download button 404s | No hub release for that version yet, or the fallback URL is stale | Check `manifest/<product>.json` on the hub; re-run the release workflow |
 | Version badge shows an old number | Manifest fetch failed, so the fallback text is showing | Open DevTools → Network, look for the `manifest/*.json` request |
@@ -480,16 +801,23 @@ Run through this once the domain is connected.
 
 | Thing | Where |
 |---|---|
-| Site source | `ZinfaiAdmin/zinfai-web` (this repo) |
-| Public downloads hub | https://github.com/ZinfaiAdmin/zinfai-download |
-| Docker image | https://hub.docker.com/r/zinfaiadmin/zinfai |
-| Firebase console | https://console.firebase.google.com |
+| Site source | `ZinfaiAdmin/zinfai-web` (this repo, public) |
+| Downloads hub | `ZinfaiAdmin/zinfai-download` — going private in §9.2 |
+| Docker image | https://hub.docker.com/r/zinfaiadmin/zinfai (stays public) |
+| Firebase console | https://console.firebase.google.com/project/zinfai-web |
 | Cloudflare dashboard | https://dash.cloudflare.com |
+| Resend dashboard | https://resend.com/domains |
 | Support inbox | support@zinfai.com (Cloudflare Email Routing) |
 
-**Private repos — never link to these from the site:** `ZinfaiAdmin/zinfai` and
-`ZinfaiAdmin/zinfai-buddy`. Both are private, so any link would 404 for visitors.
-Only the downloads hub and Docker Hub are public.
+**Never link to these from the site:** `ZinfaiAdmin/zinfai`,
+`ZinfaiAdmin/zinfai-buddy`, and — once §9.2 is done — `ZinfaiAdmin/zinfai-download`.
+All three 404 for visitors, and the third is the whole point of the gate.
+
+**The Docker image stays public and pullable by name.** It has to: the installers
+pull it unauthenticated. Removing the `docker run` instructions from the site
+means it is no longer *advertised*, not that it is *restricted*. Anyone who knows
+`zinfaiadmin/zinfai` can still pull it. The registration wall is a front door, not
+a lock — that was the deliberate trade, made to keep installs working.
 
 ---
 
