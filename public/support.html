@@ -274,7 +274,11 @@
             <summary>Which AI providers can I use?</summary>
             <div>
                 <p>
-                    OpenAI, Anthropic Claude, Google Gemini, xAI Grok, DeepSeek and Mistral.
+                    Ten, natively: OpenAI, Anthropic Claude, Google Gemini, xAI Grok,
+                    Mistral AI, DeepSeek, Groq, Perplexity, OpenRouter and AWS Bedrock.
+                    Any other service with an OpenAI-compatible API works as well — point
+                    it at a custom endpoint. Bedrock is the odd one out: it authenticates
+                    with an AWS access key, secret and region rather than a single key.
                     Add your key in Settings (or a local <code class="inline">.env</code>) and
                     switch provider whenever you like. Calls go from your machine straight to the
                     provider — they never pass through us.

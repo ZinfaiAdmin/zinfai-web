@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Features — Zinfai | Track, Plan &amp; Retire</title>
-<meta name="description" content="Everything Zinfai does: 40+ asset types across five jurisdictions, a multi-currency engine, statement auto-import, live prices and XIRR, net worth and liabilities, a FIRE planner, an AI financial planner, AI asset quality ratings, alerts, expenses and income tracking.">
+<meta name="description" content="Everything Zinfai does: 40+ asset types across five jurisdictions, a multi-currency engine, built-in statement parsers for ICICI, HDFC, SBI, Axis, Kotak, IDFC First, Bank of Baroda, Zerodha, Groww, ICICI Direct and NSDL/CDSL CAS with AI parsing for everything else, live prices and XIRR, net worth and liabilities, a FIRE planner, an AI financial planner, AI asset quality ratings, alerts, expenses and income tracking.">
 <link rel="canonical" href="https://www.zinfai.com/features">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zinfai">
 <meta property="og:title" content="Features — Zinfai">
-<meta property="og:description" content="40+ asset types, 5 jurisdictions, multi-currency engine, statement import, FIRE planner, AI advisor — all running on your own machine.">
+<meta property="og:description" content="40+ asset types, 5 jurisdictions, multi-currency engine, statement parsing, FIRE planner, AI advisor — all running on your own machine.">
 <meta property="og:url" content="https://www.zinfai.com/features">
 <meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,6 +44,7 @@
     </p>
     <div class="btn-row" style="justify-content:center; margin-top:30px;">
         <a class="btn ghost" href="#track">Track</a>
+        <a class="btn ghost" href="#statements">Statements</a>
         <a class="btn ghost" href="#plan">Plan</a>
         <a class="btn ghost" href="#retire">Retire</a>
         <a class="btn ghost" href="#insights">Insights</a>
@@ -101,7 +102,8 @@
         <div class="card">
             <div class="card-icon">📄</div>
             <h3>Smart statement processing</h3>
-            <p>Auto-parse bank PDFs (ICICI, HDFC, SBI, Axis, Kotak, IDFC First and generic formats), broker holdings and tradebooks (Zerodha, ICICI Direct, Upstox, Angel One, Groww), and password-protected NSDL/CDSL CAS files — with AI parsing for anything unsupported.</p>
+            <p>Upload a file and Zinfai parses it — bank and credit-card statements, broker holdings and tradebooks, password-protected NSDL/CDSL CAS files, and EPF, PPF, NPS and SSY statements. Anything without a built-in parser falls through to AI.</p>
+            <a class="card-button" href="#statements">See every supported institution →</a>
         </div>
         <div class="card">
             <div class="card-icon">🔄</div>
@@ -137,6 +139,128 @@
             <div class="card-icon">⚙️</div>
             <h3>SIP / STP / SWP utilities</h3>
             <p>Set up systematic investment, transfer and withdrawal plans, and retroactively generate historical SIP transactions at the right NAV so your XIRR is accurate from day one.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- STATEMENTS ---------------- -->
+<section id="statements">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">Statements</span>
+        <h2 class="section-title">Upload a statement. Zinfai reads it.</h2>
+        <p class="section-subtitle">
+            You choose the file and upload it — Zinfai never connects to your bank
+            and never asks for banking credentials. It then does the tedious part:
+            pulling out every transaction, holding and balance. Institutions below
+            have a purpose-built parser. Anything else falls through to the AI
+            parser.
+        </p>
+    </div>
+
+    <div class="meta-row" style="justify-content:center; margin-bottom:32px;">
+        <span class="pill accent">PDF</span>
+        <span class="pill accent">XLSX</span>
+        <span class="pill accent">XLS</span>
+        <span class="pill accent">CSV</span>
+        <span class="pill">Password-protected PDFs</span>
+    </div>
+
+    <h3 style="font-family:'Space Grotesk',sans-serif; margin-bottom:14px;">Banks &amp; card issuers</h3>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Institution</th>
+                    <th>Savings / current</th>
+                    <th>Credit card</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>ICICI Bank</td><td>Built-in parser</td><td>Built-in parser</td></tr>
+                <tr><td>HDFC Bank</td><td>Built-in parser</td><td>Built-in parser</td></tr>
+                <tr><td>State Bank of India</td><td>Built-in parser</td><td>Built-in parser (SBI Card)</td></tr>
+                <tr><td>IDFC First Bank</td><td>Built-in parser</td><td>Built-in parser</td></tr>
+                <tr><td>Axis Bank</td><td>Built-in parser</td><td>AI parser</td></tr>
+                <tr><td>Kotak Mahindra Bank</td><td>Built-in parser</td><td>AI parser</td></tr>
+                <tr><td>Bank of Baroda</td><td>Built-in parser</td><td>AI parser</td></tr>
+                <tr><td>Standard Chartered</td><td>AI parser</td><td>Built-in parser</td></tr>
+                <tr><td>American Express</td><td>—</td><td>Built-in parser</td></tr>
+                <tr><td>Scapia</td><td>—</td><td>Built-in parser</td></tr>
+                <tr><td>Any other bank, any country</td><td>AI parser</td><td>AI parser</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p style="color:var(--muted); font-size:.95rem; margin-top:12px;">
+        Zinfai identifies the institution from the contents of the file, so you
+        don't have to tell it which bank a statement came from.
+    </p>
+
+    <h3 style="font-family:'Space Grotesk',sans-serif; margin:36px 0 14px;">Brokers &amp; depositories</h3>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Source</th>
+                    <th>What it reads</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Zerodha</td><td>Holdings and tradebooks, CSV or Excel, across multiple sheets</td></tr>
+                <tr><td>Groww</td><td>Stock and mutual-fund holdings, plus stock and MF order history</td></tr>
+                <tr><td>ICICI Direct</td><td>Equity and mutual-fund holdings, plus tradebooks in both CSV and XLS exports</td></tr>
+                <tr><td>Vested</td><td>US holdings and trades — imported into a USD portfolio and kept in USD, with no conversion guesswork</td></tr>
+                <tr><td>INDmoney</td><td>US holdings and trades — imported into a USD portfolio and kept in USD, with no conversion guesswork</td></tr>
+                <tr><td>NSDL CAS</td><td>Password-protected consolidated statement — equities, mutual funds and sovereign gold bonds</td></tr>
+                <tr><td>CDSL CAS</td><td>Consolidated statement — equities and mutual funds</td></tr>
+                <tr><td>MF Central CAS</td><td>All mutual-fund folios across registrars, consolidated into one demat account</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 style="font-family:'Space Grotesk',sans-serif; margin:36px 0 14px;">Retirement &amp; small savings</h3>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Scheme</th>
+                    <th>Source document</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>EPF / Provident Fund</td><td>EPFO passbook PDF, with the employer and employee split kept apart</td></tr>
+                <tr><td>PPF</td><td>Account statement PDF from any of the issuing banks</td></tr>
+                <tr><td>NPS</td><td>Transaction statement from the Central Recordkeeping Agency</td></tr>
+                <tr><td>Sukanya Samriddhi (SSY)</td><td>Account statement PDF from a post office or bank</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout" style="margin-top:40px; grid-template-columns:1fr;">
+        <div>
+            <h3>When there's no built-in parser, AI reads it instead.</h3>
+            <p>
+                The built-in parsers are exact and free — they know precisely where
+                each column sits. The AI parser is the safety net for everything
+                else, and it is deliberately not India-specific: it works out the
+                statement's own currency, date format and decimal separator from
+                the document rather than assuming a country.
+            </p>
+            <ul class="feature-list" style="margin-top:18px;">
+                <li><b>Any country, any currency</b> — ISO 4217 inferred from symbols, IBAN, bank name or language, with per-row currency for forex lines.</li>
+                <li><b>Any language or script</b> — descriptions are preserved verbatim, never translated, with an optional English merchant name alongside.</li>
+                <li><b>Cross-checked</b> — the statement goes to every AI provider you've configured, and Zinfai keeps the result the providers most agree on.</li>
+                <li><b>Direction verified</b> — debit versus credit is confirmed against the running balance, not guessed from wording.</li>
+            </ul>
+            <p style="margin-top:22px;">
+                <em>This is the one feature that leaves your machine.</em> The AI
+                parser only runs if you have supplied your own API key, and it
+                sends the statement's text to the provider you chose. Leave the
+                keys blank and Zinfai still reads every institution listed above —
+                you simply lose the fallback. Full detail in the
+                <a href="/privacy">privacy statement</a>.
+            </p>
         </div>
     </div>
 </div>
@@ -351,7 +475,9 @@
             <p>
                 Every AI feature in Zinfai runs through a key <em>you</em> supply, for the
                 provider you choose: OpenAI, Anthropic Claude, Google Gemini, xAI Grok,
-                DeepSeek or Mistral. Plans, ratings, statement parsing and news analysis are
+                Mistral AI, DeepSeek, Groq, Perplexity, OpenRouter or AWS Bedrock — and
+                anything else that speaks the OpenAI API works too, via a custom
+                endpoint. Plans, ratings, statement parsing and news analysis are
                 generated with your key and stored in your local database. There is no
                 Zinfai server in the middle — because there is no Zinfai server.
             </p>
@@ -365,7 +491,7 @@
             <div class="grid" style="grid-template-columns:1fr; gap:16px;">
                 <div class="card">
                     <div class="card-icon">🔑</div>
-                    <h3>Six providers</h3>
+                    <h3>Ten providers</h3>
                     <p>Configure keys in Settings or a local <code class="inline">.env</code>. Switch providers whenever you like.</p>
                 </div>
                 <div class="card">
