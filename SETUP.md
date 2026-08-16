@@ -20,7 +20,7 @@ at **https://www.zinfai.com**, with automatic deploys and gated downloads.
 | 6 | [Point Cloudflare DNS at it](#6-point-cloudflare-dns-at-firebase) | Cloudflare | 10 min + wait | ✅ apex + www |
 | 7 | [Turn on support@zinfai.com](#7-email-routing-for-supportzinfaicom) | Cloudflare | 10 min | ✅ routing on |
 | 8 | [Continuous deployment](#8-continuous-deployment-from-github) | GitHub | 10 min | ✅ hosting only |
-| 9 | [Gated downloads & accounts](#9-gated-downloads--accounts) | Firebase + GitHub | 45 min | ⬅ **you are here** |
+| 9 | [Gated downloads & accounts](#9-gated-downloads--accounts) | Firebase + GitHub | 45 min | ✅ live |
 | 10 | [Publishing a new release](#10-publishing-a-new-release) | CI | ongoing | — |
 | 11 | [Adding screenshots](#11-adding-screenshots) | your machine | ongoing | — |
 | 12 | [Launch checklist](#12-launch-checklist) | — | 10 min | — |
@@ -385,31 +385,44 @@ you get a 401 or 403.
 
 ### Where this actually stands
 
-Sections 1–8 are done — the project, the domain, the CI. This section is the only
-outstanding work, and not all of it is outstanding. Checked **15 August 2026**;
-re-run the commands rather than trusting the ticks.
+**This is all live as of 16 August 2026.** The steps below are kept as reference
+for rebuilding or debugging, not as a to-do list — read them that way.
 
-| | State | Check it yourself |
-|---|---|---|
-| Firebase project + CLI auth | ✅ done | `firebase login:list` |
-| `www.zinfai.com` — DNS + cert | ✅ done | `curl -sI https://www.zinfai.com/` |
-| `zinfai.com` apex — DNS + cert | ✅ done | `curl -sI https://zinfai.com/` |
-| Auth authorized domains | ✅ both hosts present | see §9.4 |
-| Cloudflare Email Routing (inbound) | ✅ MX + SPF live | `dig +short zinfai.com MX` |
-| Blaze plan | ❌ **still Spark** | §9.1 — blocks everything below |
-| Email/Password + Google sign-in | ❌ not enabled | §9.4 |
-| `GITHUB_TOKEN` secret | ❌ not set (needs Blaze) | §9.3 |
-| Resend — DKIM/SPF/DMARC | ❌ no records in the zone | §9.5 |
-| Function + Firestore deployed | ❌ never deployed | §9.6 |
-| `zinfai-download` visibility | ⚠️ **still public** | §9.2 — do this last |
+Rather than trusting the ticks, run the health check:
 
-**Blaze first.** Secret Manager, Cloud Functions and the Firestore API are all
-gated behind it, so §9.3 and §9.6 will simply refuse to run until §9.1 is done.
-Everything else can be done in any order.
+```bash
+# manifests are served, and carry no URLs
+curl -s "https://www.zinfai.com/api/manifest?product=zinfai"
+curl -s "https://www.zinfai.com/api/manifest?product=zinfai-buddy"
 
-> Until §9.6 deploys the function, `/api/**` 404s — so the download buttons on
-> the live site currently fall back to their "Sign in to download" state and go
-> nowhere useful. The site is safe, not finished.
+# the gate refuses anonymous callers
+curl -s -o /dev/null -w "%{http_code}\n" -X POST \
+  https://www.zinfai.com/api/download \
+  -H 'Content-Type: application/json' \
+  -d '{"product":"zinfai","platform":"macos"}'          # expect 401
+
+# the hub is closed to the public
+curl -s -o /dev/null -w "%{http_code}\n" \
+  https://api.github.com/repos/ZinfaiAdmin/zinfai-download   # expect 404
+```
+
+Two 200s, a 401 and a 404 means the whole chain is intact. Anything else, work
+down this table:
+
+| | Verify with |
+|---|---|
+| Blaze plan | `firebase functions:secrets:access GITHUB_TOKEN --project zinfai-web` — a plan error means Spark |
+| `GITHUB_TOKEN` valid & scoped | the 404 check above passing while `/api/manifest` still returns 200 |
+| Email/Password enabled | `accounts:signInWithPassword` with junk creds → `INVALID_LOGIN_CREDENTIALS`, **not** `OPERATION_NOT_ALLOWED` |
+| Google enabled | `accounts:signInWithIdp` with a bogus token → `INVALID_IDP_RESPONSE`, not `OPERATION_NOT_ALLOWED` |
+| Resend DNS | `dig +short resend._domainkey.zinfai.com TXT` and `dig +short send.zinfai.com MX` |
+| DMARC — exactly one record | `dig +short @$(dig +short zinfai.com NS \| head -1) _dmarc.zinfai.com TXT` |
+| Firestore | `firebase firestore:databases:list --project zinfai-web` |
+| Registrations | `firebase auth:export /tmp/u.json --project zinfai-web` |
+
+> **Query DMARC and SPF authoritatively.** A public resolver will happily serve a
+> cached duplicate for hours after you delete one, which reads as a fault that
+> isn't there. Ask Cloudflare directly, as above.
 
 ### 9.1 Upgrade the Firebase project to Blaze
 
@@ -423,8 +436,9 @@ approximately nothing, but there is **no hard spending cap**.
 
 ### 9.2 Make the downloads hub private
 
-**Do this last**, once everything else works — it is the switch that breaks every
-existing public download link.
+**Already done** — `zinfai-download` is private. Kept here because it is the one
+step you would have to repeat on a fresh repo, and because it is the switch that
+breaks every existing public download link, so it belongs last in the order.
 
 ```bash
 gh repo edit ZinfaiAdmin/zinfai-download --visibility private --accept-visibility-change-consequences
@@ -601,6 +615,58 @@ firebase emulators:start --only hosting,functions,firestore,auth --project zinfa
 `auth.js` points at production Firebase Auth, so signing in against the emulator
 needs `connectAuthEmulator` wiring that is deliberately not there. For most UI
 work, run the emulator and sign in against the real project instead.
+
+### 9.9 The web API key is public, and GitHub will warn you about it
+
+`public/js/auth.js` contains the Firebase web API key in plain text, committed to
+a public repo. **This is correct and must stay that way.** The browser needs it
+before anyone is signed in, so it cannot be a secret — moving it to one just puts
+it back in the served JavaScript. Rotating it breaks the site and hides nothing;
+anyone can read it from devtools in ten seconds.
+
+GitHub secret scanning flags it as a **Google API Key** because it pattern-matches
+the `AIza…` prefix and cannot tell a Firebase web key from a server-side one,
+which genuinely is secret. Close the alert as won't-fix. Expect it to fire again
+on any commit that touches that line.
+
+What the key does *not* grant: any access to Firestore or to the installers. The
+download gate authenticates with admin credentials inside `functions/index.js`
+and never sees this key, and the Firestore rules deny all client writes. What it
+*does* allow is calling Firebase's auth endpoints against the project — creating
+accounts, triggering verification mail, and so burning Resend quota.
+
+**Referrer restrictions are applied** to the one key on the project:
+
+```bash
+gcloud services api-keys list --project=zinfai-web
+gcloud services api-keys describe <uid> --project=zinfai-web --format=yaml
+```
+
+`browserKeyRestrictions.allowedReferrers` holds the four origins — apex, `www`,
+and both Firebase domains. **Include both Firebase domains** or Google sign-in
+breaks: the OAuth popup transits `zinfai-web.firebaseapp.com`.
+
+> ### ⚠️ Be honest about what this buys
+>
+> The restriction is genuinely enforced — Identity Toolkit returns *"Requests
+> from referer … are blocked"* for an origin not on the list. But `Referer` is a
+> client-supplied header. `curl -H 'Referer: https://www.zinfai.com/'` sails
+> straight through, and the allowed origin is your own public domain.
+>
+> It stops the key being used from other origins and blocks anyone who scraped it
+> and pointed a script at it. It does not stop anyone who thinks about it for
+> thirty seconds. Treat it as hygiene, not as a control.
+>
+> The levers that actually bind are **tightening the `identitytoolkit.googleapis.com`
+> quota** (Cloud console → APIs & Services → Identity Toolkit API → Quotas — this
+> is Google's own documented recommendation against brute force) and **Firebase
+> App Check**, which attests that requests come from your real app. Reach for
+> App Check if junk registrations ever appear in `users`.
+
+If a restriction change in the Cloud console appears not to work, check whether
+it saved at all before assuming it is unenforced — compare `updateTime` against
+`createTime` in the `describe` output. A console Save that silently fails looks
+exactly like a restriction that does not apply.
 
 ---
 
