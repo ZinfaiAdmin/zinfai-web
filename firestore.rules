@@ -1,0 +1,24 @@
+rules_version = '2';
+
+/* Every write here comes from the download API (functions/index.js), which
+   runs with Admin credentials and bypasses these rules entirely. Clients get
+   read access to their own profile and nothing else — registration records
+   and download logs are audit data, so letting a browser write them would
+   make them forgeable. */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /downloads/{id} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

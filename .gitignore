@@ -25,6 +25,10 @@ ZINFAI-SCREENSHOTS/
 .env
 .env.local
 
-# Node (only if tooling is ever added; the site itself has no build step)
+# Node — the site itself still has no build step; this is the Cloud Functions
+# backend that serves the gated downloads.
 node_modules/
 npm-debug.log*
+functions/node_modules/
+functions/.env
+functions/.env.*
