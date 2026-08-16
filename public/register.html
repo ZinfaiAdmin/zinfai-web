@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create your Zinfai account</title>
+<meta name="description" content="Register for a free Zinfai account to download the macOS and Windows installers. Verify your email and the download unlocks straight away.">
+<link rel="canonical" href="https://www.zinfai.com/register">
+<meta name="robots" content="noindex, follow">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zinfai">
+<meta property="og:title" content="Create your Zinfai account">
+<meta property="og:description" content="Register to download Zinfai for macOS and Windows.">
+<meta property="og:url" content="https://www.zinfai.com/register">
+<meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/zinfai-logo-small.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<script src="/js/site.js?v=2"></script>
+<script type="module" src="/js/auth.js?v=1"></script>
+</head>
+
+<body>
+
+<!-- ---------------- NAV ---------------- -->
+<site-nav active="download"></site-nav>
+
+<!-- ---------------- PAGE HEAD ---------------- -->
+<section class="page-head">
+<div class="container">
+    <span class="eyebrow">Get Zinfai</span>
+    <h1>Create your account</h1>
+    <p>
+        The installers are free. We ask for a verified email so we know who is
+        running Zinfai and can tell you when a security or data-correctness
+        update ships. Your portfolio data is never part of this — it stays on
+        your machine, as it always has.
+    </p>
+</div>
+</section>
+
+<section style="padding-top:40px;">
+<div class="container">
+
+    <!-- Until auth.js reports a settled state we show nothing, so the page
+         never flashes the sign-up form at an already-registered user. -->
+    <div class="auth-card" id="pane-loading">
+        <p style="margin:0; text-align:center; color:var(--muted);">Checking your session…</p>
+    </div>
+
+    <!-- ---------------- SIGNED OUT ---------------- -->
+    <div class="auth-card" id="pane-auth" hidden>
+        <h2 id="auth-title">Create your account</h2>
+        <p id="auth-blurb">Takes about a minute. Verify your email and the download unlocks.</p>
+
+        <div class="auth-msg" id="auth-msg" role="alert"></div>
+
+        <button type="button" class="btn-google" id="btn-google">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            Continue with Google
+        </button>
+
+        <div class="auth-or">or</div>
+
+        <form id="auth-form" novalidate>
+            <label class="field" id="field-name">
+                <span>Your name</span>
+                <input type="text" id="f-name" autocomplete="name" placeholder="Jane Doe">
+            </label>
+            <label class="field">
+                <span>Email address</span>
+                <input type="email" id="f-email" autocomplete="email" required placeholder="you@example.com">
+            </label>
+            <label class="field">
+                <span>Password</span>
+                <input type="password" id="f-password" autocomplete="new-password" required placeholder="At least 8 characters">
+            </label>
+            <div class="auth-alt">
+                <button type="button" id="btn-forgot" hidden>Forgot your password?</button>
+            </div>
+            <button type="submit" class="btn" id="btn-submit">Create account</button>
+        </form>
+
+        <p class="auth-switch">
+            <span id="switch-text">Already have an account?</span>
+            <button type="button" id="btn-switch">Sign in</button>
+        </p>
+
+        <p class="auth-meta">
+            We store your email, sign-in method and which installers you download.
+            Nothing else. Read the <a href="/privacy">privacy policy</a>.
+        </p>
+    </div>
+
+    <!-- ---------------- AWAITING VERIFICATION ---------------- -->
+    <div class="auth-card" id="pane-verify" hidden>
+        <div class="verify-mark">✉️</div>
+        <h2 style="text-align:center;">Confirm your email</h2>
+        <p style="text-align:center;">
+            We've sent a verification link to <b id="verify-email" style="color:#fff;"></b>.
+            Click it, then come back here — the download unlocks immediately.
+        </p>
+
+        <div class="auth-msg" id="verify-msg" role="status"></div>
+
+        <button type="button" class="btn" id="btn-recheck">I've verified — continue</button>
+
+        <p class="auth-switch">
+            Nothing arrived?
+            <button type="button" id="btn-resend">Send it again</button>
+        </p>
+
+        <p class="auth-meta">
+            Check your spam folder — verification mail often lands there the first
+            time. Wrong address? <button type="button" id="btn-signout-verify" style="background:none;border:none;padding:0;font:inherit;color:var(--accent-2);cursor:pointer;text-decoration:underline;">Sign out and start over</button>.
+        </p>
+    </div>
+
+    <!-- ---------------- DONE ---------------- -->
+    <div class="auth-card" id="pane-done" hidden>
+        <div class="verify-mark" style="background:rgba(76,175,47,.12); border-color:rgba(76,175,47,.35);">✓</div>
+        <h2 style="text-align:center;">You're all set</h2>
+        <p style="text-align:center;">
+            Signed in as <b id="done-email" style="color:#fff;"></b>. Your downloads
+            are unlocked.
+        </p>
+        <a class="btn" id="btn-continue" href="/download">Go to downloads</a>
+        <p class="auth-meta">
+            <button type="button" id="btn-signout" style="background:none;border:none;padding:0;font:inherit;color:var(--accent-2);cursor:pointer;text-decoration:underline;">Sign out</button>
+        </p>
+    </div>
+
+</div>
+</section>
+
+<!-- ---------------- FOOTER ---------------- -->
+<site-footer></site-footer>
+
+<script type="module">
+import ZinfaiAuth from "/js/auth.js?v=1";
+
+const $ = (id) => document.getElementById(id);
+const panes = ["pane-loading", "pane-auth", "pane-verify", "pane-done"];
+
+/* Only ever send people to a path on this site — an open redirect here would
+   let someone mail out a zinfai.com/register link that lands elsewhere. */
+const params = new URLSearchParams(location.search);
+const rawNext = params.get("next") || "/download";
+const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "/download";
+
+let mode = "signup";   // "signup" | "signin"
+
+function show(id) {
+    panes.forEach((p) => { $(p).hidden = p !== id; });
+}
+
+function say(el, text, kind) {
+    el.textContent = text;
+    el.className = "auth-msg is-shown " + (kind || "info");
+}
+
+function clear(el) {
+    el.textContent = "";
+    el.className = "auth-msg";
+}
+
+function busy(btn, on, label) {
+    btn.disabled = on;
+    if (on) { btn.dataset.label = btn.textContent; btn.textContent = label; }
+    else if (btn.dataset.label) { btn.textContent = btn.dataset.label; }
+}
+
+/* ---- sign up / sign in toggle ---- */
+function applyMode() {
+    const up = mode === "signup";
+    $("auth-title").textContent = up ? "Create your account" : "Welcome back";
+    $("auth-blurb").textContent = up
+        ? "Takes about a minute. Verify your email and the download unlocks."
+        : "Sign in to get to your downloads.";
+    $("field-name").hidden = !up;
+    $("btn-submit").textContent = up ? "Create account" : "Sign in";
+    $("f-password").autocomplete = up ? "new-password" : "current-password";
+    $("f-password").placeholder = up ? "At least 8 characters" : "Your password";
+    $("switch-text").textContent = up ? "Already have an account?" : "Need an account?";
+    $("btn-switch").textContent = up ? "Sign in" : "Create one";
+    $("btn-forgot").hidden = up;
+    clear($("auth-msg"));
+}
+
+$("btn-switch").addEventListener("click", () => {
+    mode = mode === "signup" ? "signin" : "signup";
+    applyMode();
+});
+
+/* ---- routing on auth state ---- */
+function render(user) {
+    if (!user) { show("pane-auth"); applyMode(); return; }
+    if (!user.emailVerified) {
+        $("verify-email").textContent = user.email || "";
+        show("pane-verify");
+        return;
+    }
+    $("done-email").textContent = user.email || "";
+    $("btn-continue").href = next;
+    show("pane-done");
+}
+
+document.addEventListener("zinfai-auth", (e) => render(e.detail.user));
+
+ZinfaiAuth.ready.then(async (user) => {
+    /* Arriving back from the verification link: the cached token still says
+       unverified, so refresh before deciding which pane to show. */
+    if (user && !user.emailVerified && params.get("verified")) {
+        await ZinfaiAuth.refreshVerification().catch(() => {});
+    }
+    render(ZinfaiAuth.user);
+});
+
+/* ---- email + password ---- */
+$("auth-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg = $("auth-msg");
+    const email = $("f-email").value.trim();
+    const password = $("f-password").value;
+    const name = $("f-name").value.trim();
+    clear(msg);
+
+    if (!email || !password) { say(msg, "Please fill in both fields.", "error"); return; }
+    if (mode === "signup" && password.length < 8) {
+        say(msg, "Please choose a password of at least 8 characters.", "error");
+        return;
+    }
+
+    busy($("btn-submit"), true, mode === "signup" ? "Creating…" : "Signing in…");
+    try {
+        if (mode === "signup") await ZinfaiAuth.signUp(email, password, name);
+        else await ZinfaiAuth.signIn(email, password);
+        /* render() runs from the auth-state listener */
+    } catch (err) {
+        say(msg, ZinfaiAuth.describe(err), "error");
+    } finally {
+        busy($("btn-submit"), false);
+    }
+});
+
+/* ---- Google ---- */
+$("btn-google").addEventListener("click", async () => {
+    const msg = $("auth-msg");
+    clear(msg);
+    busy($("btn-google"), true, "Opening Google…");
+    try {
+        await ZinfaiAuth.signInWithGoogle();
+    } catch (err) {
+        say(msg, ZinfaiAuth.describe(err), "error");
+    } finally {
+        busy($("btn-google"), false);
+    }
+});
+
+/* ---- password reset ---- */
+$("btn-forgot").addEventListener("click", async () => {
+    const msg = $("auth-msg");
+    const email = $("f-email").value.trim();
+    if (!email) { say(msg, "Enter your email address first, then click again.", "error"); return; }
+    try {
+        await ZinfaiAuth.resetPassword(email);
+        say(msg, "Password reset link sent to " + email + ".", "ok");
+    } catch (err) {
+        say(msg, ZinfaiAuth.describe(err), "error");
+    }
+});
+
+/* ---- verification pane ---- */
+$("btn-recheck").addEventListener("click", async () => {
+    const msg = $("verify-msg");
+    clear(msg);
+    busy($("btn-recheck"), true, "Checking…");
+    try {
+        const ok = await ZinfaiAuth.refreshVerification();
+        if (ok) render(ZinfaiAuth.user);
+        else say(msg, "Not verified yet. Click the link in the email, then try again.", "error");
+    } catch (err) {
+        say(msg, ZinfaiAuth.describe(err), "error");
+    } finally {
+        busy($("btn-recheck"), false);
+    }
+});
+
+$("btn-resend").addEventListener("click", async () => {
+    const msg = $("verify-msg");
+    clear(msg);
+    try {
+        await ZinfaiAuth.sendVerification();
+        say(msg, "Sent. Give it a minute, and check your spam folder.", "ok");
+    } catch (err) {
+        say(msg, ZinfaiAuth.describe(err), "error");
+    }
+});
+
+$("btn-signout").addEventListener("click", () => ZinfaiAuth.signOut());
+$("btn-signout-verify").addEventListener("click", () => ZinfaiAuth.signOut());
+</script>
+
+</body>
+</html>

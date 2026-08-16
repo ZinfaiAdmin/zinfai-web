@@ -23,8 +23,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=2">
-<script src="/js/site.js?v=1"></script>
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<script src="/js/site.js?v=2"></script>
+<script type="module" src="/js/auth.js?v=1"></script>
 </head>
 
 <body>
@@ -58,7 +59,7 @@
             <span class="pill">Works offline</span>
         </div>
         <div class="btn-row">
-            <a class="btn warm" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-buddy-v1.0.0/Zinfai-Buddy-v1.0.0.apk" data-download="zinfai-buddy:android">Download the APK</a>
+            <button type="button" class="btn warm" data-download="zinfai-buddy:android" data-dl-ready="Download the APK"><span data-dl-label>Download the APK</span></button>
             <a class="btn ghost" href="#install">Install instructions</a>
         </div>
         <p class="fine-print" style="text-align:left; margin-top:18px;">
@@ -268,10 +269,10 @@
             <li>
                 <span class="num-steps__n">1</span>
                 <div>
-                    <b>Download the APK on your phone.</b> Open this page on the phone and tap
-                    <a href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-buddy-v1.0.0/Zinfai-Buddy-v1.0.0.apk" data-download="zinfai-buddy:android">Download the APK</a>.
-                    Chrome may warn that this file type can harm your device — tap
-                    <b>Download anyway</b>.
+                    <b>Download the APK on your phone.</b> Open this page on the phone, sign in
+                    to your <a href="/register">Zinfai account</a>, and tap <b>Download the
+                    APK</b> at the top of the page. Chrome may warn that this file type can harm
+                    your device — tap <b>Download anyway</b>.
                 </div>
             </li>
             <li>
@@ -305,8 +306,8 @@
         <div class="notice" style="margin-top:26px;">
             <b>Updating.</b> Download a newer APK and install it over the top — your imported
             backup, theme and alert settings are kept. There is no auto-update; check the
-            <a href="https://github.com/ZinfaiAdmin/zinfai-download/releases">release history</a>
-            now and then.
+            <a href="/download#buddy-download">download page</a> now and then to see whether
+            the version there is newer than yours.
         </div>
     </div>
 </div>
@@ -357,7 +358,7 @@
         </div>
         <div>
             <ul class="feature-list">
-                <li><b>No account</b> — nothing to sign up for.</li>
+                <li><b>No cloud account</b> — the app never signs you in to anything.</li>
                 <li><b>No telemetry</b> — no analytics or crash-reporting SDKs.</li>
                 <li><b>Your Drive, your file</b> — Drive access is yours, scoped to the backup.</li>
                 <li><b>Biometric lock</b> — fingerprint or face unlock on open.</li>
@@ -376,7 +377,7 @@
             <p>Install the desktop app, export a backup, and your whole financial picture follows you around.</p>
             <div class="btn-row" style="justify-content:center; margin-top:26px;">
                 <a class="btn" href="/download">Download Zinfai</a>
-                <a class="btn warm" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-buddy-v1.0.0/Zinfai-Buddy-v1.0.0.apk" data-download="zinfai-buddy:android">Download Buddy APK</a>
+                <button type="button" class="btn warm" data-download="zinfai-buddy:android" data-dl-ready="Download Buddy APK"><span data-dl-label>Download Buddy APK</span></button>
             </div>
         </div>
     </div>

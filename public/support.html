@@ -23,8 +23,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=2">
-<script src="/js/site.js?v=1"></script>
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<script src="/js/site.js?v=2"></script>
 </head>
 
 <body>
@@ -55,7 +55,7 @@
         <div class="card">
             <div class="card-icon">⬇️</div>
             <h3>Installing Zinfai</h3>
-            <p>Step-by-step instructions for macOS, Windows and Docker, plus system requirements.</p>
+            <p>Step-by-step instructions for macOS and Windows, plus system requirements.</p>
             <a class="card-button" href="/download">Go to downloads →</a>
         </div>
         <div class="card">
@@ -72,9 +72,9 @@
         </div>
         <div class="card">
             <div class="card-icon">🗒️</div>
-            <h3>Release history</h3>
-            <p>Every published build for Zinfai and Zinfai Buddy, with notes and assets.</p>
-            <a class="card-button" href="https://github.com/ZinfaiAdmin/zinfai-download/releases">View releases →</a>
+            <h3>Your account</h3>
+            <p>Register or sign in to unlock the installers for Zinfai and Zinfai Buddy.</p>
+            <a class="card-button" href="/register">Go to your account →</a>
         </div>
     </div>
 </div>
@@ -109,8 +109,10 @@
             <summary>Is it free? Is there a subscription?</summary>
             <div>
                 <p>
-                    Zinfai and Zinfai Buddy are free to download and use. There is no subscription,
-                    no account, and no paid tier. The only cost you might incur is your own AI
+                    Zinfai and Zinfai Buddy are free to download and use. There is no subscription
+                    and no paid tier. Downloading the installers needs a free account on this
+                    website so we can reach you about security and data-correctness updates, but
+                    the app itself never charges you. The only cost you might incur is your own AI
                     provider's API usage, if you choose to enable the AI features.
                 </p>
             </div>
@@ -120,9 +122,15 @@
             <summary>Do I need to create an account?</summary>
             <div>
                 <p>
-                    No — not with us. You create a login inside your own copy of the app so the
-                    data is protected on your machine, but that account exists only in your local
-                    database. Nothing is registered anywhere online.
+                    You need one to <b>download</b> the installers — a free account on this
+                    website, with a verified email address. We hold your email, how you signed
+                    in, and which builds you downloaded. That's the whole record.
+                </p>
+                <p>
+                    The app itself is separate and stays offline. You create a login inside your
+                    own copy of Zinfai so the data is protected on your machine, but that account
+                    lives only in your local database and never talks to us. Your holdings,
+                    transactions and statements are never uploaded anywhere.
                 </p>
             </div>
         </details>
@@ -146,10 +154,10 @@
             <summary>Which platforms can I install on?</summary>
             <div>
                 <p>
-                    macOS (Apple silicon and Intel) and Windows 10/11 have native installers, and
-                    there is a Docker image that runs anywhere Docker does, including Linux. Both
-                    desktop installers set up Docker for you if it isn't already there.
-                    See <a href="/download">the download page</a>.
+                    macOS (Apple silicon and Intel) and Windows 10/11 have native installers,
+                    which set up everything Zinfai needs for you. Downloads require a free
+                    account with a verified email address — see
+                    <a href="/download">the download page</a>.
                 </p>
             </div>
         </details>
@@ -171,14 +179,12 @@
             <summary>The app won't load at localhost:8090.</summary>
             <div>
                 <p>
-                    Check Docker is running, then check the container:
-                    <code class="inline">docker ps</code> should list <code class="inline">zinfai</code>.
-                    If it isn't there, start it with <code class="inline">docker start zinfai</code>.
-                    If it is running but the page won't load, give it 30–60 seconds on first launch
-                    while the database initialises, and check the logs with
-                    <code class="inline">docker logs zinfai</code>. If port 8090 is taken by
-                    something else, re-run the container with a different host port, e.g.
-                    <code class="inline">-p 9090:8080</code>.
+                    Give it 30–60 seconds on first launch while the database initialises, then
+                    refresh. If it still won't come up, run <b>Zinfai Setup</b> from your
+                    Applications folder (macOS) or <b>Zinfai Setup (repair)</b> from the Start
+                    menu (Windows) — it re-checks every step of the install and restarts the app.
+                    If port 8090 is taken by something else on your machine, quit that program
+                    and start Zinfai again.
                 </p>
             </div>
         </details>
@@ -187,11 +193,11 @@
             <summary>How do I update to a new version?</summary>
             <div>
                 <p>
-                    The app shows a banner when a newer release is available. On macOS and Windows,
-                    download and run the newer installer — your data volume is preserved. On
-                    Docker, pull the new image and recreate the container with the same
-                    <code class="inline">-v zinfai-data:/var/lib/postgresql/data</code> volume;
-                    the exact commands are on <a href="/download#docker">the Docker section</a>.
+                    The app shows a banner when a newer release is available. Run
+                    <b>Zinfai Update</b> from your Applications folder (macOS) or
+                    <b>Update Zinfai</b> from the Start menu (Windows) and it fetches the new
+                    version in place — your data is preserved and migrations run automatically on
+                    the next start. You don't need to download a new installer.
                 </p>
             </div>
         </details>
@@ -200,12 +206,11 @@
             <summary>How do I uninstall it completely?</summary>
             <div>
                 <p>
-                    Stop and remove the container (<code class="inline">docker rm -f zinfai</code>),
-                    then remove the image (<code class="inline">docker rmi zinfaiadmin/zinfai</code>).
-                    Your data lives in the <code class="inline">zinfai-data</code> Docker volume and
-                    survives all of that — delete it with
-                    <code class="inline">docker volume rm zinfai-data</code> only when you're sure,
-                    because that erases everything permanently. Export a backup first.
+                    Run <b>Uninstall Zinfai</b> — from your Applications folder on macOS, or the
+                    Start menu / Add&nbsp;&amp;&nbsp;Remove Programs on Windows. It asks whether to
+                    keep your data; the default is to keep it, so reinstalling later restores
+                    everything. Choose to delete it only when you're sure, because that erases
+                    your holdings permanently. Export a backup first.
                 </p>
             </div>
         </details>
@@ -364,13 +369,13 @@
             <h3>Still stuck? Write to us.</h3>
             <p>
                 Email <a href="mailto:support@zinfai.com">support@zinfai.com</a> with your platform
-                (macOS, Windows or Docker), the Zinfai version from the Settings page, and what you
+                (macOS or Windows), the Zinfai version from the Settings page, and what you
                 were doing when it went wrong. Screenshots help — just redact anything you'd rather
                 not share. We usually reply within a couple of days.
             </p>
             <div class="btn-row" style="justify-content:center; margin-top:26px;">
                 <a class="btn" href="mailto:support@zinfai.com?subject=Zinfai%20support">Email support</a>
-                <a class="btn ghost" href="https://github.com/ZinfaiAdmin/zinfai-download/releases">Release history</a>
+                <a class="btn ghost" href="/download">Go to downloads</a>
             </div>
             <p class="fine-print" style="margin-top:22px;">
                 Please never send passwords, API keys, full account numbers or an unredacted

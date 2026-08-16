@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Download Zinfai — macOS, Windows &amp; Docker</title>
-<meta name="description" content="Download and install Zinfai on macOS, Windows, or any machine with Docker. The installers set up everything for you — database, backend and UI — and run entirely on your own computer.">
+<title>Download Zinfai — macOS &amp; Windows</title>
+<meta name="description" content="Download and install Zinfai on macOS or Windows. Create a free account, verify your email, and the installers set up everything for you — database, backend and UI — running entirely on your own computer.">
 <link rel="canonical" href="https://www.zinfai.com/download">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zinfai">
 <meta property="og:title" content="Download Zinfai">
-<meta property="og:description" content="Install Zinfai on macOS, Windows or Docker. Everything runs on your own machine.">
+<meta property="og:description" content="Install Zinfai on macOS or Windows. Everything runs on your own machine.">
 <meta property="og:url" content="https://www.zinfai.com/download">
 <meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -23,8 +23,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=2">
-<script src="/js/site.js?v=1"></script>
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<script src="/js/site.js?v=2"></script>
+<script type="module" src="/js/auth.js?v=1"></script>
 </head>
 
 <body>
@@ -38,9 +39,9 @@
     <span class="eyebrow">Get Zinfai</span>
     <h1>Download Zinfai</h1>
     <p>
-        One installer, zero prerequisites. It checks your machine, installs Docker if
-        you don't have it, downloads Zinfai, and opens it in your browser. Everything
-        — database, backend and UI — runs on your own computer.
+        One installer, zero prerequisites. It checks your machine, installs everything
+        it needs, downloads Zinfai, and opens it in your browser. The database, backend
+        and UI all run on your own computer.
     </p>
 </div>
 </section>
@@ -48,38 +49,37 @@
 <!-- ---------------- DOWNLOAD CARDS ---------------- -->
 <section id="download" style="padding-top:44px;">
 <div class="container">
-    <!-- Installers live on the public downloads hub (ZinfaiAdmin/zinfai-download).
-         site.js rewrites each href, version badge and file name from
-         manifest/zinfai.json (data-download / data-download-version /
-         data-download-file); the hard-coded values below are fallbacks. -->
+    <!-- Installers are served by /api/download, which checks the caller has a
+         verified account before minting a short-lived link. site.js turns each
+         button into either "Sign in to download" or the real thing, and fills
+         in the version badge and file name from /api/manifest. -->
     <div class="download-grid">
         <div class="download-card">
             <div class="dl-icon"><svg viewBox="0 0 384 512" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg></div>
             <h3>macOS</h3>
-            <p class="dl-meta">Apple Silicon &amp; Intel · macOS 11+ · <span data-download-version="zinfai">v1.0.2</span></p>
-            <a class="btn" data-download="zinfai:macos" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-v1.0.2/Zinfai-v1.0.2.pkg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg>Download for Mac</a>
+            <p class="dl-meta">Apple Silicon &amp; Intel · macOS 11+ · <span data-download-version="zinfai">v1.0.6</span></p>
+            <button type="button" class="btn" data-download="zinfai:macos" data-dl-ready="Download for Mac">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg><span data-dl-label>Download for Mac</span>
+            </button>
         </div>
         <div class="download-card">
             <div class="dl-icon"><svg viewBox="0 0 448 512" aria-hidden="true"><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg></div>
             <h3>Windows</h3>
-            <p class="dl-meta">Windows 10 (2004+) &amp; 11 · 64-bit · <span data-download-version="zinfai">v1.0.2</span></p>
-            <a class="btn" data-download="zinfai:windows" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-v1.0.2/Zinfai-Setup-v1.0.2.exe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg>Download for Windows</a>
-        </div>
-        <div class="download-card">
-            <div class="dl-icon"><svg viewBox="0 0 640 512" aria-hidden="true"><path d="M349.9 236.3h-66.1v-59.4h66.1zm0-204.3h-66.1v60.7h66.1zm78.2 144.9h-66.1v59.4h66.1zm-156.3-72.4h-66.1v60.1h66.1zm78.1 0h-66.1v60.1h66.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4 .4 67.6 .1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1zM188.4 176.9h-66.1v59.4h66.1zm78.1 0h-66.1v59.4h66.1zm78.2 0h-66.1v59.4h66.1zm-78.2-72.5h-66.1v60.1h66.1z"/></svg></div>
-            <h3>Docker</h3>
-            <p class="dl-meta">Linux, macOS, Windows · one container · <span data-download-version="zinfai">v1.0.2</span></p>
-            <a class="btn ghost" href="#docker">See the command</a>
+            <p class="dl-meta">Windows 10 (2004+) &amp; 11 · 64-bit · <span data-download-version="zinfai">v1.0.6</span></p>
+            <button type="button" class="btn" data-download="zinfai:windows" data-dl-ready="Download for Windows">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg><span data-dl-label>Download for Windows</span>
+            </button>
         </div>
     </div>
 
-    <div class="notice info" style="max-width:860px; margin:34px auto 0;">
-        <span class="n-icon">🐳</span>
+    <div class="notice info" style="max-width:860px; margin:34px auto 0;" data-dl-hint>
+        <span class="n-icon">🔐</span>
         <div>
-            <b>Docker is the engine under all three.</b> The Mac and Windows installers
-            simply automate what the Docker command does by hand — they install Docker
-            Desktop if it's missing, pull the Zinfai image, and start it for you. If you
-            already run Docker, skip straight to <a href="#docker">the one-line command</a>.
+            <b>Downloads need a free account.</b> Register with your email — or a Google
+            account, which skips the email step — and the installers unlock as soon as
+            your address is verified. We keep your email and which builds you download,
+            nothing more. <a href="/register">Create an account</a> or
+            <a href="/register">sign in</a>.
         </div>
     </div>
 </div>
@@ -107,9 +107,9 @@
             <li>
                 <span class="num-steps__n">1</span>
                 <div>
-                    <b>Download the installer.</b> Click
-                    <a data-download="zinfai:macos" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-v1.0.2/Zinfai-v1.0.2.pkg">Download for Mac</a>
-                    above and save <b><span data-download-file="zinfai:macos">Zinfai-v1.0.2.pkg</span></b>
+                    <b>Download the installer.</b> Sign in, click
+                    <b>Download for Mac</b> above, and save
+                    <b><span data-download-file="zinfai:macos">Zinfai-v1.0.6.pkg</span></b>
                     to your <b>Downloads</b> folder.
                 </div>
             </li>
@@ -120,7 +120,7 @@
                     (Applications&nbsp;→&nbsp;Utilities&nbsp;→&nbsp;Terminal), paste the command
                     below, and press Return. Enter your Mac password when prompted.
                     <div class="code-block">
-                        <code id="mac-install-cmd">sudo installer -pkg ~/Downloads/<span data-download-file="zinfai:macos">Zinfai-v1.0.2.pkg</span> -target /</code>
+                        <code id="mac-install-cmd">sudo installer -pkg ~/Downloads/<span data-download-file="zinfai:macos">Zinfai-v1.0.6.pkg</span> -target /</code>
                         <button type="button" class="code-copy" data-copy-target="mac-install-cmd" aria-label="Copy command to clipboard">Copy</button>
                     </div>
                 </div>
@@ -130,8 +130,7 @@
                 <div>
                     <b>Let setup finish.</b> A Terminal window opens and runs first-time
                     setup as you (not as root): it checks macOS 11+ and your chip, installs
-                    <b>Docker Desktop</b> via Homebrew — or a direct download if Homebrew
-                    isn't there — starts the Docker engine, pulls the Zinfai image, and
+                    the container runtime Zinfai needs, downloads the Zinfai image, and
                     launches the app. Every step is idempotent, so re-running it is safe.
                     It also offers to put a <b>Zinfai</b> shortcut on your Desktop.
                 </div>
@@ -141,14 +140,14 @@
                 <div>
                     <b>Open the app.</b> Your browser opens
                     <a href="http://localhost:8090">http://localhost:8090</a> automatically once
-                    Zinfai reports healthy. Click <b>Register</b> to create your account.
+                    Zinfai reports healthy. Click <b>Register</b> to create your local account.
                 </div>
             </li>
         </ol>
 
         <p class="panel__intro" style="margin:26px 0 0;">
             The installer also adds four apps to your Applications folder:
-            <b>Zinfai</b> (start &amp; open), <b>Zinfai Update</b> (pull the latest image),
+            <b>Zinfai</b> (start &amp; open), <b>Zinfai Update</b> (fetch the latest version),
             <b>Zinfai Setup</b> (re-run or repair setup) and <b>Uninstall Zinfai</b>.
         </p>
     </div>
@@ -163,7 +162,8 @@
         <h2 class="section-title">Installing on Windows</h2>
         <p class="section-subtitle">
             A single <code class="inline">.exe</code> with no prerequisites. It handles
-            WSL2 and Docker Desktop for you, including the reboot they sometimes need.
+            everything Zinfai needs behind the scenes, including the reboot that is
+            sometimes required.
         </p>
     </div>
 
@@ -176,11 +176,11 @@
             <li>
                 <span class="num-steps__n">1</span>
                 <div>
-                    <b>Download and run</b>
-                    <b><span data-download-file="zinfai:windows">Zinfai-Setup-v1.0.2.exe</span></b>.
+                    <b>Sign in, download and run</b>
+                    <b><span data-download-file="zinfai:windows">Zinfai-Setup-v1.0.6.exe</span></b>.
                     Windows SmartScreen may warn that the publisher is unknown — choose
                     <b>More info → Run anyway</b>. Approve the admin prompt: setup needs it to
-                    enable Windows features and install Docker.
+                    enable Windows features and install its dependencies.
                 </div>
             </li>
             <li>
@@ -195,10 +195,9 @@
             <li>
                 <span class="num-steps__n">3</span>
                 <div>
-                    <b>WSL2 and Docker are handled for you.</b> Setup enables the Virtual
+                    <b>Dependencies are handled for you.</b> Setup enables the Virtual
                     Machine Platform and WSL features, installs or updates WSL only if your
-                    version is below Docker's minimum, then installs Docker Desktop via winget
-                    (falling back to a silent direct download).
+                    version is below the minimum, then installs the container runtime.
                     <b>If Windows asks to restart, say yes</b> — setup registers an auto-resume
                     and continues by itself after you sign back in.
                 </div>
@@ -206,10 +205,10 @@
             <li>
                 <span class="num-steps__n">4</span>
                 <div>
-                    <b>Zinfai starts automatically</b> on port <b>8090</b>, with your data in the
-                    persistent <code class="inline">zinfai-data</code> Docker volume, and opens
+                    <b>Zinfai starts automatically</b> on port <b>8090</b>, with your data in a
+                    persistent <code class="inline">zinfai-data</code> volume, and opens
                     <a href="http://localhost:8090">http://localhost:8090</a> once it's healthy.
-                    Click <b>Register</b> to create your account.
+                    Click <b>Register</b> to create your local account.
                 </div>
             </li>
         </ol>
@@ -224,55 +223,26 @@
 </div>
 </section>
 
-<!-- ---------------- DOCKER ---------------- -->
-<section id="docker" style="padding-top:20px;">
+<!-- ---------------- UPDATING ---------------- -->
+<section id="updating" style="padding-top:20px;">
 <div class="container">
     <div class="section-head">
-        <span class="eyebrow">Any OS</span>
-        <h2 class="section-title">Run it with Docker</h2>
-        <p class="section-subtitle">
-            One container runs the whole stack — PostgreSQL, the FastAPI backend and the
-            React UI. This is the same image the Mac and Windows installers use, and the
-            only supported route on Linux.
-        </p>
-    </div>
-
-    <div class="panel">
-        <div class="panel__head">
-            <svg viewBox="0 0 640 512" aria-hidden="true"><path d="M349.9 236.3h-66.1v-59.4h66.1zm0-204.3h-66.1v60.7h66.1zm78.2 144.9h-66.1v59.4h66.1zm-156.3-72.4h-66.1v60.1h66.1zm78.1 0h-66.1v60.1h66.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4 .4 67.6 .1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1zM188.4 176.9h-66.1v59.4h66.1zm78.1 0h-66.1v59.4h66.1zm78.2 0h-66.1v59.4h66.1zm-78.2-72.5h-66.1v60.1h66.1z"/></svg>
-            <h3>One command</h3>
-        </div>
-        <p class="panel__intro">
-            Your data lives in the <em>zinfai-data</em> volume and is preserved across
-            upgrades. The container restarts with your machine.
-        </p>
-        <div class="code-block">
-            <code id="docker-run-cmd">docker run -d --name zinfai -p 8090:8080 -v zinfai-data:/var/lib/postgresql/data --restart unless-stopped zinfaiadmin/zinfai:latest</code>
-            <button type="button" class="code-copy" data-copy-target="docker-run-cmd" aria-label="Copy command to clipboard">Copy</button>
-        </div>
-        <p class="panel__intro" style="margin:18px 0 0;">
-            Then open <a href="http://localhost:8090">http://localhost:8090</a> and click
-            <em>Register</em> to create your account. Port 8090 already in use? Change the
-            left-hand number — for example <code class="inline">-p 9000:8080</code> — and open
-            that port instead.
-        </p>
+        <span class="eyebrow">Staying current</span>
+        <h2 class="section-title">Updating Zinfai</h2>
     </div>
 
     <div class="panel">
         <div class="panel__head">
             <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none; stroke:#eaf1fb; stroke-width:2;"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8m0-5v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 16m0 5v-5h5"/></svg>
-            <h3>Updating</h3>
+            <h3>One click, no data loss</h3>
         </div>
-        <p class="panel__intro">
-            Zinfai shows an in-app banner when a newer image is published. On Mac and
-            Windows, click <em>Zinfai Update</em> / <em>Update Zinfai</em>. With plain Docker,
-            pull and recreate — migrations run automatically inside the container on boot,
-            and the <em>zinfai-data</em> volume is untouched, so no data is lost.
+        <p class="panel__intro" style="margin-bottom:0;">
+            Zinfai shows an in-app banner when a newer version is published. On Mac, run
+            <em>Zinfai Update</em> from your Applications folder; on Windows, <em>Update
+            Zinfai</em> from the Start menu. Migrations run automatically on the next boot
+            and your <em>zinfai-data</em> volume is untouched, so nothing is lost. You do
+            not need to download a new installer to update.
         </p>
-        <div class="code-block">
-            <code id="docker-update-cmd">docker pull zinfaiadmin/zinfai:latest && docker rm -f zinfai && docker run -d --name zinfai -p 8090:8080 -v zinfai-data:/var/lib/postgresql/data --restart unless-stopped zinfaiadmin/zinfai:latest</code>
-            <button type="button" class="code-copy" data-copy-target="docker-update-cmd" aria-label="Copy command to clipboard">Copy</button>
-        </div>
     </div>
 </div>
 </section>
@@ -299,25 +269,19 @@
                     <td>macOS</td>
                     <td>macOS 11 Big Sur</td>
                     <td>Apple Silicon or Intel, 8&nbsp;GB RAM, ~4&nbsp;GB free disk</td>
-                    <td>Installs Docker Desktop for you if it isn't already there</td>
+                    <td>Installs everything it needs if it isn't already there</td>
                 </tr>
                 <tr>
                     <td>Windows</td>
                     <td>Windows 10 build 19041 (2004) or Windows 11</td>
                     <td>64-bit, virtualization enabled, 8&nbsp;GB RAM, ~6&nbsp;GB free disk</td>
-                    <td>Installs WSL2 and Docker Desktop; may require one restart</td>
-                </tr>
-                <tr>
-                    <td>Linux / other</td>
-                    <td>Any distro with Docker Engine 20.10+</td>
-                    <td>x86-64 or arm64, 4&nbsp;GB RAM</td>
-                    <td>Use the Docker command above</td>
+                    <td>May require one restart during setup</td>
                 </tr>
             </tbody>
         </table>
     </div>
     <p class="fine-print">
-        An internet connection is needed to download the image and to refresh prices, FX
+        An internet connection is needed to download the app and to refresh prices, FX
         rates and market data. Everything else — your holdings, transactions, statements
         and plans — stays on your machine.
     </p>
@@ -340,7 +304,9 @@
             <div class="dl-icon"><svg viewBox="0 0 576 512" aria-hidden="true"><path d="M420.55 301.93a24 24 0 1 1 24-24 24 24 0 0 1-24 24m-265.1 0a24 24 0 1 1 24-24 24 24 0 0 1-24 24m273.7-144.48 47.94-83a10 10 0 1 0-17.27-10l-48.54 84.07a301.25 301.25 0 0 0-246.56 0L116.18 64.45a10 10 0 1 0-17.27 10l47.94 83C64.53 202.22 8.24 285.55 0 384h576c-8.24-98.45-64.54-181.78-146.85-226.55"/></svg></div>
             <h3>Android</h3>
             <p class="dl-meta">APK · Android 8.0+ · <span data-download-version="zinfai-buddy">v1.0.0</span></p>
-            <a class="btn warm" data-download="zinfai-buddy:android" href="https://github.com/ZinfaiAdmin/zinfai-download/releases/download/zinfai-buddy-v1.0.0/Zinfai-Buddy-v1.0.0.apk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg>Download the APK</a>
+            <button type="button" class="btn warm" data-download="zinfai-buddy:android" data-dl-ready="Download the APK">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg><span data-dl-label>Download the APK</span>
+            </button>
         </div>
     </div>
     <p class="fine-print">
@@ -361,6 +327,18 @@
 
     <div class="faq">
         <details>
+            <summary>The download button says "Sign in to download"</summary>
+            <div class="faq-body">
+                <p>
+                    Installers are only available to registered users with a verified email
+                    address. <a href="/register">Create a free account</a> — or sign in with
+                    Google, which is verified automatically — and the buttons switch to real
+                    downloads. If you registered with an email and password, click the link in
+                    the confirmation message we sent you first; it often lands in spam.
+                </p>
+            </div>
+        </details>
+        <details>
             <summary>macOS says "Zinfai-…pkg cannot be opened because it is from an unidentified developer"</summary>
             <div class="faq-body">
                 <p>
@@ -376,8 +354,7 @@
                 <p>
                     Click <b>More info</b>, then <b>Run anyway</b>. SmartScreen flags any
                     installer it hasn't seen many times before; the file you downloaded from this
-                    page comes straight from the official
-                    <a href="https://github.com/ZinfaiAdmin/zinfai-download/releases">Zinfai releases</a>.
+                    page came straight from our release pipeline.
                 </p>
             </div>
         </details>
@@ -385,13 +362,12 @@
             <summary>"Port 8090 is already allocated"</summary>
             <div class="faq-body">
                 <p>
-                    Something else on your machine owns that port. Run the container on a different
-                    one by changing the left-hand number, then use that address:
+                    Something else on your machine owns that port. Quit whatever is using it and
+                    start Zinfai again — <b>Zinfai</b> on Mac, <b>Open Zinfai</b> on Windows. If
+                    you need Zinfai on a different port permanently, email
+                    <a href="mailto:support@zinfai.com">support@zinfai.com</a> and we'll send you
+                    the one-line change.
                 </p>
-                <div class="code-block">
-                    <code id="port-cmd">docker run -d --name zinfai -p 9000:8080 -v zinfai-data:/var/lib/postgresql/data --restart unless-stopped zinfaiadmin/zinfai:latest</code>
-                    <button type="button" class="code-copy" data-copy-target="port-cmd" aria-label="Copy command to clipboard">Copy</button>
-                </div>
             </div>
         </details>
         <details>
@@ -400,22 +376,20 @@
                 <p>
                     The first boot runs database migrations and seeds master data, which can take a
                     minute or two on slower machines. Give it a moment and refresh. If it still
-                    doesn't come up, check the container is running:
+                    doesn't come up, run <b>Zinfai Setup</b> (Mac) or
+                    <b>Zinfai Setup (repair)</b> (Windows) — it re-checks every step and restarts
+                    the app.
                 </p>
-                <div class="code-block">
-                    <code id="logs-cmd">docker ps -a --filter name=zinfai && docker logs --tail 100 zinfai</code>
-                    <button type="button" class="code-copy" data-copy-target="logs-cmd" aria-label="Copy command to clipboard">Copy</button>
-                </div>
             </div>
         </details>
         <details>
             <summary>Windows: setup says virtualization is disabled</summary>
             <div class="faq-body">
                 <p>
-                    WSL2 and Docker need hardware virtualization, which some machines ship with
-                    turned off. Reboot into your BIOS/UEFI settings and enable <b>Intel VT-x</b> or
-                    <b>AMD-V</b> (often listed under CPU, Advanced or Security), then run
-                    <b>Zinfai Setup (repair)</b> again.
+                    Zinfai's container runtime needs hardware virtualization, which some machines
+                    ship with turned off. Reboot into your BIOS/UEFI settings and enable
+                    <b>Intel VT-x</b> or <b>AMD-V</b> (often listed under CPU, Advanced or
+                    Security), then run <b>Zinfai Setup (repair)</b> again.
                 </p>
             </div>
         </details>
@@ -425,13 +399,9 @@
                 <p>
                     <b>macOS:</b> run <b>Uninstall Zinfai</b> from your Applications folder.
                     <b>Windows:</b> use <b>Uninstall Zinfai</b> in the Start menu or
-                    Add/Remove Programs. Both ask before deleting your data volume — the default is
-                    to keep it, so reinstalling restores everything — and they only remove Docker
-                    Desktop if the Zinfai installer was the one that put it there.
-                </p>
-                <p>
-                    With plain Docker: <code class="inline">docker rm -f zinfai</code> removes the app;
-                    add <code class="inline">docker volume rm zinfai-data</code> to delete your data too.
+                    Add/Remove Programs. Both ask before deleting your data — the default is
+                    to keep it, so reinstalling restores everything — and they only remove the
+                    container runtime if the Zinfai installer was the one that put it there.
                 </p>
             </div>
         </details>
@@ -445,19 +415,20 @@
 </div>
 </section>
 
-<!-- ---------------- RELEASE HISTORY ---------------- -->
+<!-- ---------------- ALWAYS LATEST ---------------- -->
 <section style="padding-top:0;">
 <div class="container">
     <div class="callout" style="grid-template-columns:1fr auto; align-items:center;">
         <div>
-            <h3>Every release, listed</h3>
+            <h3>Always the current release</h3>
             <p style="margin-bottom:0;">
-                Installers and release notes for every published version live on the public
-                downloads hub. The buttons on this page always point at the latest.
+                The buttons on this page always serve the newest published version, so
+                there's nothing to pick. Need an older build, or the release notes for a
+                specific version? Email us and we'll sort it out.
             </p>
         </div>
         <div>
-            <a class="btn ghost" href="https://github.com/ZinfaiAdmin/zinfai-download/releases">Release history</a>
+            <a class="btn ghost" href="mailto:support@zinfai.com">Ask support</a>
         </div>
     </div>
 </div>

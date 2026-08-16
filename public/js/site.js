@@ -24,6 +24,7 @@
         <a href="/features" data-nav="features">Features</a>
         <a href="/buddy" data-nav="buddy">Zinfai Buddy</a>
         <a href="/support" data-nav="support">Support</a>
+        <a href="/register" data-nav="account" data-account-link>Sign in</a>
         <a class="btn" href="/download" data-nav="download">Download</a>
     </div>
 </div>
@@ -42,14 +43,14 @@
             <a href="/features">Features</a>
             <a href="/download">Download Zinfai</a>
             <a href="/buddy">Zinfai Buddy — Android</a>
-            <a href="/download#docker">Run with Docker</a>
+            <a href="/register">Create an account</a>
         </div>
         <div class="footer-col">
             <h5>Help</h5>
             <a href="/support">Support &amp; FAQ</a>
             <a href="/download#install-mac">Install on macOS</a>
             <a href="/download#install-windows">Install on Windows</a>
-            <a href="https://github.com/ZinfaiAdmin/zinfai-download/releases">Release history</a>
+            <a href="/download#troubleshooting">Install troubleshooting</a>
         </div>
         <div class="footer-col">
             <h5>Company</h5>
@@ -187,33 +188,19 @@
         }
     });
 
-    /* ---- dynamic download links (read from the public downloads hub) ----
-       Each product's release CI publishes a versioned installer to
-       ZinfaiAdmin/zinfai-download and writes a small manifest there
-       (manifest/<product>.json). We read it at page load and point the
-       download button — plus any version badge or file name in an install
-       command — at the exact current release, so the site always tracks the
-       latest version with no per-release edit.
+    /* ---- version badges and file names ----
+       The installers now live in a PRIVATE repo, so there is no public URL to
+       put in an href and nothing here fetches one. What we still want on the
+       page is the current version number and file name, which /api/manifest
+       serves to anyone — it deliberately returns no URLs.
 
        Opt in from markup:
-         <a data-download="zinfai:macos" href="...fallback...">
          <span data-download-version="zinfai">v1.0.2</span>
          <span data-download-file="zinfai:macos">Zinfai-v1.0.2.pkg</span>
 
-       If the manifest can't be reached, the hard-coded markup stays as-is, so
-       downloads never break. */
-    const DOWNLOADS_MANIFEST_BASE =
-        "https://raw.githubusercontent.com/ZinfaiAdmin/zinfai-download/main/manifest";
-
+       If the API can't be reached the hard-coded markup stays as-is, so the
+       page never renders blank. */
     function applyManifest(name, m) {
-        document.querySelectorAll('a[data-download^="' + name + ':"]').forEach(function (a) {
-            const platform = a.getAttribute("data-download").split(":")[1];
-            const entry = m.platforms && m.platforms[platform];
-            if (entry && entry.url) {
-                a.href = entry.url;
-                if (entry.file) a.setAttribute("download", entry.file);
-            }
-        });
         document.querySelectorAll('[data-download-file^="' + name + ':"]').forEach(function (el) {
             const platform = el.getAttribute("data-download-file").split(":")[1];
             const entry = m.platforms && m.platforms[platform];
@@ -228,8 +215,8 @@
 
     function hydrateDownloads() {
         const needed = new Set();
-        document.querySelectorAll("a[data-download]").forEach(function (a) {
-            needed.add(a.getAttribute("data-download").split(":")[0]);
+        document.querySelectorAll("[data-download]").forEach(function (el) {
+            needed.add(el.getAttribute("data-download").split(":")[0]);
         });
         document.querySelectorAll("[data-download-file]").forEach(function (el) {
             needed.add(el.getAttribute("data-download-file").split(":")[0]);
@@ -239,10 +226,90 @@
         });
 
         needed.forEach(function (name) {
-            fetch(DOWNLOADS_MANIFEST_BASE + "/" + name + ".json", { cache: "no-store" })
+            fetch("/api/manifest?product=" + encodeURIComponent(name))
                 .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
                 .then(function (m) { applyManifest(name, m); })
                 .catch(function () { /* keep the hard-coded fallback */ });
+        });
+    }
+
+    /* ---- gated download buttons ----
+       Every install button is a <button data-download="product:platform">, not
+       a link — there is no URL to expose until the API mints one. Clicking it
+       sends a signed-out or unverified visitor to /register, and a verified
+       one straight to a short-lived GitHub URL.
+
+       auth.js is an ES module and therefore deferred, so window.ZinfaiAuth may
+       not exist while the page is still parsing. Every read of it happens
+       inside a handler or an event, never at load time. */
+    const REGISTER_URL = "/register?next=" +
+        encodeURIComponent(location.pathname + location.hash);
+
+    function setLabel(btn, text) {
+        const label = btn.querySelector("[data-dl-label]");
+        (label || btn).textContent = text;
+    }
+
+    function bindDownloadButtons() {
+        const buttons = document.querySelectorAll("button[data-download]");
+        if (!buttons.length) return;
+
+        /* Reflect the signed-in state in the button copy, so nobody clicks
+           "Download" and gets bounced to a registration form unannounced. */
+        function paint(user) {
+            const verified = !!(user && user.emailVerified);
+            buttons.forEach(function (btn) {
+                if (btn.dataset.busy) return;
+                setLabel(btn, verified ? btn.dataset.dlReady : btn.dataset.dlLocked);
+                btn.classList.toggle("ghost", !verified);
+            });
+            document.querySelectorAll("[data-dl-hint]").forEach(function (el) {
+                el.hidden = verified;
+            });
+        }
+
+        document.addEventListener("zinfai-auth", function (e) { paint(e.detail.user); });
+        paint(null);
+
+        buttons.forEach(function (btn) {
+            btn.dataset.dlReady = btn.dataset.dlReady || btn.textContent.trim();
+            btn.dataset.dlLocked = btn.dataset.dlLocked || "Sign in to download";
+
+            btn.addEventListener("click", function () {
+                const auth = window.ZinfaiAuth;
+                if (!auth || !auth.user || !auth.user.emailVerified) {
+                    location.href = REGISTER_URL;
+                    return;
+                }
+
+                const parts = btn.getAttribute("data-download").split(":");
+                btn.dataset.busy = "1";
+                btn.disabled = true;
+                setLabel(btn, "Preparing…");
+
+                auth.download(parts[0], parts[1])
+                    .catch(function (err) {
+                        if (err && err.code === "email-not-verified") {
+                            location.href = REGISTER_URL;
+                            return;
+                        }
+                        alert(err && err.message ? err.message : "Download failed. Please try again.");
+                    })
+                    .finally(function () {
+                        delete btn.dataset.busy;
+                        btn.disabled = false;
+                        paint(window.ZinfaiAuth && window.ZinfaiAuth.user);
+                    });
+            });
+        });
+    }
+
+    /* ---- nav account link ---- */
+    function bindAccountLink() {
+        document.addEventListener("zinfai-auth", function (e) {
+            document.querySelectorAll("[data-account-link]").forEach(function (a) {
+                a.textContent = e.detail.user ? "Account" : "Sign in";
+            });
         });
     }
 
@@ -250,6 +317,8 @@
         revealShots();
         bindCopyButtons();
         hydrateDownloads();
+        bindDownloadButtons();
+        bindAccountLink();
     }
 
     if (document.readyState !== "loading") init();
