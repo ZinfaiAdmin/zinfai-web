@@ -787,6 +787,13 @@ footer{ border-top:1px solid var(--border); padding:56px 0 40px; }
 .dl-note a{ color:var(--accent-2); }
 
 /* ---------------- MOBILE ---------------- */
+/* Adding Calculators made the menu one item too wide for the tablet band,
+   where the links are still shown but the container has stopped growing. */
+@media(max-width:1020px){
+    .nav-links{ gap:20px; }
+    .nav-links a:not(.btn){ font-size:.9rem; }
+    .nav-links .btn{ padding:10px 16px; }
+}
 @media(max-width:880px){
     .app-hero-inner{ grid-template-columns:1fr; gap:36px; }
     .callout{ grid-template-columns:1fr; padding:34px; }

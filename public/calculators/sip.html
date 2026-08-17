@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SIP Calculator — What Will My Monthly Investment Grow To? | Zinfai</title>
+<meta name="description" content="Free SIP calculator. See what a monthly investment grows to over time, split into what you put in and what the market added — with annual step-up, a starting lumpsum, and the value in today's money after inflation. Works in 8 currencies.">
+<link rel="canonical" href="https://www.zinfai.com/calculators/sip">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zinfai">
+<meta property="og:title" content="SIP Calculator — What will my monthly investment grow to?">
+<meta property="og:description" content="Project a monthly SIP year by year, with step-up, lumpsum and inflation. Free, private, runs entirely in your browser.">
+<meta property="og:url" content="https://www.zinfai.com/calculators/sip">
+<meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/zinfai-logo-small.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<link rel="stylesheet" href="/css/calculators.css?v=2">
+<script src="/js/site.js?v=3"></script>
+<script src="/js/calc.js?v=2"></script>
+</head>
+
+<body>
+
+<site-nav active="calculators"></site-nav>
+
+<!-- ---------------- PAGE HEAD ---------------- -->
+<section class="page-head">
+<div class="container">
+    <span class="eyebrow">Calculator</span>
+    <h1>SIP Calculator</h1>
+    <p>
+        Invest a fixed amount every month and compounding does the rest — slowly at
+        first, then all at once. Set your numbers below and watch the split between
+        what you contributed and what the market added.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- CALCULATOR ---------------- -->
+<section style="padding-top:34px;">
+<div class="container">
+
+    <div class="calc-toolbar">
+        <label class="tb-label" for="cur">Show amounts in</label>
+        <select class="calc-select" id="cur" data-currency></select>
+    </div>
+
+    <div class="calc-layout">
+
+        <!-- ---- controls ---- -->
+        <form class="calc-panel" id="controls" onsubmit="return false;">
+            <h2>Your plan</h2>
+            <p class="panel-note">Every figure updates as you type.</p>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="monthly">Monthly investment</label>
+                    <span class="ctrl-input"><span class="unit" data-cur-symbol>₹</span>
+                        <input type="number" id="monthly" data-field="monthly" value="25000" min="100" max="10000000" step="500">
+                    </span>
+                </div>
+                <input type="range" data-log data-range="monthly" min="500" max="500000" step="500" value="25000" aria-label="Monthly investment slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="rate">Expected return
+                        <span class="hint">Annual, before tax</span>
+                    </label>
+                    <span class="ctrl-input">
+                        <input type="number" id="rate" data-field="rate" value="12" min="0" max="40" step="0.5">
+                        <span class="unit suffix">%</span>
+                    </span>
+                </div>
+                <input type="range" data-range="rate" min="1" max="30" step="0.5" value="12" aria-label="Expected annual return slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="years">Time period</label>
+                    <span class="ctrl-input">
+                        <input type="number" id="years" data-field="years" value="15" min="1" max="50" step="1">
+                        <span class="unit suffix">yrs</span>
+                    </span>
+                </div>
+                <input type="range" data-range="years" min="1" max="40" step="1" value="15" aria-label="Time period in years slider">
+            </div>
+
+            <details class="ctrl-more">
+                <summary>More assumptions</summary>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="stepup">Annual step-up
+                            <span class="hint">Raise the SIP by this much each year</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="stepup" data-field="stepup" value="0" min="0" max="50" step="1">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="stepup" min="0" max="25" step="1" value="0" aria-label="Annual step-up slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="lumpsum">Starting lumpsum
+                            <span class="hint">Already invested today</span>
+                        </label>
+                        <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                            <input type="number" id="lumpsum" data-field="lumpsum" value="0" min="0" max="1000000000" step="10000">
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="infl">Inflation
+                            <span class="hint">Used only for the "in today's money" figure</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="infl" data-field="infl" value="6" min="0" max="25" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="infl" min="0" max="15" step="0.5" value="6" aria-label="Inflation slider">
+                </div>
+
+                <button type="button" class="calc-reset" data-reset>Reset to defaults</button>
+            </details>
+        </form>
+
+        <!-- ---- results ---- -->
+        <div class="calc-results">
+
+            <div class="result-card">
+                <div class="hero-figure">
+                    <div class="lbl" data-out="hero-label">Value after 15 years</div>
+                    <div class="val" data-out="total">—</div>
+                    <p class="sub" data-out="summary"></p>
+                </div>
+
+                <div class="tiles">
+                    <div class="tile">
+                        <div class="lbl"><span class="key" style="--k:var(--series-1);"></span>You invest</div>
+                        <div class="val" data-out="invested">—</div>
+                        <div class="note" data-out="invested-note"></div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl"><span class="key" style="--k:var(--series-2);"></span>Est. returns</div>
+                        <div class="val" data-out="returns">—</div>
+                        <div class="note" data-out="returns-note"></div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl">In today's money</div>
+                        <div class="val" data-out="real">—</div>
+                        <div class="note" data-out="real-note"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card" id="chart">
+                <div class="chart-head">
+                    <h3>Where the money comes from</h3>
+                    <p>Each column is the year-end balance, split into your contributions and the growth on top. Hover, or focus the chart and use the arrow keys.</p>
+                </div>
+                <div class="chart-legend" data-legend></div>
+                <div class="chart-plot" data-plot></div>
+                <details class="table-view">
+                    <summary>Show the year-by-year numbers</summary>
+                    <div class="table-scroll" data-table></div>
+                </details>
+            </div>
+
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- METHOD ---------------- -->
+<section id="method">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">How this is worked out</span>
+        <h2 class="section-title">The assumptions, stated plainly.</h2>
+    </div>
+
+    <div class="panel">
+        <div class="panel__head"><h3>What the model does</h3></div>
+        <ul class="prose assumptions">
+            <li><b>Monthly compounding, invested at the start of each month.</b> The annual rate you enter is divided by twelve, and each instalment earns a full month of growth. This is the same convention used by every mainstream SIP calculator, so the numbers are directly comparable.</li>
+            <li><b>A step-up applies once a year.</b> The instalment rises on each anniversary, not gradually through the year.</li>
+            <li><b>The return is constant.</b> Real markets are not. A 12% average delivered as +30%, −10%, +18% ends up somewhere different from a flat 12% once you are contributing along the way — this calculator shows the smooth path, which is a planning aid, not a forecast.</li>
+            <li><b>No tax, exit load or expense ratio is deducted.</b> Enter a return you expect <em>after</em> fund costs if you want the figure to be closer to what lands in your account, and remember that capital gains tax is charged on the returns portion when you redeem.</li>
+            <li><b>"In today's money"</b> divides the final value by inflation compounded over the same period. It answers what the corpus would buy at today's prices, which is usually the number that actually matters.</li>
+        </ul>
+    </div>
+
+    <p class="fine-print">
+        This calculator is an illustration, not investment advice. It does not know your
+        tax position, your goals or your risk appetite, and it cannot promise a return.
+        Nothing you type is sent anywhere — the whole thing runs in your browser.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- FAQ ---------------- -->
+<section id="faq" style="padding-top:20px;">
+<div class="container">
+    <div class="section-head">
+        <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq">
+        <details>
+            <summary>What return should I assume?</summary>
+            <div class="faq-body">
+                <p>There is no correct answer, only a defensible one. Be conservative rather than optimistic: a projection that is too rosy makes you save too little, which is the expensive mistake. A common approach is to use the long-run average of the asset class you are actually buying, then subtract a percentage point for fund costs and a margin for being wrong.</p>
+                <p>Try the same plan at a few different rates. If the goal only works at the highest one, the plan is fragile.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Why does the orange part grow so much faster later on?</summary>
+            <div class="faq-body">
+                <p>Because returns compound and contributions don't. Your monthly instalment adds the same amount every month, but the growth is earned on a balance that keeps getting bigger — including on previous growth. In a long enough SIP the returns portion overtakes everything you contributed. Push the time period slider up and watch the crossover move.</p>
+                <p>This is also why the single most powerful input on this page is <em>time</em>, not the return rate.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Is a step-up SIP worth it?</summary>
+            <div class="faq-body">
+                <p>Usually, yes — and by more than people expect. Raising the instalment in line with your income means your savings rate holds steady instead of quietly falling as you earn more. Set the step-up to your expected annual raise and compare the total against 0%.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Does Zinfai track my actual SIPs?</summary>
+            <div class="faq-body">
+                <p>Yes. This page is a projection for one hypothetical instalment. The Zinfai desktop app tracks the SIPs you really hold, across funds and currencies, with live prices and XIRR on the actual cashflow dates — and the AI Financial Planner recommends a monthly SIP per goal. <a href="/features#plan">See how planning works</a>.</p>
+            </div>
+        </details>
+    </div>
+    <div class="btn-row" style="justify-content:center; margin-top:44px;">
+        <a class="btn" href="/download">Download Zinfai</a>
+        <a class="btn ghost" href="/calculators">All calculators</a>
+    </div>
+</div>
+</section>
+
+<site-footer></site-footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What return should I assume in a SIP calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Be conservative rather than optimistic, because a projection that is too rosy makes you save too little. A common approach is to take the long-run average of the asset class you are buying, subtract a percentage point for fund costs, and leave a margin for being wrong. Test the same plan at several rates — if the goal only works at the highest one, the plan is fragile."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do SIP returns grow faster than contributions over time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Returns compound and contributions do not. The monthly instalment adds the same amount each month, but growth is earned on a balance that keeps getting larger, including on previous growth. Over a long enough period the returns portion overtakes the total amount contributed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a step-up SIP worth it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Usually yes, and by more than people expect. Raising the instalment in line with your income keeps your savings rate steady instead of letting it fall as you earn more. Setting the step-up to your expected annual raise typically increases the final corpus substantially versus a flat instalment."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+/* ---------------------------------------------------------------------
+   SIP model — a plain month-by-month simulation rather than the closed
+   form, because the step-up and the opening lumpsum both fall out of the
+   loop for free and stay easy to check against the table.
+   --------------------------------------------------------------------- */
+(function () {
+    "use strict";
+
+    const chart = Calc.chart("#chart");
+    let latest = null;
+
+    function project(v) {
+        const years = Math.max(1, Math.round(v.years));
+        const r = v.rate / 100 / 12;
+        const step = v.stepup / 100;
+
+        let instalment = v.monthly;
+        let balance = v.lumpsum;
+        let invested = v.lumpsum;
+        const rows = [];
+
+        for (let y = 1; y <= years; y++) {
+            for (let m = 0; m < 12; m++) {
+                /* Contribution at the start of the month, so it earns that
+                   month's growth too. */
+                balance = (balance + instalment) * (1 + r);
+                invested += instalment;
+            }
+            rows.push({
+                year: y,
+                invested: invested,
+                returns: balance - invested,
+                total: balance
+            });
+            instalment *= (1 + step);
+        }
+        return { rows: rows, finalInstalment: instalment / (1 + step) };
+    }
+
+    function compute(v) {
+        latest = v;
+        const years = Math.max(1, Math.round(v.years));
+        const { rows, finalInstalment } = project(v);
+        const last = rows[rows.length - 1];
+        const real = last.total / Math.pow(1 + v.infl / 100, years);
+
+        Calc.out("hero-label", "Value after " + years + (years === 1 ? " year" : " years"));
+        Calc.out("total", Calc.money(last.total));
+        Calc.out("invested", Calc.money(last.invested));
+        Calc.out("returns", Calc.money(last.returns));
+        Calc.out("real", Calc.money(real));
+
+        const growthShare = last.total > 0 ? (last.returns / last.total) * 100 : 0;
+        Calc.out("returns-note", Calc.pct(growthShare, 0) + " of the final value");
+        Calc.out("invested-note",
+            v.stepup > 0
+                ? "Starting at " + Calc.money(v.monthly) + "/month, ending at " + Calc.money(finalInstalment)
+                : Calc.money(v.monthly) + " a month for " + (years * 12) + " months");
+        Calc.out("real-note", "At " + Calc.pct(v.infl) + " inflation");
+
+        const multiple = last.invested > 0 ? last.total / last.invested : 0;
+        Calc.out("summary",
+            "You put in " + Calc.money(last.invested) + " and the market adds " +
+            Calc.money(last.returns) + " — turning every " + Calc.symbol() + "1 invested into about " +
+            Calc.symbol() + multiple.toFixed(2) + ".");
+
+        chart.render({
+            type: "stack",
+            x: rows.map(function (r) { return String(r.year); }),
+            xTitle: "Year",
+            tableX: "Year",
+            xLabel: function (i) { return "Year " + rows[i].year; },
+            total: "Balance",
+            aria: "Stacked column chart of the year-end balance for " + years +
+                  " years, split into contributions and returns. The same figures are in the data table below.",
+            series: [
+                { name: "You invested", color: "var(--series-1)", values: rows.map(function (r) { return r.invested; }) },
+                { name: "Returns",      color: "var(--series-2)", values: rows.map(function (r) { return r.returns; }) }
+            ]
+        });
+    }
+
+    Calc.form("#controls", compute);
+    Calc.onCurrencyChange(function () { if (latest) compute(latest); });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EMI Calculator — Monthly Payment, Total Interest &amp; Amortisation | Zinfai</title>
+<meta name="description" content="Free EMI calculator for home, car and personal loans. See the monthly instalment, the total interest, and a year-by-year amortisation schedule — plus what an extra monthly prepayment saves you in interest and years. Works in 8 currencies.">
+<link rel="canonical" href="https://www.zinfai.com/calculators/emi">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zinfai">
+<meta property="og:title" content="EMI Calculator — monthly payment, total interest &amp; amortisation">
+<meta property="og:description" content="Work out your EMI, see how much of it is interest, and find out what prepaying a little extra each month is worth. Free and private.">
+<meta property="og:url" content="https://www.zinfai.com/calculators/emi">
+<meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/zinfai-logo-small.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<link rel="stylesheet" href="/css/calculators.css?v=2">
+<script src="/js/site.js?v=3"></script>
+<script src="/js/calc.js?v=2"></script>
+</head>
+
+<body>
+
+<site-nav active="calculators"></site-nav>
+
+<!-- ---------------- PAGE HEAD ---------------- -->
+<section class="page-head">
+<div class="container">
+    <span class="eyebrow">Calculator</span>
+    <h1>EMI Calculator</h1>
+    <p>
+        The instalment is the easy part. The number worth looking at is how much of
+        it is interest — and how quickly that changes if you pay a little extra
+        each month.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- CALCULATOR ---------------- -->
+<section style="padding-top:34px;">
+<div class="container">
+
+    <div class="calc-toolbar">
+        <label class="tb-label" for="cur">Show amounts in</label>
+        <select class="calc-select" id="cur" data-currency></select>
+    </div>
+
+    <div class="calc-layout">
+
+        <!-- ---- controls ---- -->
+        <form class="calc-panel" id="controls" onsubmit="return false;">
+            <h2>Your loan</h2>
+            <p class="panel-note">Every figure updates as you type.</p>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="principal">Loan amount</label>
+                    <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                        <input type="number" id="principal" data-field="principal" value="5000000" min="10000" max="1000000000" step="50000">
+                    </span>
+                </div>
+                <input type="range" data-log data-range="principal" min="100000" max="50000000" step="100000" value="5000000" aria-label="Loan amount slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="rate">Interest rate
+                        <span class="hint">Annual, reducing balance</span>
+                    </label>
+                    <span class="ctrl-input">
+                        <input type="number" id="rate" data-field="rate" value="8.5" min="0.1" max="40" step="0.05">
+                        <span class="unit suffix">%</span>
+                    </span>
+                </div>
+                <input type="range" data-range="rate" min="1" max="24" step="0.05" value="8.5" aria-label="Interest rate slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="tenure">Loan tenure</label>
+                    <span class="ctrl-input">
+                        <input type="number" id="tenure" data-field="tenure" value="20" min="1" max="480" step="1">
+                        <span class="unit suffix" data-out="tenure-unit">yrs</span>
+                    </span>
+                </div>
+                <input type="range" data-range="tenure" min="1" max="30" step="1" value="20" aria-label="Loan tenure slider">
+                <div style="margin-top:12px;">
+                    <div class="seg" data-seg="unit" role="group" aria-label="Tenure unit">
+                        <button type="button" data-val="years" aria-pressed="true">Years</button>
+                        <button type="button" data-val="months" aria-pressed="false">Months</button>
+                    </div>
+                </div>
+            </div>
+
+            <details class="ctrl-more">
+                <summary>Prepayment</summary>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="extra">Extra every month
+                            <span class="hint">Paid on top of the EMI, straight off the principal</span>
+                        </label>
+                        <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                            <input type="number" id="extra" data-field="extra" value="0" min="0" max="10000000" step="1000">
+                        </span>
+                    </div>
+                    <input type="range" data-log data-range="extra" min="0" max="100000" step="1000" value="0" aria-label="Extra monthly payment slider">
+                </div>
+
+                <button type="button" class="calc-reset" data-reset>Reset to defaults</button>
+            </details>
+        </form>
+
+        <!-- ---- results ---- -->
+        <div class="calc-results">
+
+            <div class="result-card">
+                <div class="hero-figure">
+                    <div class="lbl">Monthly instalment</div>
+                    <div class="val" data-out="emi">—</div>
+                    <p class="sub" data-out="summary"></p>
+                </div>
+
+                <div class="tiles">
+                    <div class="tile">
+                        <div class="lbl"><span class="key" style="--k:var(--series-1);"></span>Principal</div>
+                        <div class="val" data-out="principal-out">—</div>
+                        <div class="note">The amount you borrowed</div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl"><span class="key" style="--k:var(--series-2);"></span>Total interest</div>
+                        <div class="val" data-out="interest">—</div>
+                        <div class="note" data-out="interest-note"></div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl">Total repaid</div>
+                        <div class="val" data-out="total">—</div>
+                        <div class="note" data-out="term-note"></div>
+                    </div>
+                </div>
+
+                <div class="verdict good" data-out-block="prepay" hidden>
+                    <span class="v-icon" aria-hidden="true">✓</span>
+                    <span data-out="prepay"></span>
+                </div>
+            </div>
+
+            <div class="chart-card" id="chart">
+                <div class="chart-head">
+                    <h3>Where each year's payments go</h3>
+                    <p>Same instalment every month, but the split moves: early years are mostly interest, later years mostly principal. Hover, or focus the chart and use the arrow keys.</p>
+                </div>
+                <div class="chart-legend" data-legend></div>
+                <div class="chart-plot" data-plot></div>
+                <details class="table-view">
+                    <summary>Show the amortisation schedule</summary>
+                    <div class="table-scroll" data-table></div>
+                </details>
+            </div>
+
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- METHOD ---------------- -->
+<section id="method">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">How this is worked out</span>
+        <h2 class="section-title">The assumptions, stated plainly.</h2>
+    </div>
+
+    <div class="panel">
+        <div class="panel__head"><h3>What the model does</h3></div>
+        <ul class="prose assumptions">
+            <li><b>A standard reducing-balance loan.</b> The instalment is <code class="inline">P · i · (1+i)ⁿ / ((1+i)ⁿ − 1)</code>, where <em>i</em> is the annual rate divided by twelve and <em>n</em> is the tenure in months. Interest each month is charged on the balance still outstanding, so it falls as the loan runs down.</li>
+            <li><b>The rate is fixed for the whole term.</b> Most home loans are not — they are pegged to a benchmark and reset. Re-run this with a rate a percentage point or two higher to see how much room your budget has.</li>
+            <li><b>Prepayments reduce the term, not the instalment.</b> Extra money goes straight off the principal and the EMI stays where it is, which is what produces the interest saving. If your lender instead reduces the EMI and keeps the term, you save considerably less.</li>
+            <li><b>Processing fees, insurance and part-payment charges are not included.</b> Nor is any tax relief on interest or principal, which in some jurisdictions changes the real cost of the loan meaningfully.</li>
+            <li><b>Payments are assumed to be on time and monthly</b>, with no moratorium, holiday or missed instalment.</li>
+        </ul>
+    </div>
+
+    <p class="fine-print">
+        An illustration, not a loan offer or financial advice. Your lender's figure may
+        differ by a small amount depending on day-count and rounding conventions.
+        Nothing you type is sent anywhere — the whole thing runs in your browser.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- FAQ ---------------- -->
+<section id="faq" style="padding-top:20px;">
+<div class="container">
+    <div class="section-head">
+        <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq">
+        <details>
+            <summary>Why is the total interest so much larger than I expected?</summary>
+            <div class="faq-body">
+                <p>Because of the term, more than the rate. On a long loan at a typical home-loan rate, total interest can approach or exceed the amount borrowed. Drag the tenure slider down and watch two things move in opposite directions: the instalment goes up, the total interest falls sharply. The shortest term you can comfortably service is almost always the cheapest loan.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Should I take a longer tenure for a lower EMI?</summary>
+            <div class="faq-body">
+                <p>It buys breathing room, and it costs real money. A longer term lowers the monthly outflow but raises the total paid, sometimes dramatically. A reasonable middle path is to take the longer tenure for safety and then prepay whatever you can each month — open the Prepayment section above and see what even a modest extra amount does to the term.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Is prepaying better than investing the same money?</summary>
+            <div class="faq-body">
+                <p>Compare the loan rate against the return you would realistically earn after tax on the alternative. Prepaying gives you a guaranteed, risk-free saving equal to your loan rate; an investment has to beat that <em>after tax and after risk</em> to win. Where interest is tax-deductible, use the effective post-relief rate in the comparison.</p>
+                <p>You can test the investing side on the <a href="/calculators/sip">SIP calculator</a>.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Does Zinfai track my loans?</summary>
+            <div class="faq-body">
+                <p>Yes. Zinfai records liabilities alongside your assets, so the net worth it shows is a true one — what you own minus what you owe. Loan balances also feed the FIRE engine, since debts you are still servicing change the corpus you need. <a href="/features#track">See how tracking works</a>.</p>
+            </div>
+        </details>
+    </div>
+    <div class="btn-row" style="justify-content:center; margin-top:44px;">
+        <a class="btn" href="/download">Download Zinfai</a>
+        <a class="btn ghost" href="/calculators">All calculators</a>
+    </div>
+</div>
+</section>
+
+<site-footer></site-footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is the total interest on a loan so much larger than expected?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The term matters more than the rate. On a long loan at a typical home-loan rate, total interest can approach or exceed the amount borrowed. Shortening the tenure raises the instalment but reduces total interest sharply, so the shortest term you can comfortably service is usually the cheapest loan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I take a longer loan tenure for a lower EMI?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A longer term lowers the monthly outflow but raises the total amount paid, sometimes dramatically. A reasonable compromise is to take the longer tenure for safety and prepay whatever you can each month, which reduces the term and the interest without committing you to a higher instalment."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is prepaying a loan better than investing the same money?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compare the loan rate against the return you would realistically earn after tax. Prepaying is a guaranteed risk-free saving equal to your loan rate, so an investment must beat that after tax and after risk to be the better choice. Where loan interest is tax-deductible, use the effective post-relief rate in the comparison."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+/* ---------------------------------------------------------------------
+   EMI model — the instalment comes from the closed form, everything else
+   from an explicit month-by-month amortisation, which is the only honest
+   way to handle prepayment (the term becomes an output, not an input).
+   --------------------------------------------------------------------- */
+(function () {
+    "use strict";
+
+    const chart = Calc.chart("#chart");
+    let latest = null;
+
+    function amortise(principal, i, emi, extra) {
+        let bal = principal;
+        const years = [];
+        let yPrincipal = 0, yInterest = 0, m = 0;
+        let totalInterest = 0;
+
+        /* Hard stop well past any real loan: a rate low enough and an EMI
+           small enough could otherwise never clear the balance. */
+        const CAP = 12 * 100;
+
+        while (bal > 0.005 && m < CAP) {
+            const interest = bal * i;
+            let principalPart = emi - interest + extra;
+            if (principalPart <= 0) break;               /* EMI cannot cover interest */
+            if (principalPart > bal) principalPart = bal;
+
+            bal -= principalPart;
+            yInterest += interest;
+            yPrincipal += principalPart;
+            totalInterest += interest;
+            m++;
+
+            if (m % 12 === 0 || bal <= 0.005) {
+                years.push({
+                    year: Math.ceil(m / 12),
+                    principal: yPrincipal,
+                    interest: yInterest,
+                    balance: bal
+                });
+                yPrincipal = 0; yInterest = 0;
+            }
+        }
+        return { years: years, months: m, interest: totalInterest, cleared: bal <= 0.005 };
+    }
+
+    function compute(v) {
+        latest = v;
+        const n = Math.max(1, Math.round(v.unit === "years" ? v.tenure * 12 : v.tenure));
+        const i = v.rate / 100 / 12;
+        const P = v.principal;
+        const emi = Calc.payment(P, i, n);
+        const extra = Math.max(0, v.extra || 0);
+
+        Calc.out("tenure-unit", v.unit === "years" ? "yrs" : "mo");
+
+        const run = amortise(P, i, emi, extra);
+        const base = extra > 0 ? amortise(P, i, emi, 0) : run;
+
+        const totalPaid = P + run.interest;
+
+        Calc.out("emi", Calc.money(emi));
+        Calc.out("principal-out", Calc.money(P));
+        Calc.out("interest", Calc.money(run.interest));
+        Calc.out("total", Calc.money(totalPaid));
+        Calc.out("interest-note",
+            Calc.pct(P > 0 ? (run.interest / P) * 100 : 0, 0) + " of the amount borrowed");
+        Calc.out("term-note", "Over " + Calc.months(run.months));
+
+        Calc.out("summary",
+            "For every " + Calc.symbol() + "1 borrowed you repay about " +
+            Calc.symbol() + (P > 0 ? (totalPaid / P).toFixed(2) : "0") +
+            " over " + Calc.months(run.months) + ".");
+
+        /* The prepayment verdict only appears when there is something to
+           report — an empty green strip would be noise. */
+        const block = document.querySelector('[data-out-block="prepay"]');
+        if (extra > 0 && run.cleared) {
+            const saved = base.interest - run.interest;
+            const monthsSaved = base.months - run.months;
+            block.hidden = false;
+            Calc.out("prepay",
+                "Paying " + Calc.money(extra) + " extra each month clears the loan " +
+                Calc.months(monthsSaved) + " early and saves " + Calc.money(saved) +
+                " in interest.");
+        } else {
+            block.hidden = true;
+        }
+
+        const rows = run.years;
+        chart.render({
+            type: "stack",
+            x: rows.map(function (r) { return String(r.year); }),
+            xTitle: "Year",
+            tableX: "Year",
+            xLabel: function (idx) { return "Year " + rows[idx].year; },
+            total: "Paid that year",
+            aria: "Stacked column chart of principal and interest paid each year over " +
+                  rows.length + " years. The same figures, plus the closing balance, are in the schedule below.",
+            series: [
+                { name: "Principal", color: "var(--series-1)", values: rows.map(function (r) { return r.principal; }) },
+                { name: "Interest",  color: "var(--series-2)", values: rows.map(function (r) { return r.interest; }) }
+            ],
+            /* Balance is a different measure on a different scale, so it
+               belongs in the table — putting it on the plot would mean a
+               second y-axis. */
+            extraCols: [
+                { name: "Closing balance", values: rows.map(function (r) { return r.balance; }) }
+            ]
+        });
+    }
+
+    Calc.form("#controls", compute);
+    Calc.onCurrencyChange(function () { if (latest) compute(latest); });
+
+    /* Switching the unit converts the number rather than reinterpreting it:
+       20 years becomes 240 months, not 20 months. The slider's range has to
+       move with it, or a months-based tenure would be pinned to its old
+       years-based ceiling. */
+    (function bindTenureUnit() {
+        const box = document.getElementById("tenure");
+        const range = document.querySelector('[data-range="tenure"]');
+        let unit = "years";
+
+        document.querySelectorAll('[data-seg="unit"] button').forEach(function (b) {
+            b.addEventListener("click", function () {
+                const next = b.dataset.val;
+                if (next === unit) return;
+
+                const now = parseFloat(box.value) || 0;
+                const converted = next === "months"
+                    ? Math.round(now * 12)
+                    : Math.max(1, Math.round(now / 12));
+
+                if (next === "months") {
+                    range.min = 12; range.max = 360; range.step = 6;
+                    box.min = 1; box.max = 480; box.step = 1;
+                } else {
+                    range.min = 1; range.max = 30; range.step = 1;
+                    box.min = 1; box.max = 40; box.step = 1;
+                }
+
+                unit = next;
+                box.value = String(converted);
+                box.dispatchEvent(new Event("input", { bubbles: true }));
+            });
+        });
+    })();
+})();
+</script>
+
+</body>
+</html>

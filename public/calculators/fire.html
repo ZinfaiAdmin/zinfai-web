@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FIRE Calculator — At What Age Can I Retire? | Zinfai</title>
+<meta name="description" content="Free FIRE calculator. Find the age you can stop working, with Lean, Regular, Fat and Coast FIRE targets, the corpus each needs, and a year-by-year projection against an inflation-adjusted goal. Works in 8 currencies.">
+<link rel="canonical" href="https://www.zinfai.com/calculators/fire">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zinfai">
+<meta property="og:title" content="FIRE Calculator — at what age can I retire?">
+<meta property="og:description" content="Lean, Regular, Fat and Coast FIRE ages from your real numbers, with an inflation-adjusted corpus target. Free and private.">
+<meta property="og:url" content="https://www.zinfai.com/calculators/fire">
+<meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/zinfai-logo-small.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<link rel="stylesheet" href="/css/calculators.css?v=2">
+<script src="/js/site.js?v=3"></script>
+<script src="/js/calc.js?v=2"></script>
+</head>
+
+<body>
+
+<site-nav active="calculators"></site-nav>
+
+<!-- ---------------- PAGE HEAD ---------------- -->
+<section class="page-head">
+<div class="container">
+    <span class="eyebrow">Calculator</span>
+    <h1>FIRE Calculator</h1>
+    <p>
+        Financial independence is a number, and the number is the point at which your
+        savings can pay for the rest of your life. Enter what you spend, what you have
+        and what you save — this works out the age the two curves meet.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- CALCULATOR ---------------- -->
+<section style="padding-top:34px;">
+<div class="container">
+
+    <div class="calc-toolbar">
+        <label class="tb-label" for="cur">Show amounts in</label>
+        <select class="calc-select" id="cur" data-currency></select>
+    </div>
+
+    <div class="calc-layout">
+
+        <!-- ---- controls ---- -->
+        <form class="calc-panel" id="controls" onsubmit="return false;">
+            <h2>Your position</h2>
+            <p class="panel-note">Every figure updates as you type.</p>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="age">Your age today</label>
+                    <span class="ctrl-input">
+                        <input type="number" id="age" data-field="age" value="32" min="18" max="70" step="1">
+                        <span class="unit suffix">yrs</span>
+                    </span>
+                </div>
+                <input type="range" data-range="age" min="18" max="70" step="1" value="32" aria-label="Current age slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="expenses">Annual expenses
+                        <span class="hint">What your life costs today</span>
+                    </label>
+                    <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                        <input type="number" id="expenses" data-field="expenses" value="1200000" min="12000" max="500000000" step="50000">
+                    </span>
+                </div>
+                <input type="range" data-log data-range="expenses" min="120000" max="20000000" step="60000" value="1200000" aria-label="Annual expenses slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="corpus">Invested today
+                        <span class="hint">Everything already working for you</span>
+                    </label>
+                    <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                        <input type="number" id="corpus" data-field="corpus" value="3000000" min="0" max="10000000000" step="100000">
+                    </span>
+                </div>
+                <input type="range" data-log data-range="corpus" min="0" max="100000000" step="250000" value="3000000" aria-label="Amount invested today slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="monthly">You invest monthly</label>
+                    <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                        <input type="number" id="monthly" data-field="monthly" value="60000" min="0" max="50000000" step="5000">
+                    </span>
+                </div>
+                <input type="range" data-log data-range="monthly" min="0" max="1000000" step="5000" value="60000" aria-label="Monthly investment slider">
+            </div>
+
+            <details class="ctrl-more">
+                <summary>More assumptions</summary>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="stepup">Annual step-up
+                            <span class="hint">How much you raise the monthly amount</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="stepup" data-field="stepup" value="5" min="0" max="30" step="1">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="stepup" min="0" max="20" step="1" value="5" aria-label="Annual step-up slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="pre">Return before retiring</label>
+                        <span class="ctrl-input">
+                            <input type="number" id="pre" data-field="pre" value="12" min="0" max="30" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="pre" min="4" max="20" step="0.5" value="12" aria-label="Pre-retirement return slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="post">Return after retiring
+                            <span class="hint">Usually lower — the portfolio turns defensive</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="post" data-field="post" value="8" min="0" max="25" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="post" min="2" max="15" step="0.5" value="8" aria-label="Post-retirement return slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="infl">Inflation</label>
+                        <span class="ctrl-input">
+                            <input type="number" id="infl" data-field="infl" value="6" min="0" max="20" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="infl" min="0" max="12" step="0.5" value="6" aria-label="Inflation slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="life">Plan until age
+                            <span class="hint">The corpus must last this long</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="life" data-field="life" value="85" min="60" max="110" step="1">
+                            <span class="unit suffix">yrs</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="life" min="70" max="105" step="1" value="85" aria-label="Plan until age slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="retire">Traditional retirement age
+                            <span class="hint">Used for the Coast FIRE figure only</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="retire" data-field="retire" value="60" min="45" max="75" step="1">
+                            <span class="unit suffix">yrs</span>
+                        </span>
+                    </div>
+                </div>
+
+                <button type="button" class="calc-reset" data-reset>Reset to defaults</button>
+            </details>
+        </form>
+
+        <!-- ---- results ---- -->
+        <div class="calc-results">
+
+            <div class="result-card">
+                <div class="hero-figure">
+                    <div class="lbl">You can stop working at</div>
+                    <div class="val" data-out="fire-age">—</div>
+                    <p class="sub" data-out="summary"></p>
+                </div>
+
+                <div class="tiles">
+                    <div class="tile">
+                        <div class="lbl">Corpus you'll need</div>
+                        <div class="val" data-out="needed">—</div>
+                        <div class="note" data-out="needed-note"></div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl">Expenses by then</div>
+                        <div class="val" data-out="expenses-then">—</div>
+                        <div class="note" data-out="expenses-note"></div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl">First-year withdrawal</div>
+                        <div class="val" data-out="swr">—</div>
+                        <div class="note">Of the corpus, in year one</div>
+                    </div>
+                </div>
+
+                <div class="verdict" data-out-block="note">
+                    <span class="v-icon" aria-hidden="true">ℹ️</span>
+                    <span data-out="note"></span>
+                </div>
+            </div>
+
+            <!-- ---- the four flavours ---- -->
+            <div class="chart-card">
+                <div class="chart-head">
+                    <h3>Four ways to call it</h3>
+                    <p>"Enough" is a choice, not a constant. Each of these is the same calculation against a different standard of living.</p>
+                </div>
+                <div class="table-scroll" style="margin-top:16px; max-height:none;">
+                    <table class="calc-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Spending</th>
+                                <th scope="col">Corpus needed</th>
+                                <th scope="col">Age</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Lean FIRE</th>
+                                <td data-out="lean-spend">—</td>
+                                <td data-out="lean-corpus">—</td>
+                                <td data-out="lean-age">—</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">FIRE</th>
+                                <td data-out="reg-spend">—</td>
+                                <td data-out="reg-corpus">—</td>
+                                <td data-out="reg-age">—</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Fat FIRE</th>
+                                <td data-out="fat-spend">—</td>
+                                <td data-out="fat-corpus">—</td>
+                                <td data-out="fat-age">—</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Coast FIRE</th>
+                                <td data-out="coast-spend">—</td>
+                                <td data-out="coast-corpus">—</td>
+                                <td data-out="coast-age">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="chart-head" style="margin-top:14px;">
+                    <span style="color:var(--muted); font-size:.86rem; line-height:1.6; display:block;">
+                        Lean is 70% of today's spending, Fat is 150%. <b style="color:var(--silver); font-weight:600;">Coast FIRE</b>
+                        is different in kind: it is the age at which you could stop investing
+                        entirely and still drift to a full retirement at
+                        <span data-out="coast-target">60</span> on growth alone.
+                    </span>
+                </p>
+            </div>
+
+            <div class="chart-card" id="chart">
+                <div class="chart-head">
+                    <h3>Your corpus against the target</h3>
+                    <p>The target climbs because your expenses inflate. Independence is where your corpus catches it. Hover, or focus the chart and use the arrow keys.</p>
+                </div>
+                <div class="chart-legend" data-legend></div>
+                <div class="chart-plot" data-plot></div>
+                <details class="table-view">
+                    <summary>Show the year-by-year numbers</summary>
+                    <div class="table-scroll" data-table></div>
+                </details>
+            </div>
+
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- METHOD ---------------- -->
+<section id="method">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">How this is worked out</span>
+        <h2 class="section-title">The assumptions, stated plainly.</h2>
+    </div>
+
+    <div class="panel">
+        <div class="panel__head"><h3>What the model does</h3></div>
+        <ul class="prose assumptions">
+            <li><b>The target is a drawdown, not a rule of thumb.</b> Rather than applying a fixed multiple like 25×, this works out the corpus that would exactly fund your inflating expenses from the retirement age until the age you tell it to plan to. That is why the target line rises: your expenses inflate faster than the shrinking retirement shortens.</li>
+            <li><b>Two different returns.</b> Money compounds at the pre-retirement rate while you are still earning, and at the post-retirement rate once you stop — portfolios usually get more defensive at that point. What actually drives the answer is the gap between the post-retirement return and inflation.</li>
+            <li><b>Contributions are monthly and rise once a year</b> by the step-up you set, at one twelfth of the annual rate per month.</li>
+            <li><b>The corpus is spent down to zero</b> at the age you plan to. It is not designed to leave an inheritance. If you want one, raise the "plan until" age or the target spending.</li>
+            <li><b>Returns are assumed to be smooth, and they are not.</b> This is the model's biggest simplification. A bad run in the first few years of retirement does far more damage than the same run later — sequence-of-returns risk — and no single-line projection can show that. Treat the age here as the optimistic edge of a range, and build in a margin.</li>
+            <li><b>No tax, no pension, no state benefits, no one-off inflows.</b> Withdrawals in retirement are usually taxable, so the real corpus needed is higher than the figure shown.</li>
+        </ul>
+    </div>
+
+    <p class="fine-print">
+        An illustration to think with, not a retirement plan or financial advice.
+        Nothing you type is sent anywhere — the whole thing runs in your browser.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- FAQ ---------------- -->
+<section id="faq" style="padding-top:20px;">
+<div class="container">
+    <div class="section-head">
+        <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq">
+        <details>
+            <summary>Why doesn't this just use the 4% rule?</summary>
+            <div class="faq-body">
+                <p>Because the 4% rule was derived for a 30-year retirement in a particular market's history, and early retirement is a much longer problem. Someone stopping at 45 and planning to 85 needs their money to last forty years, which is a different question from the one the rule answers.</p>
+                <p>Working the drawdown out directly also makes the assumptions visible instead of hiding them inside a constant. As it happens, with mainstream inputs the model lands close to 4% anyway — the "first-year withdrawal" figure above shows what rate your own numbers imply, which is a useful sanity check.</p>
+            </div>
+        </details>
+        <details>
+            <summary>What is Coast FIRE?</summary>
+            <div class="faq-body">
+                <p>The point where you can stop adding money. Your existing corpus, left alone to compound, would reach a normal retirement target by the traditional retirement age on its own. You still have to work to cover your living costs — but not to save. In practice it is the moment the pressure comes off: you can take the less lucrative job, go part-time, or start the thing you actually wanted to do.</p>
+                <p>It usually arrives many years before full FIRE, which is why it is worth knowing.</p>
+            </div>
+        </details>
+        <details>
+            <summary>The age it gives me seems far away. What moves it most?</summary>
+            <div class="faq-body">
+                <p>Your savings rate, by a wide margin — and it moves the answer from both ends at once. Spending less raises what you invest <em>and</em> lowers the corpus you need, because the target is a multiple of your spending. Try reducing the annual expenses figure by ten per cent and watch how much more the age moves than it does for a one-point change in the return.</p>
+                <p>The return assumption is the one people fiddle with most and the one they control least.</p>
+            </div>
+        </details>
+        <details>
+            <summary>How is this different from the FIRE engine in the Zinfai app?</summary>
+            <div class="faq-body">
+                <p>This page runs one smooth projection from numbers you type in. The Zinfai desktop app runs the same idea against your actual portfolio: real holdings across currencies and jurisdictions, income sources, milestones and debts, bucket strategies, withdrawal simulations, and scenarios side by side — so you are not re-typing your net worth from memory. <a href="/features#retire">See how the FIRE engine works</a>.</p>
+            </div>
+        </details>
+    </div>
+    <div class="btn-row" style="justify-content:center; margin-top:44px;">
+        <a class="btn" href="/download">Download Zinfai</a>
+        <a class="btn ghost" href="/calculators">All calculators</a>
+    </div>
+</div>
+</section>
+
+<site-footer></site-footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why doesn't this FIRE calculator use the 4% rule?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 4% rule was derived for a 30-year retirement in one market's history, while early retirement is a much longer problem — someone stopping at 45 and planning to 85 needs the money to last forty years. This calculator works the drawdown out directly instead, funding inflating expenses from the retirement age to the planning age, which makes the assumptions visible rather than hiding them inside a constant."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Coast FIRE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Coast FIRE is the point at which you can stop adding money to your investments. The corpus you already have, left to compound on its own, would reach a normal retirement target by the traditional retirement age. You still need to work to cover living costs, but not to save — which usually arrives many years before full financial independence."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What has the biggest effect on my FIRE age?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your savings rate, by a wide margin, because it moves the answer from both ends at once: spending less raises the amount you invest and simultaneously lowers the corpus you need, since the target is a multiple of your spending. The expected return is the input people adjust most and control least."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+/* ---------------------------------------------------------------------
+   FIRE model
+   ---------------------------------------------------------------------
+   Two curves, one crossing.
+
+     corpus(a)   — a month-by-month projection of what you will have at
+                   each future age, given contributions and a step-up.
+     required(a) — the corpus that would exactly fund inflating expenses
+                   from age a until the planning age, at the post-
+                   retirement return. This is the present value at age a
+                   of a growing annuity-due, so it is a real drawdown
+                   rather than a fixed multiple like 25x.
+
+   FIRE age is the first age where corpus(a) >= required(a). Lean and Fat
+   are the same crossing against 70% and 150% of today's spending.
+   --------------------------------------------------------------------- */
+(function () {
+    "use strict";
+
+    const chart = Calc.chart("#chart");
+    const MAX_AGE = 100;
+    let latest = null;
+
+    function build(v) {
+        const age = Math.round(v.age);
+        const life = Math.max(age + 1, Math.round(v.life));
+        const inf = v.infl / 100;
+        const post = v.post / 100;
+        const pre = v.pre / 100;
+        const i = pre / 12;
+
+        /* The real return is what actually decides the target: a portfolio
+           earning 8% against 6% inflation is a 1.9% portfolio in the only
+           terms that matter. */
+        const g = (1 + post) / (1 + inf) - 1;
+
+        function required(a, mult) {
+            const N = life - a;
+            if (N <= 0) return 0;
+            const spendThen = v.expenses * mult * Math.pow(1 + inf, a - age);
+            if (Math.abs(g) < 1e-9) return spendThen * N;
+            /* Annuity-due: the first year's spending is withdrawn on day one. */
+            return spendThen * ((1 - Math.pow(1 + g, -N)) / g) * (1 + g);
+        }
+
+        const rows = [];
+        let corpus = v.corpus;
+        let monthly = v.monthly;
+        const stop = Math.min(MAX_AGE, life);
+
+        for (let a = age; a <= stop; a++) {
+            rows.push({ age: a, corpus: corpus });
+            for (let m = 0; m < 12; m++) corpus = (corpus + monthly) * (1 + i);
+            monthly *= (1 + v.stepup / 100);
+        }
+
+        function crossing(mult) {
+            for (let k = 0; k < rows.length; k++) {
+                if (rows[k].corpus >= required(rows[k].age, mult)) return rows[k];
+            }
+            return null;
+        }
+
+        /* Coast: stop contributing now and let growth alone carry you to a
+           full retirement at the traditional age. */
+        const retire = Math.round(v.retire);
+        const coastNeed = required(retire, 1);
+        let coast = null;
+        for (let k = 0; k < rows.length; k++) {
+            const a = rows[k].age;
+            if (a > retire) break;
+            if (rows[k].corpus * Math.pow(1 + pre, retire - a) >= coastNeed) { coast = rows[k]; break; }
+        }
+
+        return { rows: rows, required: required, crossing: crossing, coast: coast,
+                 coastNeed: coastNeed, age: age, life: life, retire: retire, inf: inf };
+    }
+
+    function compute(v) {
+        latest = v;
+        const m = build(v);
+        const hit = m.crossing(1);
+
+        /* ---- headline ---- */
+        if (hit) {
+            const away = hit.age - m.age;
+            Calc.out("fire-age", "Age " + hit.age);
+            Calc.out("summary", away === 0
+                ? "You are already there — your corpus covers the rest of your life at today's spending."
+                : "That is " + away + (away === 1 ? " year" : " years") + " from now, in " +
+                  (new Date().getFullYear() + away) + ".");
+            Calc.out("needed", Calc.money(m.required(hit.age, 1)));
+            Calc.out("needed-note", "At age " + hit.age + ", to last until " + m.life);
+
+            const spendThen = v.expenses * Math.pow(1 + m.inf, hit.age - m.age);
+            Calc.out("expenses-then", Calc.money(spendThen));
+            Calc.out("expenses-note", Calc.money(v.expenses) + " today at " + Calc.pct(v.infl) + " inflation");
+
+            const need = m.required(hit.age, 1);
+            Calc.out("swr", need > 0 ? Calc.pct((spendThen / need) * 100, 2) : "—");
+            Calc.out("note",
+                "This plan spends the corpus down to nothing by age " + m.life +
+                ". It assumes steady returns, so treat age " + hit.age +
+                " as the optimistic end of a range — a poor first few years after you stop earning does more damage than the same run later.");
+        } else {
+            Calc.out("fire-age", "Not yet");
+            Calc.out("summary",
+                "On these numbers the corpus never catches the target before age " + m.life +
+                ". Raising what you invest, or lowering what you spend, moves both curves at once.");
+            Calc.out("needed", "—");
+            Calc.out("needed-note", "");
+            Calc.out("expenses-then", "—");
+            Calc.out("expenses-note", "");
+            Calc.out("swr", "—");
+            Calc.out("note",
+                "Spending is the strongest lever here: it raises the amount you can invest and lowers the corpus you need at the same time.");
+        }
+
+        /* ---- the four flavours ---- */
+        const flavours = [
+            { key: "lean", mult: 0.7 },
+            { key: "reg",  mult: 1.0 },
+            { key: "fat",  mult: 1.5 }
+        ];
+        flavours.forEach(function (f) {
+            const r = m.crossing(f.mult);
+            Calc.out(f.key + "-spend", Calc.money(v.expenses * f.mult) + " a year");
+            Calc.out(f.key + "-corpus", r ? Calc.money(m.required(r.age, f.mult)) : "—");
+            Calc.out(f.key + "-age", r ? String(r.age) : "Not by " + m.life);
+        });
+
+        Calc.out("coast-target", String(m.retire));
+        Calc.out("coast-spend", Calc.money(v.expenses) + " a year, from " + m.retire);
+        Calc.out("coast-corpus", Calc.money(m.coastNeed));
+        Calc.out("coast-age", m.coast
+            ? (m.coast.age <= m.age ? "Already there" : String(m.coast.age))
+            : "Not by " + m.retire);
+
+        /* ---- chart ----
+           Trimmed to a readable window: far enough past the crossing to
+           show it clearly, never so far that the target curve's exponential
+           tail flattens everything else. */
+        const endAge = Math.min(
+            m.rows[m.rows.length - 1].age,
+            Math.max(hit ? hit.age + 4 : 0, m.age + 15, m.retire)
+        );
+        const rows = m.rows.filter(function (r) { return r.age <= endAge; });
+
+        const hitIndex = hit ? rows.findIndex(function (r) { return r.age === hit.age; }) : -1;
+
+        chart.render({
+            type: "line",
+            x: rows.map(function (r) { return String(r.age); }),
+            xTitle: "Age",
+            tableX: "Age",
+            xLabel: function (idx) { return "Age " + rows[idx].age; },
+            aria: "Line chart comparing projected corpus against the corpus required to retire, from age " +
+                  m.age + " to " + endAge + ". The same figures are in the data table below.",
+            markers: hitIndex >= 0 ? [{ i: hitIndex, label: "FIRE at " + hit.age }] : [],
+            series: [
+                {
+                    name: "Your corpus", color: "var(--series-1)", kind: "area",
+                    values: rows.map(function (r) { return r.corpus; })
+                },
+                {
+                    name: "Corpus needed to retire", color: "var(--series-2)",
+                    values: rows.map(function (r) { return m.required(r.age, 1); })
+                }
+            ]
+        });
+    }
+
+    Calc.form("#controls", compute);
+    Calc.onCurrencyChange(function () { if (latest) compute(latest); });
+})();
+</script>
+
+</body>
+</html>

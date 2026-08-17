@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rent vs Buy Calculator — Should I Buy a Home or Keep Renting? | Zinfai</title>
+<meta name="description" content="Free rent vs buy calculator. Compares your net worth after buying against renting and investing the difference — including stamp duty, maintenance, selling costs, rent inflation and the opportunity cost of your down payment. Works in 8 currencies.">
+<link rel="canonical" href="https://www.zinfai.com/calculators/rent-vs-buy">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zinfai">
+<meta property="og:title" content="Rent vs Buy Calculator — should I buy a home or keep renting?">
+<meta property="og:description" content="A fair comparison: net worth if you buy against net worth if you rent and invest the difference, with every cost counted. Free and private.">
+<meta property="og:url" content="https://www.zinfai.com/calculators/rent-vs-buy">
+<meta property="og:image" content="https://www.zinfai.com/images/zinfai-lockup.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="apple-touch-icon" href="/images/zinfai-logo-small.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<link rel="stylesheet" href="/css/calculators.css?v=2">
+<script src="/js/site.js?v=3"></script>
+<script src="/js/calc.js?v=2"></script>
+</head>
+
+<body>
+
+<site-nav active="calculators"></site-nav>
+
+<!-- ---------------- PAGE HEAD ---------------- -->
+<section class="page-head">
+<div class="container">
+    <span class="eyebrow">Calculator</span>
+    <h1>Rent vs Buy</h1>
+    <p>
+        "Rent is money down the drain" ignores what your down payment could have
+        earned instead. This compares the honest version: your net worth if you buy,
+        against your net worth if you rent and invest every rupee you didn't spend on
+        the house.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- CALCULATOR ---------------- -->
+<section style="padding-top:34px;">
+<div class="container">
+
+    <div class="calc-toolbar">
+        <label class="tb-label" for="cur">Show amounts in</label>
+        <select class="calc-select" id="cur" data-currency></select>
+    </div>
+
+    <div class="calc-layout">
+
+        <!-- ---- controls ---- -->
+        <form class="calc-panel" id="controls" onsubmit="return false;">
+            <h2>The two options</h2>
+            <p class="panel-note">Compare the same home, bought or rented.</p>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="price">Property price</label>
+                    <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                        <input type="number" id="price" data-field="price" value="12000000" min="100000" max="10000000000" step="100000">
+                    </span>
+                </div>
+                <input type="range" data-log data-range="price" min="1000000" max="100000000" step="500000" value="12000000" aria-label="Property price slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="rent">Monthly rent
+                        <span class="hint">For the same home</span>
+                    </label>
+                    <span class="ctrl-input wide"><span class="unit" data-cur-symbol>₹</span>
+                        <input type="number" id="rent" data-field="rent" value="40000" min="1000" max="10000000" step="1000">
+                    </span>
+                </div>
+                <input type="range" data-log data-range="rent" min="5000" max="500000" step="1000" value="40000" aria-label="Monthly rent slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="down">Down payment</label>
+                    <span class="ctrl-input">
+                        <input type="number" id="down" data-field="down" value="20" min="5" max="100" step="1">
+                        <span class="unit suffix">%</span>
+                    </span>
+                </div>
+                <input type="range" data-range="down" min="5" max="100" step="1" value="20" aria-label="Down payment percentage slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="rate">Loan interest rate</label>
+                    <span class="ctrl-input">
+                        <input type="number" id="rate" data-field="rate" value="8.5" min="0.1" max="30" step="0.05">
+                        <span class="unit suffix">%</span>
+                    </span>
+                </div>
+                <input type="range" data-range="rate" min="1" max="18" step="0.05" value="8.5" aria-label="Loan interest rate slider">
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-head">
+                    <label for="years">How long you'll stay</label>
+                    <span class="ctrl-input">
+                        <input type="number" id="years" data-field="years" value="15" min="1" max="40" step="1">
+                        <span class="unit suffix">yrs</span>
+                    </span>
+                </div>
+                <input type="range" data-range="years" min="1" max="35" step="1" value="15" aria-label="How long you will stay slider">
+            </div>
+
+            <details class="ctrl-more">
+                <summary>More assumptions</summary>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="tenure">Loan tenure</label>
+                        <span class="ctrl-input">
+                            <input type="number" id="tenure" data-field="tenure" value="20" min="1" max="40" step="1">
+                            <span class="unit suffix">yrs</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="tenure" min="5" max="35" step="1" value="20" aria-label="Loan tenure slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="app">Property appreciation
+                            <span class="hint">Annual, after the purchase</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="app" data-field="app" value="7" min="-5" max="25" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="app" min="0" max="15" step="0.5" value="7" aria-label="Property appreciation slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="inv">Return on investments
+                            <span class="hint">What the renter earns on the money not spent</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="inv" data-field="inv" value="10" min="0" max="30" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="inv" min="2" max="20" step="0.5" value="10" aria-label="Investment return slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="rentinc">Rent increase
+                            <span class="hint">Each year</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="rentinc" data-field="rentinc" value="7" min="0" max="25" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="rentinc" min="0" max="15" step="0.5" value="7" aria-label="Annual rent increase slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="buycost">Cost of buying
+                            <span class="hint">Stamp duty, registration, legal — % of price</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="buycost" data-field="buycost" value="7" min="0" max="25" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="buycost" min="0" max="20" step="0.5" value="7" aria-label="Cost of buying slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="own">Yearly ownership cost
+                            <span class="hint">Maintenance, society dues, property tax, insurance — % of value</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="own" data-field="own" value="1" min="0" max="10" step="0.1">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="own" min="0" max="5" step="0.1" value="1" aria-label="Yearly ownership cost slider">
+                </div>
+
+                <div class="ctrl">
+                    <div class="ctrl-head">
+                        <label for="sell">Cost of selling
+                            <span class="hint">Brokerage and transfer — % of value</span>
+                        </label>
+                        <span class="ctrl-input">
+                            <input type="number" id="sell" data-field="sell" value="2" min="0" max="15" step="0.5">
+                            <span class="unit suffix">%</span>
+                        </span>
+                    </div>
+                    <input type="range" data-range="sell" min="0" max="10" step="0.5" value="2" aria-label="Cost of selling slider">
+                </div>
+
+                <button type="button" class="calc-reset" data-reset>Reset to defaults</button>
+            </details>
+        </form>
+
+        <!-- ---- results ---- -->
+        <div class="calc-results">
+
+            <div class="result-card">
+                <div class="hero-figure">
+                    <div class="lbl" data-out="hero-label">After 15 years</div>
+                    <div class="val" data-out="verdict">—</div>
+                    <p class="sub" data-out="summary"></p>
+                </div>
+
+                <div class="tiles">
+                    <div class="tile">
+                        <div class="lbl"><span class="key" style="--k:var(--series-1);"></span>If you buy</div>
+                        <div class="val" data-out="buy-nw">—</div>
+                        <div class="note" data-out="buy-note"></div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl"><span class="key" style="--k:var(--series-3);"></span>If you rent</div>
+                        <div class="val" data-out="rent-nw">—</div>
+                        <div class="note" data-out="rent-note"></div>
+                    </div>
+                    <div class="tile">
+                        <div class="lbl">Break-even</div>
+                        <div class="val sm" data-out="breakeven">—</div>
+                        <div class="note">When buying pulls ahead</div>
+                    </div>
+                </div>
+
+                <div class="verdict" data-out-block="yield">
+                    <span class="v-icon" aria-hidden="true">ℹ️</span>
+                    <span data-out="yield"></span>
+                </div>
+            </div>
+
+            <div class="chart-card" id="chart">
+                <div class="chart-head">
+                    <h3>Net worth, either way</h3>
+                    <p>Both paths spend exactly the same amount each month. The renter invests whatever the buyer is paying above the rent — so what you are comparing is where the money ends up, not how much of it there is. Hover, or focus the chart and use the arrow keys.</p>
+                </div>
+                <div class="chart-legend" data-legend></div>
+                <div class="chart-plot" data-plot></div>
+                <details class="table-view">
+                    <summary>Show the year-by-year numbers</summary>
+                    <div class="table-scroll" data-table></div>
+                </details>
+            </div>
+
+            <div class="chart-card" id="outflow">
+                <div class="chart-head">
+                    <h3>What each option costs you each month</h3>
+                    <p>Buying starts more expensive and stays flat; rent starts cheaper and climbs. The year the orange line crosses is when renting stops being the cheaper monthly option.</p>
+                </div>
+                <div class="chart-legend" data-legend></div>
+                <div class="chart-plot" data-plot></div>
+                <details class="table-view">
+                    <summary>Show the year-by-year numbers</summary>
+                    <div class="table-scroll" data-table></div>
+                </details>
+            </div>
+
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- METHOD ---------------- -->
+<section id="method">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">How this is worked out</span>
+        <h2 class="section-title">The assumptions, stated plainly.</h2>
+    </div>
+
+    <div class="panel">
+        <div class="panel__head"><h3>What makes this a fair comparison</h3></div>
+        <ul class="prose assumptions">
+            <li><b>Both paths spend the same money.</b> This is the whole trick. The renter starts by investing what the buyer spent on the down payment and the stamp duty, and then every month invests the difference between the buyer's outflow and the rent. When rent eventually overtakes the EMI, the renter draws that shortfall back out of the portfolio. Neither side is quietly allowed to spend less.</li>
+            <li><b>Buying net worth = property value − outstanding loan − cost of selling.</b> The selling cost is subtracted at every point on the chart, not just at the end, so the line always answers "what would I walk away with if I sold today".</li>
+            <li><b>Renting net worth = the portfolio.</b> Nothing else — a renter owns no property.</li>
+            <li><b>Ownership costs scale with the property's value</b>, not the original price, since maintenance and property tax generally track the asset.</li>
+            <li><b>No tax anywhere.</b> No relief on loan interest or principal, no capital gains on the sale of the house, and none on the renter's portfolio. In jurisdictions with generous mortgage interest relief this understates the case for buying; capital gains on the investment portfolio pushes the other way.</li>
+            <li><b>Appreciation and returns are smooth.</b> Property is the less liquid and less diversified of the two assets, and its price is far harder to observe honestly than a portfolio's. A percentage point of assumed appreciation swings the answer a long way — try it.</li>
+            <li><b>The things this cannot price.</b> Security of tenure, the freedom to renovate, not being asked to move, the discipline a forced monthly payment imposes, the cost and disruption of moving every few years. They belong in the decision; they just aren't numbers.</li>
+        </ul>
+    </div>
+
+    <p class="fine-print">
+        An illustration, not property or investment advice. Nothing you type is sent
+        anywhere — the whole thing runs in your browser.
+    </p>
+</div>
+</section>
+
+<!-- ---------------- FAQ ---------------- -->
+<section id="faq" style="padding-top:20px;">
+<div class="container">
+    <div class="section-head">
+        <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq">
+        <details>
+            <summary>What single number decides this?</summary>
+            <div class="faq-body">
+                <p>The rent-to-price ratio — annual rent divided by the property price, shown above as the rental yield. It sets how much the renter has spare to invest each month. Where yields are low, renting frees up a lot of money and buying has to make it back on appreciation alone. Where yields are high, the buyer's outflow is barely above the rent, there is little left to invest, and buying wins quickly.</p>
+                <p>The second decider is the gap between property appreciation and your investment return. Property is a leveraged bet, so a small appreciation edge goes further than it looks — but leverage cuts both ways.</p>
+            </div>
+        </details>
+        <details>
+            <summary>How long do I need to stay for buying to make sense?</summary>
+            <div class="faq-body">
+                <p>Long enough to earn back the buying and selling costs, which together are often a tenth of the price. That is the single most common mistake: buying with a three-year horizon. Set "how long you'll stay" to three years and look at the gap — the transaction costs alone usually settle it.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Isn't rent just money down the drain?</summary>
+            <div class="faq-body">
+                <p>Rent buys you somewhere to live for a year, the same way loan interest buys you the use of someone else's money. Neither builds equity. On a long loan the interest paid in the early years is often close to the rent on the same property — and unlike rent, it comes with stamp duty, maintenance and a large illiquid position in a single asset on one street.</p>
+                <p>Buying can absolutely be the better decision. It is just not automatically the better decision, which is what the phrase implies.</p>
+            </div>
+        </details>
+        <details>
+            <summary>Where does this fit with the rest of my finances?</summary>
+            <div class="faq-body">
+                <p>A house is usually the largest single position anyone holds, and a loan is usually the largest liability. Zinfai tracks both — property as an asset, the loan as a liability — so your net worth reflects them, and the FIRE engine accounts for the debt you are still servicing. <a href="/features#track">See how tracking works</a>.</p>
+            </div>
+        </details>
+    </div>
+    <div class="btn-row" style="justify-content:center; margin-top:44px;">
+        <a class="btn" href="/download">Download Zinfai</a>
+        <a class="btn ghost" href="/calculators">All calculators</a>
+    </div>
+</div>
+</section>
+
+<site-footer></site-footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What single number decides whether to rent or buy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The rent-to-price ratio, or rental yield — annual rent divided by property price. It determines how much a renter has spare to invest each month. Where yields are low, renting frees up a lot of money and buying must make it back on appreciation alone. Where yields are high, the buyer's outflow is barely above the rent and buying wins quickly. The second factor is the gap between property appreciation and investment returns."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long do I need to stay in a home for buying to make sense?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Long enough to earn back the buying and selling costs, which together often come to about a tenth of the property price. Buying with a short horizon of around three years is the most common mistake, because transaction costs alone usually outweigh any appreciation over that period."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is paying rent just throwing money away?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Rent buys a year of housing in the same way that loan interest buys the use of someone else's money — neither builds equity. In the early years of a long loan, the interest paid is often close to the rent on the same property, and it comes alongside stamp duty, maintenance and a large illiquid position in a single asset. Buying can be the better decision, but it is not automatically so."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+/* ---------------------------------------------------------------------
+   Rent vs Buy
+   ---------------------------------------------------------------------
+   The comparison is only fair if both paths consume the same money, so
+   that is enforced rather than assumed:
+
+     BUY  — pays the down payment and the buying costs up front, then the
+            EMI plus ownership costs every month. Net worth is the
+            property less the outstanding loan less what it would cost to
+            sell today.
+     RENT — invests the identical up-front sum on day one, pays rent, and
+            invests the buyer's monthly outflow minus that rent. When rent
+            climbs past the buyer's outflow the difference is negative and
+            comes back out of the portfolio.
+
+   With outflows held equal, the only thing being compared is where the
+   money ended up — which is the question people actually mean to ask.
+   --------------------------------------------------------------------- */
+(function () {
+    "use strict";
+
+    const nwChart = Calc.chart("#chart");
+    const outChart = Calc.chart("#outflow");
+    let latest = null;
+
+    function simulate(v) {
+        const years = Math.max(1, Math.round(v.years));
+        const price = v.price;
+        const loanRate = v.rate / 100 / 12;
+        const loanMonths = Math.max(1, Math.round(v.tenure) * 12);
+
+        let loan = price * (1 - v.down / 100);
+        const emi = Calc.payment(loan, loanRate, loanMonths);
+
+        const upfront = price * (v.down / 100) + price * (v.buycost / 100);
+
+        let propertyValue = price;
+        let portfolio = upfront;          /* the renter invests it instead */
+        let rent = v.rent;
+
+        const appM = v.app / 100 / 12;
+        const invM = v.inv / 100 / 12;
+        const ownM = v.own / 100 / 12;
+
+        const rows = [];
+        let yearBuyOut = 0, yearRentOut = 0;
+
+        for (let m = 1; m <= years * 12; m++) {
+            let buyOutflow = 0;
+
+            if (loan > 0.005) {
+                const interest = loan * loanRate;
+                let principal = emi - interest;
+                if (principal > loan) principal = loan;
+                if (principal > 0) {
+                    loan -= principal;
+                    buyOutflow += interest + principal;
+                } else {
+                    buyOutflow += interest;     /* pathological rate: interest only */
+                }
+            }
+
+            /* Ownership costs track the current value, not the purchase price. */
+            buyOutflow += propertyValue * ownM;
+            propertyValue *= (1 + appM);
+
+            /* Positive: the buyer spends more, so the renter invests it.
+               Negative: rent has overtaken the EMI, so the renter draws it
+               back out. Either way both sides spend the same total. */
+            portfolio = (portfolio + (buyOutflow - rent)) * (1 + invM);
+
+            yearBuyOut += buyOutflow;
+            yearRentOut += rent;
+
+            if (m % 12 === 0) {
+                rows.push({
+                    year: m / 12,
+                    buy: propertyValue * (1 - v.sell / 100) - loan,
+                    rent: portfolio,
+                    buyMonthly: yearBuyOut / 12,
+                    rentMonthly: yearRentOut / 12,
+                    propertyValue: propertyValue,
+                    loan: loan
+                });
+                yearBuyOut = 0; yearRentOut = 0;
+                rent *= (1 + v.rentinc / 100);
+            }
+        }
+
+        return { rows: rows, emi: emi, upfront: upfront, years: years };
+    }
+
+    function compute(v) {
+        latest = v;
+        const sim = simulate(v);
+        const rows = sim.rows;
+        const last = rows[rows.length - 1];
+        const gap = last.buy - last.rent;
+        const buyWins = gap >= 0;
+
+        Calc.out("hero-label", "After " + sim.years + (sim.years === 1 ? " year" : " years"));
+        Calc.out("verdict", (buyWins ? "Buying" : "Renting") + " wins");
+        Calc.out("summary",
+            "By " + Calc.money(Math.abs(gap)) + " — about " +
+            Calc.pct(Math.abs(gap) / Math.max(1, Math.abs(buyWins ? last.rent : last.buy)) * 100, 0) +
+            " " + (buyWins ? "more than renting and investing the difference." :
+                             "more than buying, once the down payment is invested instead."));
+
+        Calc.out("buy-nw", Calc.money(last.buy));
+        Calc.out("buy-note",
+            "Home worth " + Calc.compact(last.propertyValue) +
+            (last.loan > 1 ? ", less " + Calc.compact(last.loan) + " still owed" : ", loan cleared"));
+        Calc.out("rent-nw", Calc.money(last.rent));
+        Calc.out("rent-note", "A portfolio, starting with the " + Calc.compact(sim.upfront) + " not spent on buying");
+
+        const be = rows.find(function (r) { return r.buy >= r.rent; });
+        Calc.out("breakeven", be
+            ? "Year " + be.year
+            : "Not within " + sim.years + " yrs");
+
+        const yieldPct = v.price > 0 ? (v.rent * 12 / v.price) * 100 : 0;
+        Calc.out("yield",
+            "This home yields " + Calc.pct(yieldPct, 2) + " in rent — " + Calc.money(v.rent) +
+            " a month against a " + Calc.compact(v.price) + " price. Your EMI would be " +
+            Calc.money(sim.emi) + ", and you would need " + Calc.money(sim.upfront) +
+            " up front. The lower the yield, the more the renter has left over to invest, and the harder buying has to work.");
+
+        nwChart.render({
+            type: "line",
+            x: rows.map(function (r) { return String(r.year); }),
+            xTitle: "Year",
+            tableX: "Year",
+            xLabel: function (i) { return "Year " + rows[i].year; },
+            aria: "Line chart comparing net worth after buying against net worth after renting and investing the difference, over " +
+                  sim.years + " years. The same figures are in the data table below.",
+            markers: be ? [{ i: rows.indexOf(be), label: "Buying pulls ahead" }] : [],
+            series: [
+                { name: "If you buy",  color: "var(--series-1)", values: rows.map(function (r) { return r.buy; }) },
+                { name: "If you rent", color: "var(--series-3)", values: rows.map(function (r) { return r.rent; }) }
+            ]
+        });
+
+        const cheaper = rows.find(function (r) { return r.rentMonthly >= r.buyMonthly; });
+        outChart.render({
+            type: "line",
+            x: rows.map(function (r) { return String(r.year); }),
+            xTitle: "Year",
+            tableX: "Year",
+            xLabel: function (i) { return "Year " + rows[i].year; },
+            aria: "Line chart comparing average monthly outflow when buying against monthly rent, over " +
+                  sim.years + " years. The same figures are in the data table below.",
+            markers: cheaper ? [{ i: rows.indexOf(cheaper), label: "Rent overtakes the EMI" }] : [],
+            series: [
+                { name: "Owning, per month", color: "var(--series-1)", values: rows.map(function (r) { return r.buyMonthly; }) },
+                { name: "Rent, per month",   color: "var(--series-2)", values: rows.map(function (r) { return r.rentMonthly; }) }
+            ]
+        });
+    }
+
+    Calc.form("#controls", compute);
+    Calc.onCurrencyChange(function () { if (latest) compute(latest); });
+})();
+</script>
+
+</body>
+</html>

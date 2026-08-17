@@ -1,0 +1,423 @@
+/* =====================================================================
+   Zinfai — financial calculators
+   Layered on top of styles.css: this file adds only what the calculators
+   need (control panel, result figures, chart chrome, data tables).
+   ---------------------------------------------------------------------
+   Chart colours are NOT hand-picked. The three series slots below were
+   snapped from the brand hues onto steps that clear every gate of the
+   data-viz validator against this site's own dark chart surface:
+
+     node scripts/validate_palette.js "#3b94ee,#e2620f,#199e70" \
+          --mode dark --surface "#161a22" --pairs all
+     → lightness band PASS · chroma floor PASS · CVD separation PASS
+       (worst all-pairs ΔE 11.3, protan) · normal-vision ΔE 20.5 PASS
+       · contrast vs surface PASS
+
+   The raw brand steps (#4aa3ff / #f97316 / #4caf2f) FAIL that run twice
+   over — two hues sit above the dark lightness band, and orange↔green
+   collapse to ΔE 5.9 under deuteranopia. Hues are held, lightness moved.
+   Re-run the validator before changing any --series-* value.
+   ===================================================================== */
+
+:root{
+    /* Opaque chart surface. Must stay opaque: the 2px gaps between stacked
+       segments and the rings around markers are painted in this exact
+       colour, so a translucent value would let marks show through. It is
+       also the surface the palette above was validated against. */
+    --chart-surface:#161a22;
+
+    --series-1:#3b94ee;   /* invested / principal / net worth if you buy   */
+    --series-2:#e2620f;   /* returns / interest / the FIRE target line     */
+    --series-3:#199e70;   /* net worth if you rent and invest the rest     */
+
+    --grid:#2a3140;       /* hairline gridline, one step off the surface   */
+    --axis:#3a4354;       /* baseline / axis rule                          */
+    --ink-muted:#8b95a7;  /* axis and tick text                            */
+}
+
+/* ---------------------------------------------------------------------
+   LAYOUT — controls on the left, results and charts on the right
+   --------------------------------------------------------------------- */
+.calc-layout{
+    display:grid;
+    grid-template-columns:minmax(0,360px) minmax(0,1fr);
+    gap:28px;
+    align-items:start;
+}
+@media(max-width:980px){
+    .calc-layout{ grid-template-columns:1fr; }
+}
+
+.calc-panel{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:26px 24px;
+    position:sticky;
+    top:88px;
+}
+@media(max-width:980px){
+    .calc-panel{ position:static; }
+}
+.calc-panel h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.12rem;
+    margin-bottom:4px;
+}
+.calc-panel .panel-note{
+    color:var(--muted);
+    font-size:.88rem;
+    line-height:1.6;
+    margin-bottom:22px;
+}
+
+.calc-results{ display:flex; flex-direction:column; gap:24px; min-width:0; }
+
+/* ---------------------------------------------------------------------
+   CONTROLS — a number field and a slider that drive the same value
+   --------------------------------------------------------------------- */
+.ctrl{ margin-bottom:20px; }
+.ctrl:last-child{ margin-bottom:0; }
+.ctrl-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:12px; margin-bottom:8px;
+}
+.ctrl-head label{
+    font-size:.9rem; color:var(--silver); font-weight:500; line-height:1.35;
+}
+.ctrl-head .hint{
+    display:block; font-weight:400; font-size:.78rem; color:var(--muted); margin-top:2px;
+}
+
+.ctrl-input{
+    display:inline-flex; align-items:center;
+    background:rgba(0,0,0,.28);
+    border:1px solid var(--border-strong);
+    border-radius:10px;
+    padding:0 10px;
+    transition:border-color .2s, box-shadow .2s;
+    flex:none;
+}
+.ctrl-input:focus-within{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-glow);
+}
+.ctrl-input .unit{
+    color:var(--muted); font-size:.85rem; flex:none; user-select:none;
+}
+.ctrl-input .unit.suffix{ margin-left:2px; }
+.ctrl-input input{
+    width:7.5ch;
+    border:0; background:transparent; color:#fff;
+    font:inherit; font-size:.95rem; font-weight:600;
+    font-variant-numeric:tabular-nums;
+    padding:8px 4px;
+    text-align:right;
+    -moz-appearance:textfield;
+}
+.ctrl-input input:focus{ outline:none; }
+.ctrl-input input::-webkit-outer-spin-button,
+.ctrl-input input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.ctrl-input.wide input{ width:10ch; }
+
+/* Slider. Track is a lighter step of the accent ramp so the filled portion
+   reads against it without a second hue. */
+input[type=range]{
+    -webkit-appearance:none; appearance:none;
+    width:100%; height:4px; margin:0;
+    border-radius:999px;
+    background:linear-gradient(
+        to right,
+        var(--accent) 0%, var(--accent) var(--fill,50%),
+        rgba(255,255,255,.12) var(--fill,50%), rgba(255,255,255,.12) 100%);
+    cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:16px; height:16px; border-radius:50%;
+    background:#fff;
+    border:0;
+    box-shadow:0 2px 6px rgba(0,0,0,.55);
+    cursor:grab;
+}
+input[type=range]::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%;
+    background:#fff; border:0;
+    box-shadow:0 2px 6px rgba(0,0,0,.55);
+    cursor:grab;
+}
+input[type=range]:focus-visible{ outline:2px solid var(--accent-2); outline-offset:4px; }
+
+/* Segmented choice (loan tenure unit, comparison horizon, …) */
+.seg{
+    display:inline-flex; padding:3px;
+    background:rgba(0,0,0,.28);
+    border:1px solid var(--border-strong);
+    border-radius:10px;
+    gap:2px;
+}
+.seg button{
+    font:inherit; font-size:.85rem; font-weight:600;
+    color:var(--muted);
+    background:none; border:0; border-radius:7px;
+    padding:6px 13px; cursor:pointer;
+    transition:.2s;
+}
+.seg button:hover{ color:#fff; }
+.seg button[aria-pressed="true"]{
+    background:var(--btn-fill); color:var(--accent-ink);
+}
+
+/* Collapsible block of secondary assumptions */
+.ctrl-more{
+    margin-top:22px; padding-top:20px; border-top:1px solid var(--border);
+}
+.ctrl-more > summary{
+    cursor:pointer; list-style:none;
+    font-size:.88rem; font-weight:600; color:var(--accent-2);
+    display:flex; align-items:center; gap:7px;
+    margin-bottom:2px;
+}
+.ctrl-more > summary::-webkit-details-marker{ display:none; }
+.ctrl-more > summary::before{
+    content:"+"; font-size:1.05rem; line-height:1; width:12px;
+}
+.ctrl-more[open] > summary::before{ content:"–"; }
+.ctrl-more[open] > summary{ margin-bottom:20px; }
+
+.calc-reset{
+    background:none; border:0; padding:0; margin-top:20px;
+    font:inherit; font-size:.85rem; color:var(--muted);
+    text-decoration:underline; cursor:pointer;
+}
+.calc-reset:hover{ color:var(--accent-2); }
+
+/* ---------------------------------------------------------------------
+   RESULTS — one hero figure per calculator, then supporting stat tiles
+   --------------------------------------------------------------------- */
+.result-card{
+    background:
+        radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 58%),
+        var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:30px 30px 26px;
+}
+.hero-figure{ margin-bottom:24px; }
+.hero-figure .lbl{
+    color:var(--muted); font-size:.9rem; margin-bottom:6px;
+}
+/* Proportional figures, brand UI sans — never tabular-nums at this size,
+   which makes a number like 121 look loose. */
+.hero-figure .val{
+    font-size:clamp(2.4rem,5.2vw,3.4rem);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:-.015em;
+    background:var(--brand-grad);
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent; -webkit-text-fill-color:transparent;
+}
+.hero-figure .sub{
+    color:var(--silver); font-size:.98rem; line-height:1.6; margin-top:10px;
+}
+.hero-figure .sub b{ color:#fff; font-weight:600; }
+
+.tiles{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:14px;
+}
+.tile{
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:16px 18px;
+}
+.tile .lbl{
+    color:var(--muted); font-size:.82rem; line-height:1.4;
+    display:flex; align-items:center; gap:7px;
+}
+/* The colour key that ties a tile to its series in the chart. Identity
+   lives in this swatch, never in the text colour. */
+.tile .key{
+    width:10px; height:10px; border-radius:3px; flex:none;
+    background:var(--k,var(--accent));
+}
+.tile .val{
+    font-size:1.42rem; font-weight:600; margin-top:7px; line-height:1.2;
+}
+.tile .val.sm{ font-size:1.15rem; }
+.tile .note{ color:var(--muted); font-size:.78rem; margin-top:4px; line-height:1.45; }
+
+/* Verdict strip — the one-line answer for the comparison calculators */
+.verdict{
+    display:flex; gap:13px; align-items:flex-start;
+    border-radius:var(--radius-sm);
+    padding:15px 17px;
+    margin-top:22px;
+    font-size:.96rem; line-height:1.65;
+    background:rgba(31,122,224,.09);
+    border:1px solid rgba(31,122,224,.32);
+    color:var(--silver);
+}
+.verdict.good{ background:rgba(12,163,12,.10); border-color:rgba(12,163,12,.34); }
+.verdict.warn{ background:rgba(250,178,25,.09); border-color:rgba(250,178,25,.32); }
+.verdict .v-icon{ flex:none; font-size:1.05rem; line-height:1.5; }
+.verdict b{ color:#fff; font-weight:600; }
+
+/* Any display: rule in this file outranks the browser's [hidden]{display:none},
+   so a block toggled with .hidden = true would keep its box and render empty.
+   Restate it here, once, with enough weight to win. */
+[hidden]{ display:none !important; }
+
+/* ---------------------------------------------------------------------
+   CHART
+   --------------------------------------------------------------------- */
+.chart-card{
+    background:var(--chart-surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:26px 26px 20px;
+}
+.chart-head{ margin-bottom:6px; }
+.chart-head h3{
+    font-family:'Space Grotesk',sans-serif; font-size:1.08rem; margin-bottom:4px;
+}
+.chart-head p{ color:var(--muted); font-size:.88rem; line-height:1.55; }
+
+/* Legend — always present for two or more series; mirrors the mark
+   (a rect for fills and bars, a short stroke for lines). */
+.chart-legend{
+    display:flex; flex-wrap:wrap; gap:8px 20px;
+    margin:16px 0 4px;
+}
+.chart-legend .item{
+    display:inline-flex; align-items:center; gap:8px;
+    color:var(--silver); font-size:.86rem;
+}
+.chart-legend .swatch{ width:11px; height:11px; border-radius:3px; background:var(--k); flex:none; }
+.chart-legend .swatch.line{ width:16px; height:2px; border-radius:2px; }
+
+/* The plot. Height is set on the <svg> in JS and includes the x-axis band,
+   so the card never grows a nested scrollbar around its own axis labels. */
+.chart-plot{ position:relative; }
+.chart-plot svg{ display:block; width:100%; overflow:visible; touch-action:pan-y; }
+.chart-plot svg:focus-visible{ outline:2px solid var(--accent-2); outline-offset:3px; border-radius:6px; }
+
+.axis-text{ fill:var(--ink-muted); font-size:11.5px; font-variant-numeric:tabular-nums; }
+.axis-title{ fill:var(--ink-muted); font-size:11px; letter-spacing:.04em; text-transform:uppercase; }
+.grid-line{ stroke:var(--grid); stroke-width:1; shape-rendering:crispEdges; }
+.axis-line{ stroke:var(--axis); stroke-width:1; shape-rendering:crispEdges; }
+.crosshair{ stroke:var(--axis); stroke-width:1; pointer-events:none; }
+/* A marked event on the x-axis (the FIRE year, the break-even year). Solid,
+   never dashed — dashes on a plot read as "projection". */
+.marker-line{ stroke:var(--border-strong); stroke-width:1; }
+.marker-text{ fill:var(--silver); font-size:11px; font-weight:600; }
+.point-label{ fill:var(--silver); font-size:11.5px; font-weight:600; }
+
+.chart-tip{
+    position:absolute; z-index:5;
+    pointer-events:none; opacity:0;
+    transition:opacity .12s;
+    transform:translate(-50%,-100%);
+    min-width:150px;
+    background:#0a0d13;
+    border:1px solid var(--border-strong);
+    border-radius:10px;
+    padding:10px 12px;
+    box-shadow:0 12px 34px rgba(0,0,0,.6);
+}
+.chart-tip.is-open{ opacity:1; }
+.chart-tip .tip-x{
+    color:var(--muted); font-size:.76rem; letter-spacing:.05em;
+    text-transform:uppercase; margin-bottom:7px;
+}
+.chart-tip .tip-row{
+    display:flex; align-items:center; gap:9px;
+    font-size:.88rem; line-height:1.7; white-space:nowrap;
+}
+/* Values lead, labels follow — the reader already knows the series. */
+.chart-tip .tip-val{
+    margin-left:auto; color:#fff; font-weight:600;
+    font-variant-numeric:tabular-nums;
+}
+.chart-tip .tip-name{ color:var(--muted); }
+.chart-tip .tip-key{ width:14px; height:2px; border-radius:2px; background:var(--k); flex:none; }
+.chart-tip .tip-total{
+    border-top:1px solid var(--border); margin-top:7px; padding-top:7px;
+}
+
+/* Table view — the WCAG-clean twin of every chart. The tooltip enhances,
+   it never gates: every plotted value is also in here. */
+.table-view{ margin-top:18px; }
+.table-view > summary{
+    cursor:pointer; list-style:none;
+    font-size:.86rem; font-weight:600; color:var(--accent-2);
+    display:inline-flex; align-items:center; gap:7px;
+}
+.table-view > summary::-webkit-details-marker{ display:none; }
+.table-view > summary::before{ content:"▸"; font-size:.75rem; }
+.table-view[open] > summary::before{ content:"▾"; }
+.table-scroll{
+    margin-top:14px; max-height:340px; overflow:auto;
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+}
+.calc-table{ width:100%; border-collapse:collapse; font-size:.87rem; }
+.calc-table th, .calc-table td{
+    padding:9px 14px; text-align:right; white-space:nowrap;
+    border-bottom:1px solid var(--border);
+    font-variant-numeric:tabular-nums;
+}
+.calc-table th{
+    position:sticky; top:0; z-index:1;
+    background:#12161e;
+    color:#fff; font-weight:600;
+    font-family:'Space Grotesk',sans-serif;
+    text-align:right;
+}
+.calc-table th:first-child, .calc-table td:first-child{ text-align:left; }
+.calc-table td{ color:var(--silver); }
+.calc-table tbody tr:last-child td{ border-bottom:0; }
+.calc-table tbody tr:hover td{ background:rgba(255,255,255,.03); }
+
+/* ---------------------------------------------------------------------
+   CURRENCY PICKER — one control, above everything it scopes
+   --------------------------------------------------------------------- */
+.calc-toolbar{
+    display:flex; align-items:center; flex-wrap:wrap; gap:14px;
+    margin-bottom:26px;
+}
+.calc-toolbar .tb-label{ color:var(--muted); font-size:.88rem; }
+.calc-select{
+    font:inherit; font-size:.9rem; font-weight:600; color:#fff;
+    background:rgba(0,0,0,.3);
+    border:1px solid var(--border-strong);
+    border-radius:10px;
+    padding:9px 12px;
+    cursor:pointer;
+}
+.calc-select:focus-visible{ outline:2px solid var(--accent-2); outline-offset:2px; }
+.calc-select option{ background:#12161e; color:#fff; }
+
+/* ---------------------------------------------------------------------
+   HUB PAGE
+   --------------------------------------------------------------------- */
+.calc-hub{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
+.calc-hub .card{ display:flex; flex-direction:column; }
+.calc-hub .card .card-button{ margin-top:auto; padding-top:18px; }
+.calc-hub .card .q{
+    color:var(--silver); font-size:.95rem; font-style:italic;
+    margin-top:12px; line-height:1.6;
+}
+
+/* Assumption / method disclosure under each calculator */
+.assumptions{ max-width:860px; margin:0 auto; }
+.assumptions li{ margin-bottom:10px; }
+
+@media(max-width:600px){
+    .calc-panel{ padding:22px 18px; }
+    .result-card{ padding:24px 20px 22px; }
+    .chart-card{ padding:20px 16px 16px; }
+    .ctrl-head{ flex-wrap:wrap; }
+}

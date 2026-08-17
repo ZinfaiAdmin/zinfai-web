@@ -22,6 +22,7 @@
     </a>
     <div class="nav-links">
         <a href="/features" data-nav="features">Features</a>
+        <a href="/calculators" data-nav="calculators">Calculators</a>
         <a href="/buddy" data-nav="buddy">Zinfai Buddy</a>
         <a href="/support" data-nav="support">Support</a>
         <a href="/register" data-nav="account" data-account-link>Sign in</a>
@@ -44,6 +45,13 @@
             <a href="/download">Download Zinfai</a>
             <a href="/buddy">Zinfai Buddy — Android</a>
             <a href="/register">Create an account</a>
+        </div>
+        <div class="footer-col">
+            <h5>Calculators</h5>
+            <a href="/calculators/fire">FIRE — when can I retire?</a>
+            <a href="/calculators/sip">SIP — what will it grow to?</a>
+            <a href="/calculators/emi">EMI — loan repayment</a>
+            <a href="/calculators/rent-vs-buy">Rent vs Buy</a>
         </div>
         <div class="footer-col">
             <h5>Help</h5>
