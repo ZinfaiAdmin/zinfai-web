@@ -514,6 +514,9 @@ section{ padding:84px 0; }
     padding:46px;
     display:grid; grid-template-columns:1.4fr 1fr; gap:34px; align-items:center;
 }
+/* Same reason as `.table-wrap`: without this a wide child sets the column
+   width and the callout pushes past the viewport. */
+.callout > *{ min-width:0; }
 .callout h3{ font-family:'Space Grotesk',sans-serif; font-size:1.6rem; margin-bottom:12px; }
 .callout p{ color:var(--muted); line-height:1.8; font-size:1.1rem; }
 .callout em{ color:#fff; font-style:normal; }
@@ -538,7 +541,10 @@ section{ padding:84px 0; }
 /* Numbered install steps */
 .num-steps{ list-style:none; display:flex; flex-direction:column; gap:22px; }
 .num-steps li{ display:flex; gap:16px; align-items:flex-start; }
-.num-steps li > div{ flex:1; color:var(--muted); line-height:1.7; }
+/* `min-width:0` so a step holding a `.code-block` can be narrower than the
+   command inside it — otherwise the step, the list and the page all stretch
+   to the width of the longest line of shell. */
+.num-steps li > div{ flex:1; min-width:0; color:var(--muted); line-height:1.7; }
 .num-steps b{ color:#fff; font-weight:600; }
 .num-steps__n{
     flex:none; width:30px; height:30px; border-radius:50%;
@@ -565,6 +571,9 @@ section{ padding:84px 0; }
     color:#e6edf3;
     white-space:nowrap;
     overflow-x:auto;
+    /* Without this the flex item holds the full width of a nowrap command and
+       scrolls the page instead of itself — same trap as `.table-wrap`. */
+    min-width:0;
 }
 .code-copy{
     flex:none;
@@ -586,6 +595,10 @@ code.inline{
     border-radius:6px;
     padding:1px 6px;
     color:#e6edf3;
+    /* File names have no spaces to break at, so on a phone one of these sets a
+       min-content width wider than the viewport and shoves the whole document
+       sideways — every section then renders clipped, not just this one. */
+    overflow-wrap:anywhere;
 }
 
 /* Warning / info strip */
@@ -600,12 +613,23 @@ code.inline{
 }
 .notice.info{ background:rgba(31,122,224,.09); border-color:rgba(31,122,224,.32); }
 .notice .n-icon{ flex:none; font-size:1.1rem; line-height:1.4; }
+/* A flex item will not shrink below its min-content width by default, so one
+   long word in the text column overflows the strip instead of wrapping. This
+   is also the guard rail for the icon-plus-<div> structure being skipped:
+   loose inline content becomes several anonymous flex items, and without it
+   they each hold their widest word and the strip splits into columns. */
+.notice > *{ min-width:0; }
 .notice a{ color:var(--accent-2); }
 .notice b{ color:#fff; }
 
 /* ---------------- TABLES ---------------- */
 .table-wrap{
     overflow-x:auto;
+    /* `overflow-x:auto` can only scroll if the box is allowed to be narrower
+       than the table inside it. As a grid or flex item it is not: the default
+       `min-width:auto` holds it at the table's min-content width, so a wide
+       table stretches its parent and the whole page scrolls sideways instead. */
+    min-width:0;
     background:var(--surface-2);
     border:1px solid var(--border);
     border-radius:var(--radius);
@@ -807,4 +831,14 @@ footer{ border-top:1px solid var(--border); padding:56px 0 40px; }
        min(280px,66vw) rule already scales it down on a phone. */
     .panel{ padding:26px 22px; }
     section{ padding:64px 0; }
+    /* 34px of padding a side is 18% of a phone screen. Giving it back is what
+       lets the region table fit its three columns instead of scrolling. */
+    .callout{ padding:26px 20px; }
+    .table-wrap{ padding:8px 4px; }
+    .data-table{ font-size:.9rem; }
+    .data-table th, .data-table td{ padding:12px 8px; }
+    /* Let the label column wrap on a phone. Kept nowrap at desktop width so
+       "United Kingdom" stays on one line, but holding that on a 375px screen
+       leaves the table no way to shrink and it clips at the box edge. */
+    .data-table td:first-child{ white-space:normal; }
 }

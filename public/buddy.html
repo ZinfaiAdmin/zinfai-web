@@ -53,7 +53,7 @@
             entirely offline.
         </p>
         <div class="meta-row">
-            <span class="pill warm" data-download-version="zinfai-buddy">v1.0.0</span>
+            <span class="pill warm" data-download-version="zinfai-buddy">v1.1.0</span>
             <span class="pill">Android 7.0+</span>
             <span class="pill">Read-only</span>
             <span class="pill">Works offline</span>
@@ -82,12 +82,15 @@
 <section id="requires">
 <div class="container">
     <div class="notice info">
-        <b>Buddy needs Zinfai to work.</b>
-        It has no backend, no database, and no way to enter data. Everything it shows comes
-        from a <code class="inline">zinfai_backup_&lt;username&gt;.json</code> file exported by
-        Zinfai on your computer. Without an active Zinfai install and a backup file, Buddy
-        stops at the onboarding screen — there is no demo mode.
-        <a href="/download">Install Zinfai first →</a>
+        <span class="n-icon">ℹ️</span>
+        <div>
+            <b>Buddy needs Zinfai to work.</b>
+            It has no backend, no database, and no way to enter data. Everything it shows comes
+            from a <code class="inline">zinfai_backup_&lt;username&gt;.json</code> file exported by
+            Zinfai on your computer. Without an active Zinfai install and a backup file, Buddy
+            stops at the onboarding screen — there is no demo mode.
+            <a href="/download">Install Zinfai first →</a>
+        </div>
     </div>
 </div>
 </section>
@@ -255,15 +258,13 @@
     <div class="panel wide">
         <div class="panel__head">
             <div class="dl-icon">🤖</div>
-            <div>
-                <h3>Install on Android</h3>
-                <p class="panel__intro">
-                    Buddy ships as a signed APK from the Zinfai downloads hub. Android will
-                    ask for permission to install it — that's normal for apps outside the
-                    Play Store.
-                </p>
-            </div>
+            <h3>Install on Android</h3>
         </div>
+        <p class="panel__intro">
+            Buddy ships as a signed APK from the Zinfai downloads hub. Android will
+            ask for permission to install it — that's normal for apps outside the
+            Play Store.
+        </p>
 
         <ol class="num-steps">
             <li>
@@ -304,10 +305,13 @@
         </ol>
 
         <div class="notice" style="margin-top:26px;">
-            <b>Updating.</b> Download a newer APK and install it over the top — your imported
-            backup, theme and alert settings are kept. There is no auto-update; check the
-            <a href="/download#buddy-download">download page</a> now and then to see whether
-            the version there is newer than yours.
+            <span class="n-icon">🔄</span>
+            <div>
+                <b>Updating.</b> Download a newer APK and install it over the top — your imported
+                backup, theme and alert settings are kept. There is no auto-update; check the
+                <a href="/download#buddy-download">download page</a> now and then to see whether
+                the version there is newer than yours.
+            </div>
         </div>
     </div>
 </div>

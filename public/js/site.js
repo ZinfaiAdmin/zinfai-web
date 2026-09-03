@@ -276,9 +276,12 @@
             });
         }
 
-        document.addEventListener("zinfai-auth", function (e) { paint(e.detail.user); });
-        paint(null);
-
+        /* Both labels have to exist before the first paint. `paint` reads
+           `dlLocked`, and the fallback for `dlReady` reads the button's own
+           text — so painting first wrote an undefined label into the button
+           and then took the blank result as the "ready" copy. The button sat
+           empty until auth.js announced a user, and stayed empty on any page
+           where that never happened. */
         buttons.forEach(function (btn) {
             btn.dataset.dlReady = btn.dataset.dlReady || btn.textContent.trim();
             btn.dataset.dlLocked = btn.dataset.dlLocked || "Sign in to download";
@@ -310,6 +313,9 @@
                     });
             });
         });
+
+        document.addEventListener("zinfai-auth", function (e) { paint(e.detail.user); });
+        paint(null);
     }
 
     /* ---- nav account link ---- */
