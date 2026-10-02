@@ -92,9 +92,9 @@
         <span class="eyebrow">Step by step</span>
         <h2 class="section-title">Installing on macOS</h2>
         <p class="section-subtitle">
-            The installer is not yet signed with an Apple Developer ID, so a plain
-            double-click is blocked with <em style="color:var(--silver); font-style:normal;">"Apple
-            could not verify…"</em>. Install it from Terminal in two steps instead.
+            A single <code class="inline">.pkg</code>, signed and notarised by Apple, so it
+            opens with a plain double-click. It handles everything Zinfai needs behind
+            the scenes.
         </p>
     </div>
 
@@ -107,26 +107,14 @@
             <li>
                 <span class="num-steps__n">1</span>
                 <div>
-                    <b>Download the installer.</b> Sign in, click
-                    <b>Download for Mac</b> above, and save
-                    <b><span data-download-file="zinfai:macos">Zinfai-v1.0.6.pkg</span></b>
-                    to your <b>Downloads</b> folder.
+                    <b>Sign in, download and open</b>
+                    <b><span data-download-file="zinfai:macos">Zinfai-v1.0.6.pkg</span></b>.
+                    Double-click it in your <b>Downloads</b> folder and follow the installer,
+                    entering your Mac password when asked.
                 </div>
             </li>
             <li>
                 <span class="num-steps__n">2</span>
-                <div>
-                    <b>Run it from Terminal.</b> Open <b>Terminal</b>
-                    (Applications&nbsp;→&nbsp;Utilities&nbsp;→&nbsp;Terminal), paste the command
-                    below, and press Return. Enter your Mac password when prompted.
-                    <div class="code-block">
-                        <code id="mac-install-cmd">sudo installer -pkg ~/Downloads/<span data-download-file="zinfai:macos">Zinfai-v1.0.6.pkg</span> -target /</code>
-                        <button type="button" class="code-copy" data-copy-target="mac-install-cmd" aria-label="Copy command to clipboard">Copy</button>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <span class="num-steps__n">3</span>
                 <div>
                     <b>Let setup finish.</b> A Terminal window opens and runs first-time
                     setup as you (not as root): it checks macOS 11+ and your chip, installs
@@ -136,7 +124,7 @@
                 </div>
             </li>
             <li>
-                <span class="num-steps__n">4</span>
+                <span class="num-steps__n">3</span>
                 <div>
                     <b>Open the app.</b> Your browser opens
                     <a href="http://localhost:8090">http://localhost:8090</a> automatically once
@@ -335,16 +323,6 @@
                     Google, which is verified automatically — and the buttons switch to real
                     downloads. If you registered with an email and password, click the link in
                     the confirmation message we sent you first; it often lands in spam.
-                </p>
-            </div>
-        </details>
-        <details>
-            <summary>macOS says "Zinfai-…pkg cannot be opened because it is from an unidentified developer"</summary>
-            <div class="faq-body">
-                <p>
-                    That's Gatekeeper — the installer isn't signed with an Apple Developer ID yet.
-                    Use the Terminal command in <a href="#install-mac">Installing on macOS</a>
-                    above, which installs the same package without the double-click block.
                 </p>
             </div>
         </details>
