@@ -88,7 +88,12 @@ async function signedAssetUrl(product, platform, manifest, token) {
         throw new Error(`no ${platform} build in the ${product} manifest`);
     }
 
-    const tag = `${product}-v${manifest.version}`;
+    /* A platform can live in an older release than the manifest's version:
+       when one installer misses a release (the Mac notary queue), the
+       publisher carries the last good build forward. Its own URL names the
+       release it is in; the manifest version only says what the newest is. */
+    const fromUrl = /\/releases\/download\/([^/]+)\//.exec(entry.url || "");
+    const tag = fromUrl ? decodeURIComponent(fromUrl[1]) : `${product}-v${manifest.version}`;
     const relRes = await fetch(`${GH}/repos/${REPO}/releases/tags/${tag}`, {
         headers: { ...ghHeaders(token), Accept: "application/vnd.github+json" },
     });
