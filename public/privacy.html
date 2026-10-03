@@ -50,7 +50,7 @@
 <div class="container">
 <div class="prose">
 
-    <p class="updated">Last updated: 30 September 2026</p>
+    <p class="updated">Last updated: 2 October 2026</p>
 
     <h2>The short version</h2>
     <p>
@@ -108,9 +108,10 @@
             request is ever made.
         </li>
         <li>
-            <b>Google Drive backups — only if you enable them.</b> The backup file is written to
-            your own Drive account, with access you grant and can revoke at any time. We never
-            receive it. See <a href="#google-user-data">Google user data</a> below.
+            <b>Google Drive backups — only if you enable them.</b> The backup file is encrypted on
+            your computer with a passphrase only you know, then written to your own Drive account,
+            with access you grant and can revoke at any time. We never receive it, and neither
+            Google nor anyone else can read it without the passphrase. See <a href="#google-user-data">Google user data</a> below.
         </li>
         <li>
             <b>Update checks.</b> The app checks for a newer release so it can show the
@@ -121,17 +122,34 @@
 
     <h2 id="google-user-data">Google user data</h2>
     <p>
-        When you connect Google Drive, the Zinfai app on your computer asks Google for one
-        permission, <code>drive.file</code>. It lets Zinfai see and change only the files and
-        folder Zinfai itself creates — your backup folder and the backup files inside it. Zinfai
-        cannot open, list or read anything else in your Drive.
+        Two Zinfai apps can connect to your Google account: Zinfai on your computer, to write
+        backups to Drive, and Zinfai Buddy on your phone, to read them. Both ask Google for the
+        same single Drive permission, <code>drive.file</code>, together with your email address so
+        each app can show which account is connected. <code>drive.file</code> lets an app see only
+        the files Zinfai itself created. Neither app can open, list or read anything else in your
+        Drive.
     </p>
     <ul>
-        <li><b>What is accessed:</b> the backup folder Zinfai creates and the backup files it writes there.</li>
-        <li><b>How it is used:</b> to upload your daily backup, list your backups, and download one when you ask to restore it. Nothing else.</li>
-        <li><b>Where it is kept:</b> the sign-in token Google issues is stored in the Zinfai database on your own computer. It is never sent to us or to anyone else.</li>
-        <li><b>Sharing:</b> none. No Google user data reaches a Zinfai server, an advertiser or an AI provider, and none is used to train any AI model.</li>
-        <li><b>Removal:</b> click <em>Disconnect</em> on Zinfai's Backup and Recovery page, which also revokes the token at Google, or remove Zinfai at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>. Deleting the backup folder in Drive removes the backups themselves.</li>
+        <li><b>What is accessed:</b> the backup folder Zinfai creates, the backup files it writes
+            there and the dated copies in its History folder, and your Google account email address.</li>
+        <li><b>How it is used:</b> Zinfai uploads your backup, lists your backups and downloads one
+            when you ask to restore it. Zinfai Buddy lists your backups and downloads the latest one
+            to show your portfolio on the phone. Buddy never writes, changes or deletes anything in
+            your Drive. The email address is shown on screen and used for nothing else.</li>
+        <li><b>Encryption:</b> backups are encrypted before they leave your computer. Buddy decrypts
+            them on the phone with the passphrase you enter there. The passphrase is never sent
+            anywhere.</li>
+        <li><b>Where it is kept:</b> Zinfai stores the sign-in token Google issues in the Zinfai
+            database on your own computer. On the phone, the Google sign-in session is held by
+            the operating system's Google sign-in service. Neither is ever sent to us or anyone
+            else.</li>
+        <li><b>Sharing:</b> none. No Google user data reaches a Zinfai server, an advertiser or an
+            AI provider, and none is used to train any AI model.</li>
+        <li><b>Removal:</b> click <em>Disconnect</em> on Zinfai's Backup and Recovery page, which
+            also revokes the token at Google; tap <em>Disconnect</em> under Google Drive in Buddy's Settings; or remove
+            Zinfai at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>,
+            which disconnects both apps. Deleting the backup folder in Drive removes the backups
+            themselves.</li>
     </ul>
     <p>
         Zinfai's use and transfer to any other app of information received from Google APIs will
@@ -190,14 +208,34 @@
         file. We will never ask for them.
     </p>
 
-    <h2>Zinfai Buddy</h2>
+    <h2 id="buddy">Zinfai Buddy (Android and iOS)</h2>
     <p>
-        The Android app is read-only and signs you in to nothing. The backup you import is kept in
-        the app's private storage on the device, optionally behind a biometric lock, and can
-        be erased with one tap in Settings. Its only outbound calls are to the same public
-        market-data sources for live prices and news, and to Google Drive if you sync that
-        way. There are no analytics or crash-reporting SDKs in it.
+        Zinfai Buddy is the companion app for your phone. It shows the portfolio from your Zinfai
+        backup and cannot change it. Like Zinfai, it has no server behind it: we receive nothing
+        from it.
     </p>
+    <ul>
+        <li><b>Where your data comes from:</b> the latest Zinfai backup in your Google Drive (see
+            <a href="#google-user-data">Google user data</a> above), or a backup file you pick
+            yourself from the phone's storage.</li>
+        <li><b>What stays on the phone:</b> the opened backup, kept in the app's private storage,
+            optionally behind a fingerprint or face lock. Your backup passphrase is kept in the
+            phone's secure keystore (Android Keystore or the iOS Keychain). Alerts and the daily
+            digest are worked out on the phone and shown as local notifications. There are no push
+            notifications and no server sends them.</li>
+        <li><b>What leaves the phone:</b> requests for live prices, exchange rates, market
+            sentiment and news. These go to public sources: Yahoo Finance, AMFI, CoinGecko, Binance,
+            Coinbase, Gate.io, Frankfurter, ExchangeRate-API, alternative.me, CNN, and the RSS feeds
+            of the news sites shown in the app. Price requests contain only ticker symbols. They never
+            contain your quantities, values or identity. Like any website, those sources see the
+            phone's IP address. A background task repeats the price requests now and then to keep
+            the daily digest current. Apart from Google Drive, nothing else is contacted.</li>
+        <li><b>What we collect:</b> nothing. Buddy has no account with us, and no analytics,
+            advertising or crash-reporting SDKs. It does not track you across apps or websites.</li>
+        <li><b>Removal:</b> <em>Clear Cached Data</em> in Buddy's Settings deletes the backup,
+            the saved passphrase and every cached figure from the phone. Uninstalling the app does
+            the same.</li>
+    </ul>
 
     <h2>Security is yours to hold</h2>
     <p>
