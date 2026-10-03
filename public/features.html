@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Features — Zinfai | Track, Plan &amp; Retire</title>
-<meta name="description" content="Everything Zinfai does: 40+ asset types across five jurisdictions, a multi-currency engine, built-in statement parsers for ICICI, HDFC, SBI, Axis, Kotak, IDFC First, Bank of Baroda, Zerodha, Groww, ICICI Direct and NSDL/CDSL CAS with AI parsing for everything else, live prices and XIRR, net worth and liabilities, a FIRE planner, an AI financial planner, AI asset quality ratings, alerts, expenses and income tracking.">
+<meta name="description" content="Everything Zinfai does: 40+ asset types across five jurisdictions, a multi-currency engine, built-in statement parsers for ICICI, HDFC, SBI, Axis, Kotak, IDFC First, Bank of Baroda, Zerodha, Groww, ICICI Direct and NSDL/CDSL CAS with AI parsing for everything else, live prices and XIRR, net worth and liabilities, a customizable dashboard, corporate actions and share gifts, an Indian income tax module, Mr Mirror (a chatbot that answers from your own portfolio), a FIRE planner, an AI financial planner, AI asset quality ratings and intrinsic value, alerts, expenses and income tracking.">
 <link rel="canonical" href="https://www.zinfai.com/features">
 
 <meta property="og:type" content="website">
@@ -45,9 +45,11 @@
     <div class="btn-row" style="justify-content:center; margin-top:30px;">
         <a class="btn ghost" href="#track">Track</a>
         <a class="btn ghost" href="#statements">Statements</a>
+        <a class="btn ghost" href="#tax">Income Tax</a>
         <a class="btn ghost" href="#plan">Plan</a>
         <a class="btn ghost" href="#retire">Retire</a>
         <a class="btn ghost" href="#insights">Insights</a>
+        <a class="btn ghost" href="#mirror">Mr Mirror</a>
     </div>
 </div>
 </section>
@@ -79,7 +81,7 @@
             <ul class="feature-list" style="margin-top:18px;">
                 <li><b>Multi-account</b> — bank, demat and crypto accounts with independent cash balances.</li>
                 <li><b>Multi-portfolio</b> — self, spouse, retirement or children, each with its own base currency and location.</li>
-                <li><b>Custom attributes</b> — tag holdings "long-term", "index", "high risk", then analyse by tag.</li>
+                <li><b>Custom attributes</b> — tag holdings, bank balances and demat cash "long-term", "emergency fund", "high risk" — one at a time or many at once — then analyse by tag.</li>
                 <li><b>Full transaction history</b> — buys, sells, dividends, interest and fees, powering XIRR.</li>
             </ul>
         </div>
@@ -112,8 +114,13 @@
         </div>
         <div class="card">
             <div class="card-icon">📈</div>
-            <h3>Portfolio dashboard</h3>
-            <p>Total valuation, gain and loss, day-change tracking, invested-vs-current performance charts, allocation pies with drill-down, top and bottom performers, and portfolio XIRR.</p>
+            <h3>A dashboard you build yourself</h3>
+            <p>Pick cards from every part of the app — net worth, daily P&amp;L, allocation, performance, income, expenses, budgets, maturities, equity vs index, attribute and asset insight — then drag and resize them into place. Add the same card twice with different settings; every card remembers its own. One click resets to the default.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🏢</div>
+            <h3>Corporate actions, gifts &amp; transfers</h3>
+            <p>Record splits, bonuses, rights issues, demergers, IPO allotments and symbol, name or ISIN changes as transactions, so capital gains and XIRR follow automatically. Gift or move shares between demat accounts, singly or in bulk, carrying the original cost and purchase dates with them.</p>
         </div>
         <div class="card">
             <div class="card-icon">🏦</div>
@@ -122,8 +129,13 @@
         </div>
         <div class="card">
             <div class="card-icon">📸</div>
-            <h3>End-of-day snapshots</h3>
-            <p>A daily snapshot of your whole portfolio powers historical performance across 7d, 30d, 90d, 6m and 1y views — with missed-snapshot recovery when the app restarts.</p>
+            <h3>Daily snapshots &amp; daily P&amp;L</h3>
+            <p>A snapshot of your whole portfolio at a day-close time you choose, in your own time zone. Each day's P&amp;L is what your holdings gained since the snapshot before — money you added or took out is not counted as a gain. Missed days are filled in at each day's own prices.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🏧</div>
+            <h3>Close out to your bank</h3>
+            <p>When a PF, PPF, gratuity, deposit, bond or any of 24 schemes matures or is closed, pay it into the right bank account, net of TDS, in one step. Record PF partial withdrawals without closing the account. The later bank statement line is recognised, so the money isn't counted twice.</p>
         </div>
         <div class="card">
             <div class="card-icon">🧮</div>
@@ -237,6 +249,22 @@
         </table>
     </div>
 
+    <h3 style="font-family:'Space Grotesk',sans-serif; margin:36px 0 14px;">Income tax (India)</h3>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Document</th>
+                    <th>What it reads</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Intimation u/s 143(1)</td><td>The department's own assessment: income by head, deductions, tax, interest, taxes paid, and the demand or refund. Works across every assessment year's layout.</td></tr>
+                <tr><td>ITR-V / acknowledgement</td><td>The return as filed: income, tax payable and taxes paid</td></tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="callout" style="margin-top:40px; grid-template-columns:1fr;">
         <div>
             <h3>When there's no built-in parser, AI reads it instead.</h3>
@@ -252,6 +280,7 @@
                 <li><b>Any language or script</b> — descriptions are preserved verbatim, never translated, with an optional English merchant name alongside.</li>
                 <li><b>Cross-checked</b> — the statement goes to every AI provider you've configured, and Zinfai keeps the result the providers most agree on.</li>
                 <li><b>Direction verified</b> — debit versus credit is confirmed against the running balance, not guessed from wording.</li>
+                <li><b>Learns each layout</b> — after one successful AI read, Zinfai saves the layout and checks it against the same file. From then on that bank's or form's statements are read locally, at no cost.</li>
             </ul>
             <p style="margin-top:22px;">
                 <em>This is the one feature that leaves your machine.</em> The AI
@@ -263,6 +292,55 @@
             </p>
         </div>
     </div>
+</div>
+</section>
+
+<!-- ---------------- INCOME TAX ---------------- -->
+<section id="tax">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow warm">Income Tax · India</span>
+        <h2 class="section-title">Your tax year, worked out from what you already own.</h2>
+        <p class="section-subtitle">
+            Zinfai already knows your salary credits, interest, dividends, rent and
+            every sale. The Income Tax module puts them under the heads the Act uses,
+            works out the tax under both regimes, and checks the result against the
+            department's own documents.
+        </p>
+    </div>
+
+    <div class="callout">
+        <div>
+            <h3>Five pages, one financial year at a time.</h3>
+            <ul class="feature-list" style="margin-top:6px;">
+                <li><b>Profile</b> — PAN, date of birth, residential status and regime; your Chapter VI-A deductions (80C, 80D, 80CCD and the rest); losses brought forward; and the figures only a document can give, such as gross salary from Form 16.</li>
+                <li><b>Returns</b> — upload the Intimation u/s 143(1) or the ITR-V and Zinfai reads the income, the tax and whether you have a demand or a refund. It checks the form's own arithmetic too.</li>
+                <li><b>Profit &amp; Loss</b> — income by head, and capital gains worked out lot by lot. Each gain is short- or long-term under the right section (111A, 112A, 112, 115BBH), and every sale is listed. A sale with no recorded buy is flagged with a button to add one.</li>
+                <li><b>Computation</b> — old and new regime side by side, with every deduction named by its section. Exempt income such as PPF and EPF interest is shown separately rather than silently dropped.</li>
+                <li><b>Calendar</b> — advance-tax instalments and filing deadlines, as reminders in your alerts inbox.</li>
+            </ul>
+        </div>
+        <div>
+            <div class="grid" style="grid-template-columns:1fr; gap:16px;">
+                <div class="card">
+                    <div class="card-icon">🧾</div>
+                    <h3>Only actual figures</h3>
+                    <p>Nothing is projected to the end of the year. The advance-tax schedule uses the income received so far, and says so when that makes an early instalment look low.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📌</div>
+                    <h3>Every figure shows its source</h3>
+                    <p>A figure from the filed return, your Form 16 or your bank credits says which one it came from. Where the app can't tell something from your data, it asks you rather than guessing.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="fine-print">
+        The Income Tax module is a record-keeping and estimation tool for Indian resident
+        individuals, not tax advice. File your return from your own documents, and consult
+        a chartered accountant where your situation calls for one.
+    </p>
 </div>
 </section>
 
@@ -423,6 +501,11 @@
 
     <div class="grid" style="margin-top:28px;">
         <div class="card">
+            <div class="card-icon">💎</div>
+            <h3>Intrinsic value</h3>
+            <p>An intrinsic value for every stock you hold, blending four models (discounted cash flow, earnings power, Graham, and shareholder payouts) into one figure with a margin of safety and a verdict. It runs on the company's reported per-share figures, each dated to its fiscal period, and a methodology page shows exactly how it's calculated.</p>
+        </div>
+        <div class="card">
             <div class="card-icon">🔮</div>
             <h3>The Predictor</h3>
             <p>A macro regime detector scoring 0–100 across bond yields, dollar strength, volatility, money supply, the Fed balance sheet and gold/equity trends — with buy/sell/hold signals, RSI and SMA indicators, and correlation heatmaps.</p>
@@ -466,6 +549,45 @@
 </div>
 </section>
 
+<!-- ---------------- MR MIRROR ---------------- -->
+<section id="mirror">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">Mr Mirror</span>
+        <h2 class="section-title">Ask about your money. Get an answer from your own numbers.</h2>
+        <p class="section-subtitle">
+            Mr Mirror is a chat assistant available on every screen. Ask it "how much did
+            I earn in dividends this year?", "which of my funds overlap?" or "what's
+            maturing next quarter?", and it answers from your own records rather than
+            from general knowledge.
+        </p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="card-icon">🪞</div>
+            <h3>Answers from your data</h3>
+            <p>It has 32 ways to look things up across the whole app: holdings, returns, spending, budgets, SIPs, alerts, ratings, rates, the market calendar, your FIRE details and your financial plan. Figures about you come only from those records, and it says when an explanation is general knowledge instead.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Tables and charts when they help</h3>
+            <p>It answers briefly: tables for figures, bullet points for comparisons, a chart when the shape of the numbers matters. Links take you straight to the relevant screen.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🌐</div>
+            <h3>The web, when your data is silent</h3>
+            <p>For questions about the market rather than your portfolio, it can run a web search through a provider that supports search. It never presents an answer from memory as a live lookup.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔒</div>
+            <h3>Look, don't touch</h3>
+            <p>Asking a question never changes your data. Retirement and planning questions are handed to the FIRE and Planner modules that own those numbers, so the chat never contradicts your own screens.</p>
+        </div>
+    </div>
+</div>
+</section>
+
 <!-- ---------------- BRING YOUR OWN AI ---------------- -->
 <section id="ai">
 <div class="container">
@@ -477,8 +599,9 @@
                 provider you choose: OpenAI, Anthropic Claude, Google Gemini, xAI Grok,
                 Mistral AI, DeepSeek, Groq, Perplexity, OpenRouter or AWS Bedrock — and
                 anything else that speaks the OpenAI API works too, via a custom
-                endpoint. Plans, ratings, statement parsing and news analysis are
-                generated with your key and stored in your local database. There is no
+                endpoint. Plans, ratings, statement parsing, Mr Mirror's answers and
+                news analysis are generated with your key and stored in your local
+                database. There is no
                 Zinfai server in the middle — because there is no Zinfai server.
             </p>
             <p style="margin-top:14px;">
@@ -486,13 +609,18 @@
                 in supported formats, prices, XIRR, snapshots, net worth, alerts and the
                 entire FIRE engine are all deterministic and need no AI at all.
             </p>
+            <p style="margin-top:14px;">
+                No key yet? Google Gemini, Groq and OpenRouter all offer free keys. On
+                first login Zinfai shows you how to get one in a couple of clicks and
+                tests it before saving.
+            </p>
         </div>
         <div>
             <div class="grid" style="grid-template-columns:1fr; gap:16px;">
                 <div class="card">
                     <div class="card-icon">🔑</div>
                     <h3>Ten providers</h3>
-                    <p>Configure keys in Settings or a local <code class="inline">.env</code>. Switch providers whenever you like.</p>
+                    <p>Configure keys in Settings or a local <code class="inline">.env</code>. The provider you mark as Primary is always tried first, for every feature; the others act only as fallbacks.</p>
                 </div>
                 <div class="card">
                     <div class="card-icon">👁️</div>
