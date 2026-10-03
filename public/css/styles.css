@@ -273,7 +273,7 @@ section{ padding:84px 0; }
     color:var(--muted); font-size:.86rem; line-height:1.6;
     opacity:.8;
 }
-.fine-print a{ color:var(--accent-2); }
+.fine-print a:not(.btn){ color:var(--accent-2); }
 
 /* ---------------- PILLS / BADGES ---------------- */
 .pill{
@@ -536,7 +536,7 @@ section{ padding:84px 0; }
 .panel__head svg{ width:22px; height:26px; fill:#eaf1fb; flex:none; }
 .panel__intro{ color:var(--muted); line-height:1.7; font-size:.98rem; margin-bottom:24px; }
 .panel__intro em{ color:#fff; font-style:normal; }
-.panel__intro a, .panel a{ color:var(--accent-2); }
+.panel__intro a:not(.btn), .panel a:not(.btn){ color:var(--accent-2); }
 
 /* Numbered install steps */
 .num-steps{ list-style:none; display:flex; flex-direction:column; gap:22px; }
@@ -619,7 +619,7 @@ code.inline{
    loose inline content becomes several anonymous flex items, and without it
    they each hold their widest word and the strip splits into columns. */
 .notice > *{ min-width:0; }
-.notice a{ color:var(--accent-2); }
+.notice a:not(.btn){ color:var(--accent-2); }
 .notice b{ color:#fff; }
 
 /* ---------------- TABLES ---------------- */
@@ -676,7 +676,7 @@ code.inline{
 .faq details[open] summary::after{ content:"–"; }
 .faq .faq-body{ color:var(--muted); line-height:1.8; padding:0 0 20px; font-size:1.02rem; }
 .faq .faq-body p + p{ margin-top:12px; }
-.faq .faq-body a{ color:var(--accent-2); }
+.faq .faq-body a:not(.btn){ color:var(--accent-2); }
 .faq .faq-body ul{ margin:12px 0 0 20px; }
 .faq .faq-body li{ margin-bottom:6px; }
 
@@ -691,7 +691,7 @@ code.inline{
 .prose ul{ margin:14px 0 0 22px; }
 .prose li{ margin-bottom:10px; }
 .prose li b, .prose p b{ color:#fff; font-weight:600; }
-.prose a{ color:var(--accent-2); }
+.prose a:not(.btn){ color:var(--accent-2); }
 .prose .updated{ font-size:.9rem; opacity:.75; }
 
 /* ---------------- FOOTER ---------------- */
@@ -718,7 +718,9 @@ footer{ border-top:1px solid var(--border); padding:56px 0 40px; }
 }
 .auth-card h2{ font-family:'Space Grotesk',sans-serif; font-size:1.45rem; margin-bottom:8px; }
 .auth-card > p{ color:var(--muted); line-height:1.7; font-size:.96rem; margin-bottom:24px; }
-.auth-card a{ color:var(--accent-2); }
+/* Every container link-colour rule skips .btn: `.x a` outranks `.btn`, and
+   a button's own text colour lost to it — blue text on the blue fill. */
+.auth-card a:not(.btn){ color:var(--accent-2); }
 
 .field{ display:block; margin-bottom:16px; }
 .field span{ display:block; font-size:.85rem; color:var(--silver); margin-bottom:7px; font-weight:500; }
@@ -808,7 +810,7 @@ footer{ border-top:1px solid var(--border); padding:56px 0 40px; }
 .dl-gate{ display:flex; flex-direction:column; gap:10px; align-items:stretch; }
 .dl-gate .btn{ justify-content:center; }
 .dl-note{ font-size:.85rem; color:var(--muted); line-height:1.6; }
-.dl-note a{ color:var(--accent-2); }
+.dl-note a:not(.btn){ color:var(--accent-2); }
 
 /* ---------------- MOBILE ---------------- */
 /* Adding Calculators made the menu one item too wide for the tablet band,
