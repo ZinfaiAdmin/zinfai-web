@@ -18,6 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # A page left on an old "N asset types" stops the deploy.
+      - name: Check asset-type counts agree
+        run: node scripts/check-asset-count.mjs
+
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
