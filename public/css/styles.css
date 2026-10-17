@@ -436,6 +436,9 @@ section{ padding:84px 0; }
 .shot__frame.phone-tall img{ object-fit:contain; }
 .shot__frame.portrait{ aspect-ratio:4/5; max-width:340px; margin-inline:auto; }
 .shot__frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* The statements-to-insights clip on the home page (1672x940). */
+.shot__frame.video{ aspect-ratio:1672/940; }
+.shot__frame video{ width:100%; height:100%; object-fit:cover; display:block; }
 .shot__frame.portrait img{ object-fit:contain; }
 
 /* Wide app screenshots. Callouts & gallery show the whole shot (contain) at 19:10;

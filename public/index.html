@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=5">
+<link rel="stylesheet" href="/css/styles.css?v=6">
 <script src="/js/site.js?v=4"></script>
 </head>
 
@@ -65,8 +65,74 @@
 </div>
 </section>
 
-<!-- ---------------- HERO SHOT ---------------- -->
+<!-- ---------------- STATEMENTS IN, INSIGHTS OUT ---------------- -->
+<section id="mirror" style="padding-top:0;">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">Statements in · Insights out</span>
+        <h2 class="section-title">The statements you throw away tell your whole financial story.</h2>
+        <p class="section-subtitle">
+            Bank, credit-card, demat, mutual-fund, provident-fund and tax
+            statements — the dull PDFs and spreadsheets most of us file and
+            forget. Zinfai reads every one of them, pulls out each transaction,
+            holding and figure, and gives them back as charts you take in at a
+            glance, insights you can act on, and one clear reflection of where
+            you stand: your Financial Mirror.
+        </p>
+    </div>
+    <figure class="shot">
+        <div class="shot__frame video">
+            <!-- Muted + playsinline is what lets browsers autoplay it; the poster
+                 is the first frame, shown until the clip has loaded. -->
+            <video id="mirror-video" src="/videos/zinfai_functionality.mp4"
+                   poster="/videos/zinfai_functionality-poster.jpg"
+                   width="1672" height="940" autoplay muted loop playsinline preload="metadata"
+                   aria-label="Bank, credit-card, demat and investment statements flow into Zinfai and come out as net-worth, expense, income and goal charts">
+            </video>
+        </div>
+    </figure>
+    <div class="steps" style="margin-top:32px;">
+        <div class="step">
+            <h4>Feed it the boring paperwork</h4>
+            <p>Upload statements from any bank, card issuer, broker or scheme, in PDF, CSV or Excel. No re-typing.</p>
+        </div>
+        <div class="step">
+            <h4>It finds what matters</h4>
+            <p>Every row is read, categorised and checked against the statement's own totals, then turned into net worth, spending, income and returns.</p>
+        </div>
+        <div class="step">
+            <h4>See yourself in the Mirror</h4>
+            <p>Clear dashboards, alerts and next steps show where your money goes, how it grows, and how far you are from financial freedom.</p>
+        </div>
+    </div>
+</div>
+</section>
+<script>
+    // Respect a reduced-motion preference: hold the first frame and let the
+    // visitor press play instead.
+    (function () {
+        var v = document.getElementById('mirror-video');
+        if (v && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            v.removeAttribute('autoplay'); v.pause(); v.controls = true;
+        }
+    })();
+</script>
+
+<!-- ---------------- STATS ---------------- -->
 <section style="padding-top:0;">
+<div class="container">
+    <div class="stats">
+        <div class="stat"><div class="num">62</div><div class="lbl">Asset types</div></div>
+        <div class="stat"><div class="num">5</div><div class="lbl">Jurisdictions</div></div>
+        <div class="stat"><div class="num">10</div><div class="lbl">AI providers supported</div></div>
+        <div class="stat"><div class="num">100%</div><div class="lbl">On your machine</div></div>
+        <div class="stat"><div class="num">0</div><div class="lbl">Cloud accounts</div></div>
+    </div>
+</div>
+</section>
+
+<!-- ---------------- HERO SHOT ---------------- -->
+<section style="padding-top:34px;">
 <div class="container">
     <figure class="shot">
         <div class="shot__frame is-empty" style="aspect-ratio:19/10;">
@@ -78,19 +144,6 @@
             </div>
         </div>
     </figure>
-</div>
-</section>
-
-<!-- ---------------- STATS ---------------- -->
-<section style="padding-top:34px;">
-<div class="container">
-    <div class="stats">
-        <div class="stat"><div class="num">62</div><div class="lbl">Asset types</div></div>
-        <div class="stat"><div class="num">5</div><div class="lbl">Jurisdictions</div></div>
-        <div class="stat"><div class="num">10</div><div class="lbl">AI providers supported</div></div>
-        <div class="stat"><div class="num">100%</div><div class="lbl">On your machine</div></div>
-        <div class="stat"><div class="num">0</div><div class="lbl">Cloud accounts</div></div>
-    </div>
 </div>
 </section>
 
