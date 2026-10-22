@@ -25,7 +25,7 @@
         <a href="/calculators" data-nav="calculators">Calculators</a>
         <a href="/buddy" data-nav="buddy">Zinfai Buddy</a>
         <a href="/support" data-nav="support">Support</a>
-        <a href="/register" data-nav="account" data-account-link>Sign in</a>
+        <a href="/signin" data-nav="account" data-account-link>Sign in</a>
         <a class="btn" href="/download" data-nav="download">Download</a>
     </div>
 </div>
@@ -244,13 +244,14 @@
     /* ---- gated download buttons ----
        Every install button is a <button data-download="product:platform">, not
        a link — there is no URL to expose until the API mints one. Clicking it
-       sends a signed-out or unverified visitor to /register, and a verified
+       sends a signed-out or unverified visitor to /signin (which links on to
+       registration), and a verified
        one straight to a short-lived GitHub URL.
 
        auth.js is an ES module and therefore deferred, so window.ZinfaiAuth may
        not exist while the page is still parsing. Every read of it happens
        inside a handler or an event, never at load time. */
-    const REGISTER_URL = "/register?next=" +
+    const SIGNIN_URL = "/signin?next=" +
         encodeURIComponent(location.pathname + location.hash);
 
     function setLabel(btn, text) {
@@ -289,7 +290,7 @@
             btn.addEventListener("click", function () {
                 const auth = window.ZinfaiAuth;
                 if (!auth || !auth.user || !auth.user.emailVerified) {
-                    location.href = REGISTER_URL;
+                    location.href = SIGNIN_URL;
                     return;
                 }
 
@@ -301,7 +302,7 @@
                 auth.download(parts[0], parts[1])
                     .catch(function (err) {
                         if (err && err.code === "email-not-verified") {
-                            location.href = REGISTER_URL;
+                            location.href = SIGNIN_URL;
                             return;
                         }
                         alert(err && err.message ? err.message : "Download failed. Please try again.");

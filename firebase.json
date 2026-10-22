@@ -40,6 +40,10 @@
     ],
     "rewrites": [
       {
+        "source": "/signin",
+        "destination": "/register.html"
+      },
+      {
         "source": "/api/**",
         "function": {
           "functionId": "api",

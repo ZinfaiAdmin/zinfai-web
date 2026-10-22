@@ -22,6 +22,10 @@ jobs:
       - name: Check asset-type counts agree
         run: node scripts/check-asset-count.mjs
 
+      # A "Sign in" link that opens the sign-up form stops the deploy.
+      - name: Check account links open the right form
+        run: node scripts/check-auth-links.mjs
+
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:

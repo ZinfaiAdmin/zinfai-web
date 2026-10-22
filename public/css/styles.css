@@ -3,6 +3,11 @@
    Used by index, features, download, buddy, support, privacy, 404.
    ===================================================================== */
 
+/* `hidden` must win over any display rule. The browser's own [hidden] rule
+   loses to a class that sets display, so `.field{display:block}` kept the
+   name field on the sign-in form no matter what the page script did. */
+[hidden]{ display:none !important; }
+
 :root{
     /* Deep slate canvas — dark enough for the logo's white ring to read as a mark */
     --bg:#0b0d12;

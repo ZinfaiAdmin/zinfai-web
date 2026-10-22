@@ -21,6 +21,7 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     signInWithRedirect,
+    getRedirectResult,
     GoogleAuthProvider,
     sendEmailVerification,
     sendPasswordResetEmail,
@@ -93,14 +94,21 @@ function syncProfile() {
 
 /* ---- verification ------------------------------------------------------ */
 
-const verifySettings = {
-    url: location.origin + "/register?verified=1",
-    handleCodeInApp: false,
-};
+/* The link in the email lands on the sign-in form, not the sign-up one: the
+   person clicking it already has an account, and if they open it in another
+   browser they have no session there and need to sign in. Whatever page sent
+   them to register (`next`) comes along, so they end up back on it. */
+function verifySettings() {
+    const next = new URLSearchParams(location.search).get("next");
+    return {
+        url: location.origin + "/signin?verified=1" + (next ? "&next=" + encodeURIComponent(next) : ""),
+        handleCodeInApp: false,
+    };
+}
 
 async function sendVerification() {
     if (!auth.currentUser) throw new Error("Please sign in first.");
-    await sendEmailVerification(auth.currentUser, verifySettings);
+    await sendEmailVerification(auth.currentUser, verifySettings());
 }
 
 /* Firebase caches email_verified in the ID token, so a user who has just
@@ -140,7 +148,7 @@ const ZinfaiAuth = {
     async signUp(email, password, displayName) {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         if (displayName) await updateProfile(cred.user, { displayName });
-        await sendEmailVerification(cred.user, verifySettings);
+        await sendEmailVerification(cred.user, verifySettings());
         await syncProfile();
         return cred.user;
     },
@@ -190,6 +198,12 @@ const ZinfaiAuth = {
 };
 
 window.ZinfaiAuth = ZinfaiAuth;
+
+/* A Google sign-in that fell back to a redirect finishes on page load, outside
+   signInWithGoogle(), so the profile is recorded here instead. */
+getRedirectResult(auth)
+    .then((cred) => { if (cred) return syncProfile(); })
+    .catch((e) => console.warn("Google redirect sign-in failed", e));
 
 onAuthStateChanged(auth, (user) => {
     document.documentElement.classList.toggle("is-signed-in", !!user);

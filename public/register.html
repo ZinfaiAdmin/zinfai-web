@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=6">
-<script src="/js/site.js?v=4"></script>
-<script type="module" src="/js/auth.js?v=1"></script>
+<link rel="stylesheet" href="/css/styles.css?v=7">
+<script src="/js/site.js?v=5"></script>
+<script type="module" src="/js/auth.js?v=2"></script>
 </head>
 
 <body>
@@ -38,15 +38,33 @@
 <section class="page-head">
 <div class="container">
     <span class="eyebrow">Get Zinfai</span>
-    <h1>Create your account</h1>
-    <p>
+    <h1 id="head-title">Create your account</h1>
+    <p id="head-blurb-signup">
         The installers are free. We ask for a verified email so we know who is
         running Zinfai and can tell you when a security or data-correctness
         update ships. Your portfolio data is never part of this — it stays on
         your machine, as it always has.
     </p>
+    <p id="head-blurb-signin" hidden>
+        Sign in with the email and password you registered with, or with Google.
+        Your portfolio data is never part of this — it stays on your machine.
+    </p>
 </div>
 </section>
+
+<!-- The page script is a module, so it runs after first paint. Decide the
+     mode here instead, or /signin flashes the sign-up heading first. -->
+<script>
+window.ZINFAI_AUTH_MODE =
+    (location.pathname.replace(/\.html$/, "").replace(/\/$/, "") === "/signin"
+     || new URLSearchParams(location.search).get("mode") === "signin") ? "signin" : "signup";
+if (window.ZINFAI_AUTH_MODE === "signin") {
+    document.title = "Sign in to Zinfai";
+    document.getElementById("head-title").textContent = "Sign in";
+    document.getElementById("head-blurb-signup").hidden = true;
+    document.getElementById("head-blurb-signin").hidden = false;
+}
+</script>
 
 <section style="padding-top:40px;">
 <div class="container">
@@ -146,7 +164,7 @@
 <site-footer></site-footer>
 
 <script type="module">
-import ZinfaiAuth from "/js/auth.js?v=1";
+import ZinfaiAuth from "/js/auth.js?v=2";
 
 const $ = (id) => document.getElementById(id);
 const panes = ["pane-loading", "pane-auth", "pane-verify", "pane-done"];
@@ -155,9 +173,19 @@ const panes = ["pane-loading", "pane-auth", "pane-verify", "pane-done"];
    let someone mail out a zinfai.com/register link that lands elsewhere. */
 const params = new URLSearchParams(location.search);
 const rawNext = params.get("next") || "/download";
-const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "/download";
+/* "/\evil.com" is "//evil.com" to a browser, so a backslash is refused too. */
+const next = /^\/(?![\/\\])/.test(rawNext) ? rawNext : "/download";
 
-let mode = "signup";   // "signup" | "signin"
+/* One page, two addresses: /signin asks for an email and password only,
+   /register also asks for a name. Every "Sign in" link on the site points at
+   /signin — this page used to open in sign-up mode whatever the link said,
+   so someone signing in was asked for their name. `?mode=signin` works too. */
+let mode = window.ZINFAI_AUTH_MODE;   // set by the inline script above the form
+
+/* A visitor sent here by a gated page goes straight back to it once signed
+   in and verified; one who opened the account page directly stays on it. */
+const returnAfterSignIn = params.has("next");
+let actedHere = false;
 
 function show(id) {
     panes.forEach((p) => { $(p).hidden = p !== id; });
@@ -182,11 +210,16 @@ function busy(btn, on, label) {
 /* ---- sign up / sign in toggle ---- */
 function applyMode() {
     const up = mode === "signup";
+    document.title = up ? "Create your Zinfai account" : "Sign in to Zinfai";
+    $("head-title").textContent = up ? "Create your account" : "Sign in";
+    $("head-blurb-signup").hidden = !up;
+    $("head-blurb-signin").hidden = up;
     $("auth-title").textContent = up ? "Create your account" : "Welcome back";
     $("auth-blurb").textContent = up
         ? "Takes about a minute. Verify your email and the download unlocks."
         : "Sign in to get to your downloads.";
     $("field-name").hidden = !up;
+    $("f-name").disabled = !up;
     $("btn-submit").textContent = up ? "Create account" : "Sign in";
     $("f-password").autocomplete = up ? "new-password" : "current-password";
     $("f-password").placeholder = up ? "At least 8 characters" : "Your password";
@@ -196,19 +229,30 @@ function applyMode() {
     clear($("auth-msg"));
 }
 
-$("btn-switch").addEventListener("click", () => {
-    mode = mode === "signup" ? "signin" : "signup";
+/* Keep the address in step with the form, so a refresh, the back button or a
+   copied link opens the same mode — and `?next=` survives the switch. */
+function setMode(m) {
+    mode = m;
+    const q = new URLSearchParams(location.search);
+    q.delete("mode");
+    const qs = q.toString();
+    history.replaceState(null, "", (m === "signin" ? "/signin" : "/register") + (qs ? "?" + qs : ""));
     applyMode();
-});
+}
+
+$("btn-switch").addEventListener("click", () => setMode(mode === "signup" ? "signin" : "signup"));
 
 /* ---- routing on auth state ---- */
 function render(user) {
     if (!user) { show("pane-auth"); applyMode(); return; }
     if (!user.emailVerified) {
         $("verify-email").textContent = user.email || "";
+        $("head-title").textContent = "Confirm your email";
         show("pane-verify");
         return;
     }
+    if (actedHere && returnAfterSignIn) { location.replace(next); return; }
+    $("head-title").textContent = "Your account";
     $("done-email").textContent = user.email || "";
     $("btn-continue").href = next;
     show("pane-done");
@@ -220,7 +264,7 @@ ZinfaiAuth.ready.then(async (user) => {
     /* Arriving back from the verification link: the cached token still says
        unverified, so refresh before deciding which pane to show. */
     if (user && !user.emailVerified && params.get("verified")) {
-        await ZinfaiAuth.refreshVerification().catch(() => {});
+        actedHere = await ZinfaiAuth.refreshVerification().catch(() => false);
     }
     render(ZinfaiAuth.user);
 });
@@ -241,11 +285,15 @@ $("auth-form").addEventListener("submit", async (e) => {
     }
 
     busy($("btn-submit"), true, mode === "signup" ? "Creating…" : "Signing in…");
+    actedHere = true;
     try {
         if (mode === "signup") await ZinfaiAuth.signUp(email, password, name);
         else await ZinfaiAuth.signIn(email, password);
         /* render() runs from the auth-state listener */
     } catch (err) {
+        /* Registering an address that already has an account: the person
+           meant to sign in, so take them there with the email kept. */
+        if (mode === "signup" && err && err.code === "auth/email-already-in-use") setMode("signin");
         say(msg, ZinfaiAuth.describe(err), "error");
     } finally {
         busy($("btn-submit"), false);
@@ -257,6 +305,7 @@ $("btn-google").addEventListener("click", async () => {
     const msg = $("auth-msg");
     clear(msg);
     busy($("btn-google"), true, "Opening Google…");
+    actedHere = true;
     try {
         await ZinfaiAuth.signInWithGoogle();
     } catch (err) {
@@ -286,7 +335,7 @@ $("btn-recheck").addEventListener("click", async () => {
     busy($("btn-recheck"), true, "Checking…");
     try {
         const ok = await ZinfaiAuth.refreshVerification();
-        if (ok) render(ZinfaiAuth.user);
+        if (ok) { actedHere = true; render(ZinfaiAuth.user); }
         else say(msg, "Not verified yet. Click the link in the email, then try again.", "error");
     } catch (err) {
         say(msg, ZinfaiAuth.describe(err), "error");
@@ -306,8 +355,10 @@ $("btn-resend").addEventListener("click", async () => {
     }
 });
 
-$("btn-signout").addEventListener("click", () => ZinfaiAuth.signOut());
-$("btn-signout-verify").addEventListener("click", () => ZinfaiAuth.signOut());
+/* Whoever signs out has an account, so the form they come back to is sign-in.
+   "Start over" from the verification pane is a fresh registration. */
+$("btn-signout").addEventListener("click", () => { setMode("signin"); ZinfaiAuth.signOut(); });
+$("btn-signout-verify").addEventListener("click", () => { setMode("signup"); ZinfaiAuth.signOut(); });
 </script>
 
 </body>

@@ -368,7 +368,7 @@ address. Nothing on the public web links to a binary any more.
 ```
 visitor clicks Download
         ▼
- signed in & verified?  ── no ──►  /register  (Firebase Auth: Google or email+password)
+ signed in & verified?  ── no ──►  /signin    (Firebase Auth: Google or email+password)
         │ yes                            │
         ▼                                └─► verification email via Resend
  POST /api/download  (Firebase ID token in the Authorization header)
@@ -744,8 +744,14 @@ put in an href, and that is the point.
 ```
 
 `site.js` swaps the label to "Sign in to download" for signed-out visitors and
-sends them to `/register`. Elements marked `data-dl-hint` are hidden once the
+sends them to `/signin`. Elements marked `data-dl-hint` are hidden once the
 visitor is verified.
+
+`/signin` and `/register` are one page (`register.html`; `/signin` is a hosting
+rewrite). The path picks the form: `/signin` asks for email and password only,
+`/register` adds a name, and the link under the form switches between them,
+keeping `?next=`. `scripts/check-auth-links.mjs` fails the deploy if a link
+labelled "Sign in" points at `/register` or the other way round.
 
 If the manifest can't be fetched the hard-coded text stays as-is, so the page
 never renders blank — it just goes stale. Bump it whenever you happen to edit
@@ -824,7 +830,7 @@ Run through this once the domain is connected.
 The gate (after §9 is deployed — all of these fail today):
 
 - [ ] `/api/manifest?product=zinfai` returns JSON with a version and **no URL**
-- [ ] Signed out, a download button reads "Sign in to download" and goes to `/register`
+- [ ] Signed out, a download button reads "Sign in to download" and goes to `/signin` — email and password only, no name field
 - [ ] Registering with email sends a verification mail **from `zinfai.com`, to the inbox not spam**
 - [ ] Before verifying, the button still refuses; `POST /api/download` returns 403 `email-not-verified`
 - [ ] After clicking the link and pressing "I've verified — continue", the download starts
