@@ -15,6 +15,7 @@
      GET  /api/manifest?product=zinfai   public   version + file names + sha256
      POST /api/profile                   auth     upsert the users/{uid} record
      POST /api/download                  auth+verified  mint a signed URL
+     POST /api/report                    public   file a problem report from the app
 
    Deliberately NOT exposed: the release asset URLs themselves. The manifest
    route strips them, because it is readable by anyone.
@@ -24,7 +25,8 @@ import { onRequest } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { getFirestore, FieldValue, Timestamp } from "firebase-admin/firestore";
+import { createHash, randomBytes } from "node:crypto";
 
 /* Fine-grained PAT with Contents: read-only on ZinfaiAdmin/zinfai-download.
    Set with:  firebase functions:secrets:set GITHUB_TOKEN                  */
@@ -113,6 +115,115 @@ async function signedAssetUrl(product, platform, manifest, token) {
     return { url, file: entry.file, sha256: entry.sha256, size: entry.size };
 }
 
+/* ---- problem reports ---------------------------------------------------
+   The desktop app has no server of its own to report to, so "Report a
+   problem" posts here (Zinfai's backend, server to server — no CORS). It is
+   public by necessity: the app's users have no account on this site. What
+   keeps it cheap and clean instead:
+
+     * every field is clipped to a fixed size, and only known fields are kept;
+     * 5 reports an hour from one network, 300 a day in all — counted in
+       reportLimits/*, whose docs carry an expiresAt for a Firestore TTL policy;
+     * the caller's IP is stored only as a hash, enough to spot abuse and no
+       more (a report is not a download, nothing needs to be audited);
+     * a filled-in honeypot field gets a convincing answer and is dropped.
+
+   The admin console (zinfai-admin) reads and triages reports/*. */
+const REPORT_PRODUCTS = ["zinfai", "zinfai-buddy"];
+const REPORT_KINDS = ["bug", "idea", "question"];
+const REPORTS_PER_HOUR_PER_IP = 5;
+const REPORTS_PER_DAY = 300;
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+class ReportRefused extends Error {
+    constructor(status, message) { super(message); this.status = status; }
+}
+
+function clip(value, max) {
+    return typeof value === "string" && value.trim() ? value.trim().slice(0, max) : null;
+}
+
+function clipObject(value, keys, max) {
+    const out = {};
+    if (value && typeof value === "object") {
+        for (const k of keys) {
+            const v = clip(value[k], max);
+            if (v) out[k] = v;
+        }
+    }
+    return out;
+}
+
+function reportReference() {
+    const day = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const tail = randomBytes(3).toString("hex").toUpperCase();
+    return `R-${day}-${tail}`;
+}
+
+function cleanReport(body) {
+    const b = body || {};
+    const product = REPORT_PRODUCTS.includes(b.product) ? b.product : null;
+    const kind = REPORT_KINDS.includes(b.kind) ? b.kind : null;
+    const title = clip(b.title, 140);
+    const description = clip(b.description, 5000);
+    if (!product || !kind) throw new ReportRefused(400, "Unknown product or kind of report.");
+    if (!title || title.length < 3) throw new ReportRefused(400, "Please add a short summary.");
+    if (!description || description.length < 10) throw new ReportRefused(400, "Please describe the problem.");
+    const contact = clip(b.contact, 200);
+    if (contact && !EMAIL_RE.test(contact)) throw new ReportRefused(400, "That does not look like an email address.");
+    return {
+        product,
+        kind,
+        title,
+        description,
+        contact,
+        page: clip(b.page, 200),
+        app: clipObject(b.app, ["version", "environment", "server"], 120),
+        client: clipObject(b.client, ["user_agent", "language", "timezone", "screen"], 300),
+        installationId: clip(b.installation_id, 64),
+        recentProblems: Array.isArray(b.recent_problems)
+            ? b.recent_problems.filter((x) => typeof x === "string").slice(0, 25).map((x) => x.slice(0, 300))
+            : [],
+    };
+}
+
+async function fileReport(req) {
+    const body = req.body || {};
+    if (clip(body.website, 10)) return reportReference();      // honeypot: pretend, keep nothing
+
+    const report = cleanReport(body);
+    const ip = callerIp(req) || "unknown";
+    const ipHash = createHash("sha256").update("zinfai-report:" + ip).digest("hex").slice(0, 32);
+    const hour = Math.floor(Date.now() / 3600000);
+    const day = new Date().toISOString().slice(0, 10);
+    const ipRef = db.collection("reportLimits").doc(`ip_${ipHash}_${hour}`);
+    const dayRef = db.collection("reportLimits").doc(`day_${day}`);
+    const id = reportReference();
+
+    await db.runTransaction(async (tx) => {
+        const [perIp, perDay] = await Promise.all([tx.get(ipRef), tx.get(dayRef)]);
+        if ((perIp.get("count") || 0) >= REPORTS_PER_HOUR_PER_IP) {
+            throw new ReportRefused(429, "Too many reports from this network. Please try again in an hour.");
+        }
+        if ((perDay.get("count") || 0) >= REPORTS_PER_DAY) {
+            throw new ReportRefused(429, "The report service is busy today. Please try again tomorrow.");
+        }
+        const expiresAt = Timestamp.fromMillis(Date.now() + 2 * 86400000);
+        tx.set(ipRef, { count: FieldValue.increment(1), expiresAt }, { merge: true });
+        tx.set(dayRef, { count: FieldValue.increment(1), expiresAt }, { merge: true });
+        tx.create(db.collection("reports").doc(id), {
+            ...report,
+            status: "new",
+            notes: "",
+            createdAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
+            ipHash,
+            via: clip(req.get("user-agent"), 200),
+        });
+    });
+    return id;
+}
+
 /* ---- request helpers --------------------------------------------------- */
 
 async function requireUser(req) {
@@ -141,9 +252,22 @@ export const api = onRequest(
     { region: "us-central1", secrets: [GITHUB_TOKEN], cors: false, maxInstances: 10 },
     async (req, res) => {
         const path = route(req);
-        const token = GITHUB_TOKEN.value();
+
+        /* ---------------- public: problem report from the app ---------------- */
+        if (path === "/report" && req.method === "POST") {
+            try {
+                const id = await fileReport(req);
+                res.set("Cache-Control", "no-store");
+                return res.status(201).json({ id });
+            } catch (err) {
+                if (err instanceof ReportRefused) return res.status(err.status).json({ error: err.message });
+                console.error(path, err);
+                return res.status(502).json({ error: "The report service is temporarily unavailable. Please try again later." });
+            }
+        }
 
         try {
+            const token = GITHUB_TOKEN.value();
             /* ---------------- public: current version ---------------- */
             if (path === "/manifest" && req.method === "GET") {
                 const product = String(req.query.product || "zinfai");

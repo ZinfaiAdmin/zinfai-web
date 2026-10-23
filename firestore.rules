@@ -17,6 +17,16 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    /* Problem reports from the app, and their rate-limit counters: written
+       only by POST /api/report, read only by the admin console (Admin SDK). */
+    match /reports/{id} {
+      allow read, write: if false;
+    }
+
+    match /reportLimits/{id} {
+      allow read, write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
