@@ -16,6 +16,8 @@
      POST /api/profile                   auth     upsert the users/{uid} record
      POST /api/download                  auth+verified  mint a signed URL
      POST /api/report                    public   file a problem report from the app
+     POST /api/parser-spec               public   open a pull request for a learned
+                                                  statement Format (zinfai-parser-packs)
 
    Deliberately NOT exposed: the release asset URLs themselves. The manifest
    route strips them, because it is readable by anyone.
@@ -31,6 +33,10 @@ import { createHash, randomBytes } from "node:crypto";
 /* Fine-grained PAT with Contents: read-only on ZinfaiAdmin/zinfai-download.
    Set with:  firebase functions:secrets:set GITHUB_TOKEN                  */
 const GITHUB_TOKEN = defineSecret("GITHUB_TOKEN");
+/* Contents + pull requests write on ZinfaiAdmin/zinfai-parser-packs and
+   nothing else. Kept apart from GITHUB_TOKEN, which can read the private
+   download repo: this route is public. */
+const PARSER_PACKS_TOKEN = defineSecret("PARSER_PACKS_TOKEN");
 
 initializeApp();
 const db = getFirestore();
@@ -224,6 +230,139 @@ async function fileReport(req) {
     return id;
 }
 
+/* ---- statement Formats shared by Zinfai installs -----------------------
+   Every Zinfai install posts the Formats it learned (a layout description
+   plus a redacted sample it must reproduce) here, and this opens the pull
+   request on the public pack repository. Nothing here can check that the
+   Format reads its sample — that is the pack repository's CI, which runs
+   Zinfai's own interpreter — so this only keeps out what is malformed,
+   oversized, already covered or arriving too fast.
+
+   Contract with backend/app/services/parser_pack_publisher.py:
+     201 {status:"opened", url, branch, path, repo}
+     409 {status:"duplicate", path}      layout already on main or in an open PR
+     4xx {error}                          the entry is wrong; not retried
+     429 / 5xx {error}                    try again later; costs no attempt */
+const PACKS_REPO = "ZinfaiAdmin/zinfai-parser-packs";
+const PACKS_BASE = "main";
+const LAYOUT_KEY_RE = /^[a-z0-9]+(?:-[a-z0-9]+){1,11}$/;
+// Every kind the app learns: a header-read kind (scheme, CAS, holdings)
+// ships its sample with the demo identity and proves it on the packs repo.
+const SHAREABLE_KINDS = ["bank_savings", "bank_cc", "holdings", "tradebook",
+    "ppf", "pf", "nps", "ssy", "fd", "cas"];
+const MAX_SPEC_BYTES = 1_500_000;
+const SPECS_PER_HOUR_PER_IP = 20;
+const SPECS_PER_DAY = 300;
+
+class SpecRefused extends Error {
+    constructor(status, message, extra = {}) { super(message); this.status = status; this.extra = extra; }
+}
+
+function cleanContribution(body) {
+    const b = body || {};
+    const key = typeof b.layout_key === "string" ? b.layout_key : "";
+    if (key.length > 100 || !LAYOUT_KEY_RE.test(key)) throw new SpecRefused(400, "layout_key is not a layout key.");
+    if (!SHAREABLE_KINDS.includes(b.kind)) throw new SpecRefused(400, "This kind of Format is not shared.");
+    const pack = b.pack;
+    if (!pack || typeof pack !== "object" || pack.pack_version !== 1 || !Array.isArray(pack.specs)
+        || pack.specs.length !== 1) {
+        throw new SpecRefused(400, "pack must be a version 1 pack carrying exactly one Format.");
+    }
+    const entry = pack.specs[0];
+    if (!entry || typeof entry !== "object" || !entry.spec || typeof entry.spec !== "object"
+        || !entry.fixture || typeof entry.fixture !== "object" || !Array.isArray(entry.expected)
+        || typeof entry.spec.id !== "string" || !/^[A-Za-z0-9_.-]{1,100}$/.test(entry.spec.id)) {
+        throw new SpecRefused(400, "The Format entry is missing its spec, fixture or expected rows.");
+    }
+    if ((entry.spec.kind || "bank_savings") !== b.kind) throw new SpecRefused(400, "kind does not match the Format.");
+    const text = JSON.stringify(pack, null, 2) + "\n";
+    if (Buffer.byteLength(text) > MAX_SPEC_BYTES) throw new SpecRefused(413, "The Format is too large to share.");
+    const bankKey = typeof b.bank_key === "string" ? b.bank_key.slice(0, 80) : null;
+    return { key, kind: b.kind, bankKey, specId: entry.spec.id, rows: entry.expected.length, text };
+}
+
+async function github(token, method, path, body) {
+    const res = await fetch(GH + path, {
+        method,
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "zinfai-web-parser-spec-intake",
+            ...(body ? { "Content-Type": "application/json" } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+    });
+    if (res.status === 404 && method === "GET") return null;
+    if (!res.ok) {
+        const detail = (await res.text()).slice(0, 300);
+        const err = new Error(`GitHub ${method} ${path}: ${res.status} ${detail}`);
+        err.status = res.status;
+        throw err;
+    }
+    return res.status === 204 ? {} : res.json();
+}
+
+async function rateLimitSpecs(req) {
+    const ip = callerIp(req) || "unknown";
+    const ipHash = createHash("sha256").update("zinfai-spec:" + ip).digest("hex").slice(0, 32);
+    const hour = Math.floor(Date.now() / 3600000);
+    const day = new Date().toISOString().slice(0, 10);
+    const ipRef = db.collection("reportLimits").doc(`spec_ip_${ipHash}_${hour}`);
+    const dayRef = db.collection("reportLimits").doc(`spec_day_${day}`);
+    await db.runTransaction(async (tx) => {
+        const [perIp, perDay] = await Promise.all([tx.get(ipRef), tx.get(dayRef)]);
+        if ((perIp.get("count") || 0) >= SPECS_PER_HOUR_PER_IP
+            || (perDay.get("count") || 0) >= SPECS_PER_DAY) {
+            throw new SpecRefused(429, "Too many Formats at once. Try again later.");
+        }
+        const expiresAt = Timestamp.fromMillis(Date.now() + 2 * 86400000);
+        tx.set(ipRef, { count: FieldValue.increment(1), expiresAt }, { merge: true });
+        tx.set(dayRef, { count: FieldValue.increment(1), expiresAt }, { merge: true });
+    });
+}
+
+async function openContribution(req) {
+    const c = cleanContribution(req.body);
+    const token = PARSER_PACKS_TOKEN.value();
+    const path = `contributions/${c.key}.json`;
+
+    /* Same two checks the app makes on its own GitHub route: on main, or
+       already waiting in a pull request whose branch carries this key. */
+    if (await github(token, "GET", `/repos/${PACKS_REPO}/contents/${path}?ref=${PACKS_BASE}`)) {
+        throw new SpecRefused(409, "Already shared.", { status: "duplicate", path });
+    }
+    const open = await github(token, "GET", `/repos/${PACKS_REPO}/pulls?state=open&per_page=100`);
+    if ((open || []).some((pr) => pr.head && pr.head.ref.startsWith(`parser-spec/${c.key}-`))) {
+        throw new SpecRefused(409, "Already waiting for review.", { status: "duplicate", path });
+    }
+
+    await rateLimitSpecs(req);
+
+    const head = await github(token, "GET", `/repos/${PACKS_REPO}/git/ref/heads/${PACKS_BASE}`);
+    const stamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 14);
+    const branch = `parser-spec/${c.key}-${stamp}`;
+    await github(token, "POST", `/repos/${PACKS_REPO}/git/refs`, { ref: `refs/heads/${branch}`, sha: head.object.sha });
+    await github(token, "PUT", `/repos/${PACKS_REPO}/contents/${path}`, {
+        message: `Add parser spec ${c.specId}`,
+        content: Buffer.from(c.text).toString("base64"),
+        branch,
+    });
+    const pull = await github(token, "POST", `/repos/${PACKS_REPO}/pulls`, {
+        title: `Parser spec: ${c.bankKey || c.specId}`,
+        head: branch,
+        base: PACKS_BASE,
+        body: [
+            `Contributed parser spec \`${c.specId}\`` + (c.bankKey ? ` for \`${c.bankKey}\`.` : "."),
+            "",
+            `The bundled fixture is a redacted sample; the spec reproduces ${c.rows} transaction(s) from it, and that is checked again on install.`,
+            "",
+            "Opened by the zinfai.com contribution service on behalf of a Zinfai install.",
+        ].join("\n"),
+    });
+    return { status: "opened", url: pull.html_url, branch, path, repo: PACKS_REPO };
+}
+
 /* ---- request helpers --------------------------------------------------- */
 
 async function requireUser(req) {
@@ -249,7 +388,7 @@ function route(req) {
 }
 
 export const api = onRequest(
-    { region: "us-central1", secrets: [GITHUB_TOKEN], cors: false, maxInstances: 10 },
+    { region: "us-central1", secrets: [GITHUB_TOKEN, PARSER_PACKS_TOKEN], cors: false, maxInstances: 10 },
     async (req, res) => {
         const path = route(req);
 
@@ -263,6 +402,20 @@ export const api = onRequest(
                 if (err instanceof ReportRefused) return res.status(err.status).json({ error: err.message });
                 console.error(path, err);
                 return res.status(502).json({ error: "The report service is temporarily unavailable. Please try again later." });
+            }
+        }
+
+        /* ---------------- public: a statement Format to share ---------------- */
+        if (path === "/parser-spec" && req.method === "POST") {
+            res.set("Cache-Control", "no-store");
+            try {
+                return res.status(201).json(await openContribution(req));
+            } catch (err) {
+                if (err instanceof SpecRefused) {
+                    return res.status(err.status).json({ error: err.message, ...err.extra });
+                }
+                console.error(path, err);
+                return res.status(502).json({ error: "The contribution service could not reach GitHub. Try again later." });
             }
         }
 
