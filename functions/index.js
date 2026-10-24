@@ -254,6 +254,8 @@ const MAX_SPEC_BYTES = 1_500_000;
 const SPECS_PER_HOUR_PER_IP = 20;
 const SPECS_PER_DAY = 300;
 
+const GENERIC_KEYS = ["other", "others", "unknown", "misc", "na", "n_a"];
+
 class SpecRefused extends Error {
     constructor(status, message, extra = {}) { super(message); this.status = status; this.extra = extra; }
 }
@@ -278,7 +280,13 @@ function cleanContribution(body) {
     const text = JSON.stringify(pack, null, 2) + "\n";
     if (Buffer.byteLength(text) > MAX_SPEC_BYTES) throw new SpecRefused(413, "The Format is too large to share.");
     const bankKey = typeof b.bank_key === "string" ? b.bank_key.slice(0, 80) : null;
-    return { key, kind: b.kind, bankKey, specId: entry.spec.id, rows: entry.expected.length, text };
+    /* The institution, unless it is a placeholder ("Other" is where a holdings
+       or scheme Format usually lands), then the Format's own name. Same rule
+       as Zinfai's parser_pack_publisher.contribution_name. */
+    const label = typeof entry.spec.label === "string" ? entry.spec.label.trim().slice(0, 120) : "";
+    const name = (bankKey && !GENERIC_KEYS.includes(bankKey.trim().toLowerCase()) && bankKey)
+        || label || entry.spec.id;
+    return { key, kind: b.kind, bankKey, name, specId: entry.spec.id, rows: entry.expected.length, text };
 }
 
 async function github(token, method, path, body) {
@@ -349,11 +357,11 @@ async function openContribution(req) {
         branch,
     });
     const pull = await github(token, "POST", `/repos/${PACKS_REPO}/pulls`, {
-        title: `Parser spec: ${c.bankKey || c.specId}`,
+        title: `Parser spec: ${c.name}`,
         head: branch,
         base: PACKS_BASE,
         body: [
-            `Contributed parser spec \`${c.specId}\`` + (c.bankKey ? ` for \`${c.bankKey}\`.` : "."),
+            `Contributed parser spec \`${c.specId}\` for ${c.name}.`,
             "",
             `The bundled fixture is a redacted sample; the spec reproduces ${c.rows} transaction(s) from it, and that is checked again on install.`,
             "",
