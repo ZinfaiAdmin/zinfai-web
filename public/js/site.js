@@ -7,7 +7,7 @@
    with no flash.
 
    Usage:
-     <site-nav active="download"></site-nav>   <!-- features | download | buddy | support -->
+     <site-nav active="download"></site-nav>   <!-- features | videos | download | buddy | support -->
      <site-footer></site-footer>
    ===================================================================== */
 (function () {
@@ -22,6 +22,7 @@
     </a>
     <div class="nav-links">
         <a href="/features" data-nav="features">Features</a>
+        <a href="/videos" data-nav="videos">Videos</a>
         <a href="/calculators" data-nav="calculators">Calculators</a>
         <a href="/buddy" data-nav="buddy">Zinfai Buddy</a>
         <a href="/support" data-nav="support">Support</a>
@@ -42,6 +43,7 @@
         <div class="footer-col">
             <h5>Product</h5>
             <a href="/features">Features</a>
+            <a href="/videos">Video guides</a>
             <a href="/download">Download Zinfai</a>
             <a href="/buddy">Zinfai Buddy — Android</a>
             <a href="/register">Create an account</a>
@@ -90,8 +92,52 @@
         }
     }
 
+    /* ---- YouTube videos, click to play ----
+       <yt-video vid="wdFSOsY5U9M" title="Meet Zinfai" thumb="/videos/guides/intro.jpg"
+                 duration="2:20" list="PLBjUjhUGK458"></yt-video>
+
+       The privacy page promises no tracking scripts on this site, and a plain
+       YouTube embed loads YouTube's player, scripts and cookies on every page
+       view whether or not anyone watches. So the page shows our own thumbnail,
+       and nothing is fetched from YouTube until the visitor presses play — then
+       the player comes from youtube-nocookie.com. */
+    function escapeAttr(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    }
+
+    class YtVideo extends HTMLElement {
+        connectedCallback() {
+            if (this.dataset.ready) return;
+            this.dataset.ready = "1";
+            const vid = this.getAttribute("vid");
+            const title = this.getAttribute("title") || "Zinfai video";
+            const duration = this.getAttribute("duration");
+            this.removeAttribute("title");  // no hover tooltip over the player
+            this.innerHTML =
+                '<button type="button" class="yt__play" aria-label="Play: ' + escapeAttr(title) + '">' +
+                    '<img src="' + escapeAttr(this.getAttribute("thumb")) + '" alt="" loading="lazy">' +
+                    '<span class="yt__icon" aria-hidden="true"></span>' +
+                    (duration ? '<span class="yt__dur">' + escapeAttr(duration) + '</span>' : '') +
+                '</button>';
+            this.querySelector("button").addEventListener("click", () => {
+                const iframe = document.createElement("iframe");
+                // With a list, the player carries on into the next episode.
+                const list = this.getAttribute("list");
+                iframe.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(vid) +
+                             "?autoplay=1&rel=0&modestbranding=1" +
+                             (list ? "&list=" + encodeURIComponent(list) : "");
+                iframe.title = title;
+                iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                iframe.allowFullscreen = true;
+                this.innerHTML = "";
+                this.appendChild(iframe);
+            });
+        }
+    }
+
     customElements.define("site-nav", SiteNav);
     customElements.define("site-footer", SiteFooter);
+    customElements.define("yt-video", YtVideo);
 
     /* ---- screenshots: self-revealing placeholders ----
        Every screenshot slot shows a styled placeholder until the real image

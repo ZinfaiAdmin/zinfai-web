@@ -23,6 +23,7 @@ zinfai-web/
 └── public/                        # Everything deployed
     ├── index.html                 # Landing page
     ├── features.html              # Feature tour  (#track / #plan / #retire / #insights)
+    ├── videos.html                # Intro + how-to videos (click-to-play YouTube, <yt-video> in site.js)
     ├── download.html              # Downloads + install instructions (#install-mac, #install-windows, #docker)
     ├── buddy.html                 # Zinfai Buddy (Android)
     ├── support.html               # FAQ + contact
