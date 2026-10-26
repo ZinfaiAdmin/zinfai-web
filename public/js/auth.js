@@ -22,6 +22,8 @@ import {
     signInWithPopup,
     signInWithRedirect,
     getRedirectResult,
+    getAdditionalUserInfo,
+    deleteUser,
     GoogleAuthProvider,
     sendEmailVerification,
     sendPasswordResetEmail,
@@ -81,6 +83,7 @@ async function callApi(path, { method = "POST", body, auth: needsAuth = true } =
         const err = new Error(data.error || "Request failed.");
         err.code = data.code;
         err.status = res.status;
+        err.termsVersion = data.termsVersion;
         throw err;
     }
     return data;
@@ -125,6 +128,11 @@ async function refreshVerification() {
 
 /* ---- public surface ---------------------------------------------------- */
 
+function isNewAccount(cred) {
+    const info = cred ? getAdditionalUserInfo(cred) : null;
+    return !!(info && info.isNewUser);
+}
+
 const ZinfaiAuth = {
     describe,
 
@@ -167,6 +175,10 @@ const ZinfaiAuth = {
         try {
             const cred = await signInWithPopup(auth, provider);
             await syncProfile();
+            /* Google signs in and signs up through the same button, so this
+               is the only place that knows whether an account was just
+               created — the caller has to ask for the terms if it was. */
+            ZinfaiAuth.createdNow = isNewAccount(cred);
             return cred.user;
         } catch (err) {
             /* Popups are blocked outright in some embedded browsers. */
@@ -179,13 +191,29 @@ const ZinfaiAuth = {
     },
 
     signOut: () => fbSignOut(auth),
+
+    /* Set by a Google sign-in (popup or redirect) that created the account. */
+    createdNow: false,
+
+    /* Removes the signed-in account. Used only when someone who has just
+       created one through Google declines the Terms of Use, so that no
+       account exists that never agreed. Firebase allows it without
+       re-authentication because the sign-in is seconds old. */
+    deleteAccount: () => (auth.currentUser ? deleteUser(auth.currentUser) : Promise.resolve()),
     resetPassword: (email) => sendPasswordResetEmail(auth, email),
     sendVerification,
     refreshVerification,
     syncProfile,
 
+    /* Records that the signed-in account agrees to the Terms of Use. `version`
+       is the one the visitor was shown (from a terms-not-accepted reply); left
+       out, the server records its current version. `via` says where they
+       agreed: "register" or "download". */
+    acceptTerms: (version, via) => callApi("/terms", { body: { version, via } }),
+
     /* Asks the function for a short-lived signed GitHub URL and starts the
-       download. Throws with code "email-not-verified" if the gate rejects. */
+       download. Throws with code "email-not-verified" or "terms-not-accepted"
+       (carrying `termsVersion`) if the gate rejects. */
     async download(product, platform) {
         const data = await callApi("/download", { body: { product, platform } });
         location.href = data.url;
@@ -202,7 +230,14 @@ window.ZinfaiAuth = ZinfaiAuth;
 /* A Google sign-in that fell back to a redirect finishes on page load, outside
    signInWithGoogle(), so the profile is recorded here instead. */
 getRedirectResult(auth)
-    .then((cred) => { if (cred) return syncProfile(); })
+    .then(async (cred) => {
+        if (!cred) return;
+        await syncProfile();
+        if (isNewAccount(cred)) {
+            ZinfaiAuth.createdNow = true;
+            document.dispatchEvent(new CustomEvent("zinfai-account-created"));
+        }
+    })
     .catch((e) => console.warn("Google redirect sign-in failed", e));
 
 onAuthStateChanged(auth, (user) => {

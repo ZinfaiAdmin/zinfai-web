@@ -66,6 +66,7 @@
             <h5>Company</h5>
             <a href="/#philosophy">Philosophy</a>
             <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms of Use</a>
             <a href="mailto:support@zinfai.com">support@zinfai.com</a>
         </div>
     </div>
@@ -305,6 +306,79 @@
         (label || btn).textContent = text;
     }
 
+    /* ---- Terms of Use agreement ----
+       /api/download refuses an account that has not accepted the current
+       Terms of Use (code "terms-not-accepted", with the version it wants).
+       This asks, with an unticked box the visitor has to tick themselves —
+       a pre-ticked box, or "by clicking download you agree", is a much weaker
+       agreement — and resolves true only on "Agree and download".
+       `opts` re-titles it for the one other place it is used: a Google
+       sign-in on the register page that turned out to create an account. */
+    function askToAcceptTerms(product, opts) {
+        opts = opts || {};
+        return new Promise(function (resolve) {
+            const dlg = document.createElement("dialog");
+            dlg.className = "terms-dialog";
+            dlg.setAttribute("aria-labelledby", "terms-dialog-title");
+            dlg.innerHTML =
+                '<h3 id="terms-dialog-title">' + (opts.title || "Before you download") + '</h3>' +
+                '<p>Zinfai is free, and is provided on these terms. Please read them, and confirm you agree.</p>' +
+                '<ul>' +
+                '<li><b>Not advice.</b> Zinfai is not financial, investment, tax or legal advice. Your decisions are your own.</li>' +
+                '<li><b>As is.</b> It comes with no warranty, and our liability is limited.</li>' +
+                '<li><b>Your data, your backups.</b> Everything stays on your device, so keeping it safe is up to you.</li>' +
+                (product === "zinfai"
+                    ? '<li><b>Docker Desktop.</b> Setup installs it if needed. It is Docker\'s software, under Docker\'s own licence, which requires a paid subscription in larger organisations.</li>'
+                    : '') +
+                '</ul>' +
+                '<label class="terms-check"><input type="checkbox" id="terms-agree">' +
+                '<span>I have read and agree to the <a href="/terms" target="_blank" rel="noopener">Terms of Use</a> ' +
+                'and the <a href="/privacy" target="_blank" rel="noopener">Privacy statement</a>.</span></label>' +
+                '<div class="terms-actions">' +
+                '<button type="button" class="btn ghost" data-terms="cancel">' + (opts.cancel || "Cancel") + '</button>' +
+                '<button type="button" class="btn" data-terms="agree" disabled>' + (opts.agree || "Agree and download") + '</button>' +
+                '</div>';
+            document.body.appendChild(dlg);
+
+            const box = dlg.querySelector("#terms-agree");
+            const agree = dlg.querySelector('[data-terms="agree"]');
+            let answer = false;
+            box.addEventListener("change", function () { agree.disabled = !box.checked; });
+            agree.addEventListener("click", function () { answer = box.checked; dlg.close(); });
+            dlg.querySelector('[data-terms="cancel"]').addEventListener("click", function () { dlg.close(); });
+            dlg.addEventListener("close", function () { dlg.remove(); resolve(answer); });
+            dlg.showModal();
+        });
+    }
+
+    /* Downloads, asking for the agreement when the server wants it. A 409
+       "terms-changed" means the terms were updated while the dialog was
+       open, so the visitor is asked again rather than signed up to text
+       they never saw. */
+    async function downloadWithTerms(auth, product, platform) {
+        for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+                return await auth.download(product, platform);
+            } catch (err) {
+                if (!err || err.code !== "terms-not-accepted") throw err;
+                let version = err.termsVersion;
+                for (;;) {
+                    if (!(await askToAcceptTerms(product))) return null;
+                    try {
+                        await auth.acceptTerms(version, "download");
+                        break;
+                    } catch (e) {
+                        if (!e || e.code !== "terms-changed") throw e;
+                        version = e.termsVersion;
+                    }
+                }
+            }
+        }
+        throw new Error("Download failed. Please try again.");
+    }
+
+    window.ZinfaiTerms = { ask: askToAcceptTerms };
+
     function bindDownloadButtons() {
         const buttons = document.querySelectorAll("button[data-download]");
         if (!buttons.length) return;
@@ -345,7 +419,7 @@
                 btn.disabled = true;
                 setLabel(btn, "Preparing…");
 
-                auth.download(parts[0], parts[1])
+                downloadWithTerms(auth, parts[0], parts[1])
                     .catch(function (err) {
                         if (err && err.code === "email-not-verified") {
                             location.href = SIGNIN_URL;

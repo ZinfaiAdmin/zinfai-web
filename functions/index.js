@@ -14,7 +14,8 @@
    Routes:
      GET  /api/manifest?product=zinfai   public   version + file names + sha256
      POST /api/profile                   auth     upsert the users/{uid} record
-     POST /api/download                  auth+verified  mint a signed URL
+     POST /api/terms                     auth     record acceptance of the Terms of Use
+     POST /api/download                  auth+verified+terms  mint a signed URL
      POST /api/report                    public   file a problem report from the app
      POST /api/parser-spec               public   open a pull request for a learned
                                                   statement Format (zinfai-parser-packs)
@@ -50,6 +51,13 @@ const PRODUCTS = {
     "zinfai": ["macos", "windows"],
     "zinfai-buddy": ["android"],
 };
+
+/* The Terms of Use a caller must have accepted before /api/download will
+   mint anything: the "Last updated" date printed on public/terms.html. Bump
+   it whenever that page changes materially, and every account is asked to
+   agree again on its next download — acceptance is per version, not once
+   for ever. */
+const TERMS_VERSION = "2026-10-26";
 
 /* Signed GitHub asset URLs are valid for a few minutes; there is no point
    handing the same user a fresh one on every click, but there is also no
@@ -474,7 +482,46 @@ export const api = onRequest(
                 return res.json({ ok: true, emailVerified: user.email_verified === true });
             }
 
-            /* ---------------- auth + verified: mint a download ---------------- */
+            /* ---------------- auth: accept the Terms of Use ---------------- */
+            if (path === "/terms" && req.method === "POST") {
+                const { user, error } = await requireUser(req);
+                if (error) return res.status(error[0]).json({ error: error[1] });
+
+                /* A caller that names a version is agreeing to the text it was
+                   shown. If the terms changed under it, it agreed to something
+                   that is no longer current — make it show the new text. */
+                const body = req.body || {};
+                if (body.version && body.version !== TERMS_VERSION) {
+                    return res.status(409).json({
+                        code: "terms-changed",
+                        termsVersion: TERMS_VERSION,
+                        error: "The Terms of Use have just been updated. Please read the current version and agree again.",
+                    });
+                }
+                const via = ["register", "download"].includes(body.via) ? body.via : "other";
+                const record = {
+                    uid: user.uid,
+                    email: user.email || null,
+                    version: TERMS_VERSION,
+                    via,
+                    at: FieldValue.serverTimestamp(),
+                    ip: callerIp(req),
+                    userAgent: req.get("user-agent") || null,
+                };
+                /* The users/{uid} fields answer "may this account download?";
+                   the termsAcceptances log is the evidence of each agreement,
+                   and is never overwritten. */
+                await db.collection("termsAcceptances").add(record);
+                await db.collection("users").doc(user.uid).set({
+                    termsAcceptedVersion: TERMS_VERSION,
+                    termsAcceptedAt: FieldValue.serverTimestamp(),
+                }, { merge: true });
+
+                res.set("Cache-Control", "no-store");
+                return res.json({ ok: true, termsVersion: TERMS_VERSION });
+            }
+
+            /* ---------------- auth + verified + terms: mint a download ---------------- */
             if (path === "/download" && req.method === "POST") {
                 const { user, error } = await requireUser(req);
                 if (error) return res.status(error[0]).json({ error: error[1] });
@@ -493,6 +540,18 @@ export const api = onRequest(
                     return res.status(400).json({ error: "Unknown product or platform." });
                 }
 
+                /* Checked here, against our own record, for the same reason as
+                   the verified flag: the agreement dialog is client-side and
+                   can be skipped with devtools; this cannot. */
+                const profile = await db.collection("users").doc(user.uid).get();
+                if (!profile.exists || profile.get("termsAcceptedVersion") !== TERMS_VERSION) {
+                    return res.status(403).json({
+                        code: "terms-not-accepted",
+                        termsVersion: TERMS_VERSION,
+                        error: "Please read and agree to the Terms of Use before downloading.",
+                    });
+                }
+
                 const manifest = await readManifest(product, token);
                 const asset = await signedAssetUrl(product, platform, manifest, token);
 
@@ -503,6 +562,7 @@ export const api = onRequest(
                     platform,
                     version: manifest.version,
                     file: asset.file,
+                    termsVersion: TERMS_VERSION,
                     at: FieldValue.serverTimestamp(),
                     ip: callerIp(req),
                     userAgent: req.get("user-agent") || null,

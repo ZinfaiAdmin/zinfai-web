@@ -23,8 +23,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/styles.css?v=8">
-<script src="/js/site.js?v=7"></script>
+<link rel="stylesheet" href="/css/styles.css?v=9">
+<script src="/js/site.js?v=10"></script>
 </head>
 
 <body>
@@ -129,9 +129,20 @@
             Google nor anyone else can read it without the passphrase. See <a href="#google-user-data">Google user data</a> below.
         </li>
         <li>
-            <b>Update checks.</b> The app checks for a newer release so it can show the
-            update banner. This is a plain request for a version number and carries no data
-            about you — it is not tied to your download account.
+            <b>Installing and updating.</b> The installer downloads Docker Desktop (if you don't
+            already have it) and the Zinfai image from Docker Hub, and <em>Update Zinfai</em>
+            downloads newer images from there too. Docker, Inc. receives those downloads like any
+            web request. Docker Desktop is Docker's own software and may send usage and
+            diagnostic data to Docker under
+            <a href="https://www.docker.com/legal/docker-privacy-policy/">its privacy policy</a>;
+            you can review that in Docker Desktop's settings. None of your Zinfai data is
+            included. It stays in the Docker volume on your computer. See the
+            <a href="/terms">Terms of Use</a> for Docker Desktop's licence terms.
+        </li>
+        <li>
+            <b>Update checks.</b> The app asks Docker Hub for the latest Zinfai version so it
+            can show the update banner. This is a plain request for a version number and
+            carries no data about you — it is not tied to your download account.
         </li>
     </ul>
 
@@ -185,6 +196,9 @@
         <li><b>How you signed in</b> — email and password, or Google.</li>
         <li><b>Whether your email is verified</b>, and when you last signed in.</li>
         <li><b>Which installers you downloaded</b> — product, platform, version and time.</li>
+        <li><b>When you agreed to the <a href="/terms">Terms of Use</a></b>, which version, and
+            where (at registration or at a download), with the IP address and browser it came
+            from, as the record of your agreement.</li>
         <li>The <b>IP address and browser</b> the registration and each download came from,
             kept as an anti-abuse record.</li>
     </ul>
@@ -285,7 +299,8 @@
         planner and asset quality ratings are AI-generated and can be wrong. Zinfai is not a
         registered investment adviser, broker or tax adviser, and nothing in the app or on
         this site is a recommendation to buy or sell any security. Verify anything that
-        matters, and consider a registered adviser in your own jurisdiction.
+        matters, and consider a registered adviser in your own jurisdiction. The full terms on which Zinfai
+        is provided are in the <a href="/terms">Terms of Use</a>.
     </p>
 
     <h2>Changes to this statement</h2>
