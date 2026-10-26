@@ -28,6 +28,7 @@ zinfai-web/
     ├── buddy.html                 # Zinfai Buddy (Android)
     ├── support.html               # FAQ + contact
     ├── privacy.html               # Privacy statement
+    ├── terms.html                 # Terms of Use (as-is, not advice, liability cap)
     ├── 404.html                   # Not-found page
     ├── robots.txt
     ├── sitemap.xml
