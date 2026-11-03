@@ -50,7 +50,7 @@
 <div class="container">
 <div class="prose">
 
-    <p class="updated">Last updated: 26 October 2026</p>
+    <p class="updated">Last updated: 3 November 2026</p>
 
     <h2>The short version</h2>
     <p>
@@ -188,6 +188,15 @@
         From the app: nothing. No telemetry, no crash reporting, no analytics, and no way
         for your financial data to reach us.
     </p>
+    <p id="problem-reports">
+        <b>Problem reports.</b> If you send one from Zinfai or Zinfai Buddy, we keep what the
+        report screen showed you before you sent it: what you wrote, an email address if you gave
+        one, the app version and environment, the page or screen you were on, your browser or
+        phone's language, time zone and screen size, and a random install id. We also keep a
+        one-way hash of the sending IP address and the browser or app's user agent, to stop abuse;
+        never the address itself. We use reports only to fix problems and reply to you, and you
+        can ask us to delete one by writing to the address below.
+    </p>
     <p>
         From this website, if you register for a download, we hold exactly this:
     </p>
@@ -241,7 +250,7 @@
     <p>
         Zinfai Buddy is the companion app for your phone. It shows the portfolio from your Zinfai
         backup and cannot change it. Like Zinfai, it has no server behind it: we receive nothing
-        from it.
+        from it unless you send us a problem report.
     </p>
     <ul>
         <li><b>Where your data comes from:</b> the latest Zinfai backup in your Google Drive (see
@@ -258,9 +267,30 @@
             of the news sites shown in the app. Price requests contain only ticker symbols. They never
             contain your quantities, values or identity. Like any website, those sources see the
             phone's IP address. A background task repeats the price requests now and then to keep
-            the daily digest current. Apart from Google Drive, nothing else is contacted.</li>
-        <li><b>What we collect:</b> nothing. Buddy has no account with us, and no analytics,
-            advertising or crash-reporting SDKs. It does not track you across apps or websites.</li>
+            the daily digest current.</li>
+        <li><b>Mr Mirror — only if your backup carries an AI key.</b> When you ask Mr Mirror a
+            question, Buddy sends the question and the portfolio figures it looked up to answer it
+            straight from the phone to the AI provider set as Primary in Zinfai, using your own key
+            from the backup. It does not pass through us, and the provider's own privacy terms apply.
+            Names and account numbers are swapped for stand-ins first, and passwords, statement
+            passwords and API keys are never sent. Switch it off under <em>Data &amp; Internet</em>
+            in Buddy's Settings, or leave the key out of Zinfai, and nothing is sent.</li>
+        <li><b>Problem reports — only when you tap Send.</b> <em>Report a Problem or Idea</em>
+            in Settings sends us what you type (kind, title, description, and an email address
+            only if you give one), the screen you came from, the app version, the phone's
+            operating system, language, time zone and screen size, and a random install id that
+            lets us group your reports. If you tick it, the last Google Drive sync error goes too,
+            with names and account numbers masked. The report screen shows the whole report
+            before it is sent. No portfolio figures are included.</li>
+        <li><b>Version check — the version downloaded from zinfai.com only.</b> That build asks
+            zinfai.com whether a newer Buddy exists; the request carries nothing about you. The
+            Google Play and App Store versions never make it: the store delivers updates.</li>
+        <li><b>Nothing else.</b> Apart from the sources above and Google Drive, Buddy contacts
+            nothing.</li>
+        <li><b>What we collect:</b> only the problem reports you choose to send (see
+            <a href="#problem-reports">Problem reports</a>). Buddy has no account with us, and no
+            analytics, advertising or crash-reporting SDKs. It does not track you across apps or
+            websites.</li>
         <li><b>Removal:</b> <em>Clear Cached Data</em> in Buddy's Settings deletes the backup,
             the saved passphrase and every cached figure from the phone. Uninstalling the app does
             the same.</li>
