@@ -268,9 +268,38 @@ class SpecRefused extends Error {
     constructor(status, message, extra = {}) { super(message); this.status = status; this.extra = extra; }
 }
 
+/* A geometry Format (the statement engine's column layout) carries no fixture:
+   the engine proves every read it produces against the statement's own
+   running balance and printed totals, so a wrong one fails on arrival. Its
+   labels were checked by Zinfai's geometry_pack.clean; the shape is checked
+   again here, and it is committed as a one-entry pack under "geometry". */
+const GEOMETRY_KEY_RE = /^geometry-[a-z0-9-]{3,60}-(pdf|sheet)-[0-9a-f]{8,40}$/;
+const GEOMETRY_KINDS = ["bank_savings", "bank_cc", "fd", "holdings", "tradebook", "ppf", "ssy", "pf",
+    "mf_holdings", "mf_transactions", "us_401k", "us_ira", "us_hsa"];
+const MAX_GEOMETRY_BYTES = 64_000;
+
+function cleanGeometry(b, key) {
+    if (!GEOMETRY_KEY_RE.test(key)) throw new SpecRefused(400, "layout_key is not a geometry layout key.");
+    const g = b.geometry;
+    if (!g || typeof g !== "object" || Array.isArray(g) || typeof g.id !== "string"
+        || !/^[A-Za-z0-9_.:-]{1,80}$/.test(g.id) || !["pdf", "sheet"].includes(g.media)
+        || !Array.isArray(g.columns) || !g.columns.length || g.columns.length > 40
+        || typeof g.fingerprint !== "string" || !/^[0-9a-f]{8,40}$/.test(g.fingerprint)) {
+        throw new SpecRefused(400, "The geometry Format is missing its id, media, fingerprint or columns.");
+    }
+    if (!GEOMETRY_KINDS.includes(g.kind) || g.kind !== b.kind) {
+        throw new SpecRefused(400, "This kind of geometry Format is not shared.");
+    }
+    const text = JSON.stringify({ pack_version: 1, specs: [], geometry: [g] }, null, 2) + "\n";
+    if (Buffer.byteLength(text) > MAX_GEOMETRY_BYTES) throw new SpecRefused(413, "The Format is too large to share.");
+    return { key, kind: b.kind, bankKey: null, name: `${g.kind} ${g.media} layout`, specId: g.id,
+        rows: 0, text, geometry: true };
+}
+
 function cleanContribution(body) {
     const b = body || {};
     const key = typeof b.layout_key === "string" ? b.layout_key : "";
+    if (b.format === "geometry") return cleanGeometry(b, key.slice(0, 120));
     if (key.length > 100 || !LAYOUT_KEY_RE.test(key)) throw new SpecRefused(400, "layout_key is not a layout key.");
     if (!SHAREABLE_KINDS.includes(b.kind)) throw new SpecRefused(400, "This kind of Format is not shared.");
     const pack = b.pack;
@@ -371,7 +400,9 @@ async function openContribution(req) {
         body: [
             `Contributed parser spec \`${c.specId}\` for ${c.name}.`,
             "",
-            `The bundled fixture is a redacted sample; the spec reproduces ${c.rows} transaction(s) from it, and that is checked again on install.`,
+            c.geometry
+                ? "A statement-engine geometry Format: column positions and printed labels only. It carries no sample; the engine proves each read it makes against the statement's own balances."
+                : `The bundled fixture is a redacted sample; the spec reproduces ${c.rows} transaction(s) from it, and that is checked again on install.`,
             "",
             "Opened by the zinfai.com contribution service on behalf of a Zinfai install.",
         ].join("\n"),
