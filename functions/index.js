@@ -48,7 +48,7 @@ const GH = "https://api.github.com";
 /* Which platforms each product publishes. Requests for anything not listed
    here are rejected before we ever talk to GitHub. */
 const PRODUCTS = {
-    "zinfai": ["macos", "windows"],
+    "zinfai": ["macos", "windows", "linux"],
     "zinfai-buddy": ["android"],
 };
 
@@ -57,7 +57,7 @@ const PRODUCTS = {
    it whenever that page changes materially, and every account is asked to
    agree again on its next download — acceptance is per version, not once
    for ever. */
-const TERMS_VERSION = "2026-10-26";
+const TERMS_VERSION = "2026-11-16";
 
 /* Signed GitHub asset URLs are valid for a few minutes; there is no point
    handing the same user a fresh one on every click, but there is also no

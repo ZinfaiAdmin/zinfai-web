@@ -60,6 +60,7 @@
             <a href="/support">Support &amp; FAQ</a>
             <a href="/download#install-mac">Install on macOS</a>
             <a href="/download#install-windows">Install on Windows</a>
+            <a href="/download#install-linux">Install on Linux</a>
             <a href="/download#troubleshooting">Install troubleshooting</a>
         </div>
         <div class="footer-col">
@@ -261,6 +262,16 @@
             const entry = m.platforms && m.platforms[platform];
             if (entry && entry.file) el.textContent = entry.file;
         });
+        /* A platform the hub has not published yet (a new installer before
+           its first release) would only reach a server error on click. */
+        document.querySelectorAll('button[data-download^="' + name + ':"]').forEach(function (btn) {
+            const platform = btn.getAttribute("data-download").split(":")[1];
+            if (m.platforms && !m.platforms[platform]) {
+                btn.disabled = true;
+                btn.dataset.dlReady = btn.dataset.dlLocked = "Coming soon";
+                setLabel(btn, "Coming soon");
+            }
+        });
         if (m.version) {
             document.querySelectorAll('[data-download-version="' + name + '"]').forEach(function (el) {
                 el.textContent = "v" + m.version;
@@ -327,7 +338,9 @@
                 '<li><b>Not advice.</b> Zinfai is not financial, investment, tax or legal advice. Your decisions are your own.</li>' +
                 '<li><b>As is.</b> It comes with no warranty, and our liability is limited.</li>' +
                 '<li><b>Your data, your backups.</b> Everything stays on your device, so keeping it safe is up to you.</li>' +
-                (product === "zinfai"
+                (product === "zinfai" && opts.platform === "linux"
+                    ? '<li><b>Docker Engine.</b> Setup installs it if needed, from Docker or your distribution. It is Docker\'s software, under its own licence.</li>'
+                    : product === "zinfai"
                     ? '<li><b>Docker Desktop.</b> Setup installs it if needed. It is Docker\'s software, under Docker\'s own licence, which requires a paid subscription in larger organisations.</li>'
                     : '') +
                 '</ul>' +
@@ -363,7 +376,7 @@
                 if (!err || err.code !== "terms-not-accepted") throw err;
                 let version = err.termsVersion;
                 for (;;) {
-                    if (!(await askToAcceptTerms(product))) return null;
+                    if (!(await askToAcceptTerms(product, { platform: platform }))) return null;
                     try {
                         await auth.acceptTerms(version, "download");
                         break;

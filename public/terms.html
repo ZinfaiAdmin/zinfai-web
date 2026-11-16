@@ -49,7 +49,7 @@
 <div class="container">
 <div class="prose">
 
-    <p class="updated">Last updated: 2 November 2026</p>
+    <p class="updated">Last updated: 16 November 2026</p>
 
     <h2>1. Agreeing to these terms</h2>
     <p>
@@ -152,23 +152,39 @@
         affiliation with or endorsement by them.
     </p>
 
-    <h2>7. Docker Desktop and Docker Hub</h2>
+    <h2>7. Docker, Docker Desktop and Docker Hub</h2>
     <p>
         The Zinfai desktop application runs inside a Docker container. To set that up, the
-        Zinfai installer for macOS and Windows will, if they are not already present on your
-        computer:
+        Zinfai installer for macOS, Windows and Linux will, if they are not already present on
+        your computer:
     </p>
     <ul>
-        <li>install <b>Docker Desktop</b>, published by Docker, Inc., using Homebrew on macOS
-            or winget on Windows, or by downloading it directly from Docker;</li>
+        <li>on macOS and Windows, install <b>Docker Desktop</b>, published by Docker, Inc.,
+            using Homebrew on macOS or winget on Windows, or by downloading it directly from
+            Docker;</li>
         <li>on Windows, enable the <b>Windows Subsystem for Linux (WSL2)</b> and Virtual
             Machine Platform features, which may require a restart;</li>
+        <li>on Linux, install <b>Docker Engine</b>, either with Docker's own installation
+            script (<code class="inline">get.docker.com</code>) or from your distribution's
+            package manager, using administrator rights (<code class="inline">sudo</code>)
+            that it asks you for; start the Docker service and set it to start when your
+            computer starts; and add your user account to the
+            <code class="inline">docker</code> group;</li>
         <li>download the Zinfai image, <code class="inline">zinfaiadmin/zinfai</code>, from
-            <b>Docker Hub</b>, and create a container and a Docker volume
-            (<code class="inline">zinfai-data</code>) that holds your Zinfai data.</li>
+            <b>Docker Hub</b>, and create a container and the Docker volumes
+            (<code class="inline">zinfai-data</code> and
+            <code class="inline">zinfai-uploads</code>) that hold your Zinfai data and the
+            statements you upload.</li>
     </ul>
     <p>
-        Docker Desktop, WSL2, Homebrew and winget are third-party software. They are not part
+        <b>On Linux, membership of the <code class="inline">docker</code> group gives your
+        user account control over Docker, which is equivalent to administrator access to
+        that computer.</b> Install Zinfai only on a computer and an account where that is
+        acceptable to you.
+    </p>
+    <p>
+        Docker Desktop, Docker Engine, WSL2, Homebrew, winget and your Linux distribution's
+        packages are third-party software. They are not part
         of Zinfai and are not licensed by us. They are governed by their publishers' own
         licence terms and privacy policies, which you accept when they are installed or first
         run. <b>In particular, Docker Desktop is free for personal use, education,
@@ -177,6 +193,7 @@
         service agreement</a> requires a paid subscription for use in larger
         organisations.</b> If you install Zinfai on a computer owned by, or used for, such an
         organisation, it is your responsibility to make sure that use is properly licensed.
+        Docker Engine on Linux is open-source software and does not need that subscription.
     </p>
     <p>
         Docker Desktop may collect usage and diagnostic data under
@@ -184,14 +201,17 @@
         You can review this in Docker Desktop's own settings. Downloads from Docker Hub, and
         the update check Zinfai makes against Docker Hub, are received by Docker, Inc. like
         any other web request. Docker Desktop and its virtual machine use disk space, memory
-        and processor time on your computer.
+        and processor time on your computer. Docker Engine on Linux uses the same resources
+        and runs as a system service.
     </p>
     <p>
         Uninstalling Zinfai removes the Zinfai container and, if you choose, its data volume
         and image. On macOS, the uninstaller offers to remove Docker Desktop only if Zinfai's
-        setup installed it. On Windows, Docker Desktop and WSL2 stay installed, because other
+        setup installed it. On Linux, it offers to remove Docker Engine only if Zinfai's setup
+        installed it, and removes only the packages setup installed; your user account stays
+        in the <code class="inline">docker</code> group unless you remove it. On Windows, Docker Desktop and WSL2 stay installed, because other
         software may depend on them. Remove them yourself through your operating system if
-        you no longer need them. We are not responsible for Docker Desktop, WSL2 or any other
+        you no longer need them. We are not responsible for Docker Desktop, Docker Engine, WSL2 or any other
         third-party software, for their behaviour, updates, licensing or charges, or for any
         effect they have on your computer or on other software running on it.
     </p>

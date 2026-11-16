@@ -70,6 +70,14 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg><span data-dl-label>Download for Windows</span>
             </button>
         </div>
+        <div class="download-card">
+            <div class="dl-icon"><svg viewBox="0 0 24 24" fill-rule="evenodd" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v12h16V6H4zm2.3 2.3a1 1 0 0 1 1.4 0l3 3a1 1 0 0 1 0 1.4l-3 3a1 1 0 1 1-1.4-1.4L8.6 12 6.3 9.7a1 1 0 0 1 0-1.4zM12 15h5a1 1 0 0 1 0 2h-5a1 1 0 0 1 0-2z"/></svg></div>
+            <h3>Linux</h3>
+            <p class="dl-meta">Ubuntu, Debian, Fedora &amp; more · x86_64 / ARM64 · <span data-download-version="zinfai">v1.21.2</span></p>
+            <button type="button" class="btn" data-download="zinfai:linux" data-dl-ready="Download for Linux">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H6a1 1 0 0 1-1-1z"/></svg><span data-dl-label>Download for Linux</span>
+            </button>
+        </div>
     </div>
 
     <div class="notice info" style="max-width:860px; margin:34px auto 0;" data-dl-hint>
@@ -212,6 +220,68 @@
 </div>
 </section>
 
+<!-- ---------------- LINUX ---------------- -->
+<section id="install-linux" style="padding-top:20px;">
+<div class="container">
+    <div class="section-head">
+        <span class="eyebrow">Step by step</span>
+        <h2 class="section-title">Installing on Linux</h2>
+        <p class="section-subtitle">
+            A single <code class="inline">.run</code> file for any 64-bit distribution. It
+            installs Docker Engine if you don't have it, and adds Zinfai to your
+            applications menu.
+        </p>
+    </div>
+
+    <div class="panel">
+        <div class="panel__head">
+            <svg viewBox="0 0 24 24" fill-rule="evenodd" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v12h16V6H4zm2.3 2.3a1 1 0 0 1 1.4 0l3 3a1 1 0 0 1 0 1.4l-3 3a1 1 0 1 1-1.4-1.4L8.6 12 6.3 9.7a1 1 0 0 1 0-1.4zM12 15h5a1 1 0 0 1 0 2h-5a1 1 0 0 1 0-2z"/></svg>
+            <h3>Run the installer</h3>
+        </div>
+        <ol class="num-steps">
+            <li>
+                <span class="num-steps__n">1</span>
+                <div>
+                    <b>Sign in and download</b>
+                    <b><span data-download-file="zinfai:linux">Zinfai-Setup-v1.38.1.run</span></b>,
+                    then open a terminal in your <b>Downloads</b> folder and run it as your
+                    normal user (not with <code class="inline">sudo</code>):
+                    <code class="inline">bash <span data-download-file="zinfai:linux">Zinfai-Setup-v1.38.1.run</span></code>
+                </div>
+            </li>
+            <li>
+                <span class="num-steps__n">2</span>
+                <div>
+                    <b>Docker is handled for you.</b> If Docker isn't installed, setup installs
+                    Docker Engine &mdash; with Docker's own installer on Ubuntu, Debian, Fedora
+                    and RHEL, or your distribution's packages on Arch, openSUSE, Mint and others
+                    &mdash; and adds you to the <code class="inline">docker</code> group. It asks
+                    for your password only for this step. An existing Docker, including Docker
+                    Desktop, is used as it is.
+                </div>
+            </li>
+            <li>
+                <span class="num-steps__n">3</span>
+                <div>
+                    <b>Zinfai starts automatically</b> on port <b>8090</b>, with your data in
+                    persistent Docker volumes, and opens
+                    <a href="http://localhost:8090">http://localhost:8090</a> once it's healthy.
+                    Click <b>Register</b> to create your local account. No re-login is needed.
+                </div>
+            </li>
+        </ol>
+
+        <p class="panel__intro" style="margin:26px 0 0;">
+            Your applications menu gets four entries: <b>Zinfai</b> (start &amp; open),
+            <b>Zinfai Update</b>, <b>Zinfai Setup</b> (re-run or repair) and
+            <b>Uninstall Zinfai</b>. Everything is installed for your user only, under
+            <code class="inline">~/.local/share/zinfai</code>. A damaged or incomplete
+            download is refused before anything runs.
+        </p>
+    </div>
+</div>
+</section>
+
 <!-- ---------------- UPDATING ---------------- -->
 <section id="updating" style="padding-top:20px;">
 <div class="container">
@@ -228,7 +298,8 @@
         <p class="panel__intro" style="margin-bottom:0;">
             Zinfai shows an in-app banner when a newer version is published. On Mac, run
             <em>Zinfai Update</em> from your Applications folder; on Windows, <em>Update
-            Zinfai</em> from the Start menu. Migrations run automatically on the next boot
+            Zinfai</em> from the Start menu; on Linux, <em>Zinfai Update</em> from your
+            applications menu. Migrations run automatically on the next boot
             and your <em>zinfai-data</em> volume is untouched, so nothing is lost. You do
             not need to download a new installer to update.
         </p>
@@ -265,6 +336,12 @@
                     <td>Windows 10 build 19041 (2004) or Windows 11</td>
                     <td>64-bit, virtualization enabled, 8&nbsp;GB RAM, ~6&nbsp;GB free disk</td>
                     <td>May require one restart during setup</td>
+                </tr>
+                <tr>
+                    <td>Linux</td>
+                    <td>Any 64-bit distribution with systemd (Ubuntu 22.04+, Debian 12+, Fedora, RHEL 9, Arch, openSUSE)</td>
+                    <td>x86_64 or ARM64, 4&nbsp;GB RAM, ~4&nbsp;GB free disk, <code class="inline">sudo</code> access</td>
+                    <td>Installs Docker Engine if it isn't already there</td>
                 </tr>
             </tbody>
         </table>
